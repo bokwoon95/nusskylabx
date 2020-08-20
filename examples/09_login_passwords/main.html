@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{if $.IsLoggedIn}}
+  <title>Welcome, {{$.User.Username}}</title>
+  {{else}}
+  <title>Login</title>
+  {{end}}
+</head>
+<body>
+  <h1>List of users</h1>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Password</th>
+        <th>Password Hash</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range $i, $user := $.Users}}
+      <tr>
+        <td>{{$user.Username}}</td>
+        <td>{{$user.Password}}</td>
+        <td>{{$user.PasswordHash}}</td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+  {{if $.IsLoggedIn}}
+    <h1>You are logged in</h1>
+    <div><b>Username:</b> {{$.User.Username}}</div>
+    <div><b>Password:</b> {{$.User.Password}}</div>
+    <div><b>Password Hash:</b> {{$.User.PasswordHash}}</div>
+    <form method="post" action="/logout"><button type="submit">Logout</button></form>
+  {{else}}
+    <h1>Login</h1>
+    <form method="post" action="/login">
+      <div>Username: <input type="text" name="username" autocomplete="off"></div>
+      <div>Password: <input type="text" name="password" autocomplete="off"></div>
+      <div><button type="submit">Submit</button></div>
+    </form>
+    <h1>Signup</h1>
+    <form method="post" action="/signup">
+      <div>Username: <input type="text" name="username" autocomplete="off"></div>
+      <div>Password: <input type="text" name="password" autocomplete="off"></div>
+      <div><button type="submit">Submit</button></div>
+    </form>
+  {{end}}
+</body>
+</html>

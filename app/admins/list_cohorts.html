@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+  <title></title>
+</head>
+<body class="{{if SkylabCurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
+  {{template "app/skylab/navbar.html"}}
+  {{template "app/skylab/sidebar.html"}}
+  <div class="sans-serif pa2 pa4-l">
+    {{template "helpers/flash/flash.html"}}
+    <div>
+      <button type="button" id="select-all-btn" class="button ph2 bg-moon-gray hover-bg-light-silver">Select All</button>
+      <button type="button" id="unselect-all-btn" class="button ph2 bg-light-gray hover-bg-light-silver">Unselect All</button>
+      <form method="post" action="{{AdminListCohorts}}/refresh" class="dib">
+        {{SkylabCsrfToken}}
+        <button type="submit" id="refresh-btn" class="button ph2 bg-lightest-blue hover-bg-light-blue">Refresh List</button>
+      </form>
+    </div>
+    <div class="pv1"></div>
+    <form method="post" action="{{AdminListCohorts}}/{{$.NextCohort}}/create" class="dib">
+      {{SkylabCsrfToken}}
+      <button type="submit" id="create-btn" class="button ph2 bg-light-green hover-bg-green">Create Cohort {{$.NextCohort}}</button>
+    </form>
+    <form id="delete-btn-form" method="post" action="{{AdminListCohorts}}/delete" class="dib">
+      {{SkylabCsrfToken}}
+      <span id="delete-btn-list"></span>
+      <button type="submit" id="delete-btn" class="button ph2 bg-light-red hover-bg-red dn">Delete</button>
+    </form>
+    <div class="pv2"></div>
+    <table id="table_id" class="compact stripe display" style="width:100%">
+      <thead>
+        <tr>
+          <th>Cohort</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range $i, $cohort := $.Cohorts}}
+        <tr>
+          <td>{{$cohort}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+  <script nonce="{{HeadersCSPNonce}}">
+    $(document).ready(function() {
+      $("#table_id").DataTable({
+        order: [],
+        scrollX: true,
+        iDisplayLength: 50,
+      });
+    });
+  </script>
+  <script src="/static/vendor.js"></script>
+  <script src="/static/admins/list_cohorts.js"></script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <title>{{$.TeamEvaluation.Evaluatee.Team.TeamName}} | {{SkylabMilestoneNameAbbrev $.TeamEvaluation.EvaluationForm.Period.Milestone}} Evaluation</title>
+</head>
+<body class="{{if SkylabCurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
+  {{template "app/skylab/navbar.html"}}
+  {{template "app/skylab/sidebar.html"}}
+  <div class="sans-serif pa2 pa4-l">
+    {{template "helpers/flash/flash.html"}}
+    <div class="ba br4 b--black-30 pa4">
+      <div class="mb3">
+        <a href="{{$.SubmissionURL}}">
+          <button class="button f6 pv1 ph2 bg-light-red hover-bg-red">View Submission</button>
+        </a>
+      </div>
+      <h4 class="ma0">{{SkylabMilestoneName $.TeamEvaluation.EvaluationForm.Period.Milestone}} Evaluation</h4>
+      <div class="">
+        <span class="gray">[{{$.TeamEvaluation.Evaluator.TeamID}}] [{{$.TeamEvaluation.Evaluator.ProjectLevel}}]</span> 
+        &nbsp;{{$.TeamEvaluation.Evaluator.TeamName}} &rarr;
+        evaluating <span class="gray">[{{$.TeamEvaluation.Evaluatee.Team.TeamID}}] [{{$.TeamEvaluation.Evaluatee.Team.ProjectLevel}}]</span> 
+        &nbsp;{{$.TeamEvaluation.Evaluatee.Team.TeamName}}
+      </div>
+      {{if $.TeamEvaluation.Submitted}}
+        <div class="gray">Submitted</div>
+      {{else}}
+        <div class="gray">Draft</div>
+      {{end}}
+      <div class="pv3"></div>
+      {{$evaluationData := FormxMergeQuestionsAnswers $.TeamEvaluation.EvaluationForm.Questions $.TeamEvaluation.EvaluationAnswers}}
+      {{template "helpers/formx/render_form_results.html" $evaluationData}}
+      {{if $.EditURL}}
+      <a href="{{$.EditURL}}">
+        <button type="submit" formaction="{{$.EditURL}}" class="button pa2 ph3 bg-light-blue hover-bg-blue">
+          Edit
+        </button>
+      </a>
+      {{end}}
+      {{if $.TeamEvaluation.Submitted}}
+      {{else if and $.TeamEvaluation.Valid $.SubmitURL}}
+        <span class="ml2"></span>
+        <form method="post" action="{{$.SubmitURL}}" class="dib">
+          {{SkylabCsrfToken}}
+          <button type="submit" class="button pa2 bg-dark-green hover-bg-darker-green white">Submit</button>
+        </form>
+      {{end}}
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/static/tinymce/tinymce.min.js"></script>
+  <script nonce="{{HeadersCSPNonce}}">
+    tinymce.init({
+      selector: "textarea",
+      statusbar: false,
+      menubar: false,
+      toolbar: "bold italic bullist numlist table",
+      plugins: "autoresize lists table",
+    })
+  </script>
+  <!-- End Scripts -->
+</body>
+</html>

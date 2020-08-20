@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <title>User</title>
+</head>
+<body class="{{if SkylabCurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
+  {{template "app/skylab/navbar.html"}}
+  {{template "app/skylab/sidebar.html"}}
+  <div class="sans-serif pa2 pa4-l">
+    {{template "helpers/flash/flash.html"}}
+    <a href="#" class="goback">&lt; Back</a>
+    <script nonce="{{HeadersCSPNonce}}">
+      document.querySelector(".goback").addEventListener("click", () => window.history.back());
+    </script>
+    <div class="pv1"></div>
+    <div class="widget">
+      <div class="widget-title pv1 ph2 bg-near-white">
+        <h4 class="ma0">[User {{$.User.UserID}}] {{$.User.Displayname}}</h4>
+      </div>
+      <div class="pa3">
+        {{$usr := SkylabUser}}
+        {{$admin := SkylabAdmin}}
+        {{if and $admin.Valid (ne $usr.UserID $.User.UserID) $.UserBaseURL}}
+          <form method="post" action="{{$.UserBaseURL}}/{{$.User.UserID}}/preview" class="mb2">
+            {{SkylabCsrfToken}}
+            <button type="submit" class="button pa2 bg-light-red hover-bg-red">Preview As User</button>
+          </form>
+        {{end}}
+        <div>Email: {{$.User.Email}}</div>
+        <div>{{template "DisplayRoles" .}}</div>
+        {{if $.Team.Valid}}
+          <div>Team: <a href="{{$.TeamBaseURL}}/{{$.Team.TeamID}}">{{$.Team.TeamName}}</a></div>
+          {{if $.Team.Adviser.Valid}}
+            <div>Adviser: <a href="{{$.UserBaseURL}}/{{$.Team.Adviser.UserID}}">{{$.Team.Adviser.Displayname}}</a></div>
+          {{end}}
+          {{if $.Team.Mentor.Valid}}
+            <div>Mentor: <a href="{{$.UserBaseURL}}/{{$.Team.Mentor.UserID}}">{{$.Team.Mentor.Displayname}}</a></div>
+          {{end}}
+        {{end}}
+        {{if $.AdvisingTeams}}
+          <div>Advising Teams:</div>
+          {{DisplayTeams $.AdvisingTeams}}
+        {{end}}
+        {{if $.MentoringTeams}}
+          <div>Mentoring Teams:</div>
+          {{DisplayTeams $.MentoringTeams}}
+        {{end}}
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+{{define "DisplayRoles"}}
+Roles:
+{{range $i, $role := SkylabRoles}}
+  {{if (index $.User.Roles $role)}}
+    {{if $i}},&nbsp;{{$role}}{{else}}{{$role}}{{end}}
+  {{end}}
+{{end}}
+{{end}}

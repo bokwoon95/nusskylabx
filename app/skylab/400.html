@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <title>400 Bad Request</title>
+</head>
+<body class="bipanel-l">
+  {{template "app/skylab/navbar.html"}}
+  <div class="sans-serif">
+    <div class="pa4">
+      <img src="/static/img/ssl_error.png" class="">
+      <h1 class="f-subheadline">400 Bad Request</h1>
+      <p class="f4">{{SkylabSanitizeHTML $.Msg}}</p>
+      <pre>{{$.Location}}</pre>
+      <a href="#" class="goback">&lt; Back</a>
+      <script nonce="{{HeadersCSPNonce}}">
+        document.querySelector(".goback").addEventListener("click", () => window.history.back());
+      </script>
+    </div>
+  </div>
+</body>
+</html>

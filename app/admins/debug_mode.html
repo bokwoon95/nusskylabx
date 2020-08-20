@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <title>Debug Mode</title>
+</head>
+<body class="tripanel-l">
+  {{template "app/skylab/navbar.html"}}
+  {{template "app/skylab/sidebar.html"}}
+  <div class="sans-serif pa2 pa4-l">
+    <form method="post" action="{{AdminDebugMode}}/{{if $.DebugMode}}off{{else}}on{{end}}">
+      {{SkylabCsrfToken}}
+      <div>
+        <div class="pb2">
+          Turning Debug Mode on will activate all <code>[DEBUG]</code> and <code>[TRACE]</code> logging statements scattered throughout the codebase. It is useful for tracing the execution of a request, but can be quite verbose.
+        </div>
+        <div class="pb2">
+          [NOTICE: everytime the server restarts it will default back to whatever setting DEBUG_MODE is set to in the .env file]
+        </div>
+        {{if $.DebugMode}}
+          <button type="submit" class="button pa2 bg-light-red hover-bg-red">Turn Debug Mode Off</button>
+        {{else}}
+          <button type="submit" class="button pa2 bg-light-green hover-bg-green">Turn Debug Mode On</button>
+        {{end}}
+      </div>
+    </form>
+  </div>
+</body>
+</html>

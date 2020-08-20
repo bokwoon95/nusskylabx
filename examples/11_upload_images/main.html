@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="/static/style.css">
+  <title>Upload Images</title>
+</head>
+<body>
+  <form method="post" enctype="multipart/form-data" action="/upload">
+    <h1>Upload Image</h1>
+    <div><input type="file" name="upload_img" accept="image/*"></div>
+    <div><button type="submit">Upload</button></div>
+  </form>
+  <h2>Images</h2>
+  <div class="grid-3-2-1 grid-gap-3">
+    {{range $i, $img := $.Images}}
+    <div class="ba pointer">
+      <img style="height:auto;width:100%;object-fit:cover" src="/img/{{$img.UUID}}">
+      <div><a href="/img/{{$img.UUID}}">[{{$img.UUID}}] {{$img.Filename}}</a></div>
+    </div>
+    {{end}}
+  </div>
+</body>
+</html>

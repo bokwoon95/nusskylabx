@@ -1,0 +1,41 @@
+{
+  "name": "nusskylabx",
+  "version": "1.0.0",
+  "private": true,
+  "description": "nusskylabx",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bokwoon95/nusskylabx.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "crypto-js": "^3.3.0",
+    "date-fns": "^2.15.0",
+    "lit-html": "^1.2.1",
+    "micromodal": "^0.4.6",
+    "mithril": "^2.0.4",
+    "qs": "^6.9.4",
+    "uuid": "^3.4.0",
+    "vanilla-lazyload": "^15.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.0",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-typescript": "^7.10.4",
+    "@types/jquery": "^3.5.1",
+    "@types/micromodal": "^0.3.1",
+    "@types/mithril": "^2.0.3",
+    "@types/node": "^12.12.53",
+    "babel-loader": "^8.1.0",
+    "dotenv-webpack": "^1.8.0",
+    "regenerator-runtime": "^0.13.7",
+    "typescript": "^3.9.7",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  }
+}

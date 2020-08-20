@@ -1,0 +1,254 @@
+<!-- Main Sidebar -->
+{{define "app/skylab/sidebar.html"}}
+{{if eq SkylabCurrentRole RoleStudent}}
+  {{template "app/skylab/sidebar.html:student"}}
+{{else if eq SkylabCurrentRole RoleAdviser}}
+  {{template "app/skylab/sidebar.html:adviser"}}
+{{else if eq SkylabCurrentRole RoleMentor}}
+  {{template "app/skylab/sidebar.html:mentor"}}
+{{else if eq SkylabCurrentRole RoleAdmin}}
+  {{template "app/skylab/sidebar.html:admin"}}
+{{end}}
+<script src="/static/ensure_in_view.js"></script>
+<script src="/static/toggle_mobile_sidebar.js"></script>
+{{end}}
+<!-- End Main Sidebar -->
+
+<!-- Student Sidebar -->
+{{define "app/skylab/sidebar.html:student"}}
+<div id="toggle_mobile_sidebar" class="db dn-l pointer bg-near-black light-silver pv1 tc">Toggle Sidebar</div>
+<nav class="toggleable_sidebar sidebar-backing-l sans-serif">
+  <div class="sidebar bg-near-black fixed-l">
+    <div class="justify-center dn flex-l pv3">
+      <a href="/" class="sidebar-orbital-logo-l f1 decorative no-underline navy-inverse">Orbital</a>
+    </div>
+    <div class="">
+      {{template "app/skylab/sidebar.html:item" SkylabSidebarItem StudentDashboard "dashboard_svg" "Dashboard"}}
+      {{template "app/skylab/sidebar.html:item" SkylabSidebarItem StudentTeam "people_svg" "Your Team"}}
+      {{template "app/skylab/sidebar.html:category" "Milestone 1"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem StudentM1Submission "submission_svg" "Submission"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem StudentM1Evaluation "evaluation_svg" "Evaluation"}}
+      {{template "app/skylab/sidebar.html:category" "Milestone 2"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem StudentM2Submission "submission_svg" "Submission"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem StudentM2Evaluation "evaluation_svg" "Evaluation"}}
+      {{template "app/skylab/sidebar.html:category" "Milestone 3"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem StudentM3Submission "submission_svg" "Submission"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem StudentM3Evaluation "evaluation_svg" "Evaluation"}}
+      {{template "app/skylab/sidebar.html:item" SkylabSidebarItem StudentListFeedbacks "feedback_svg" "Feedback"}}
+    </div>
+  </div>
+</nav>
+{{end}}
+<!-- End Student Sidebar -->
+
+<!-- Adviser Sidebar -->
+{{define "app/skylab/sidebar.html:adviser"}}
+<div id="toggle_mobile_sidebar" class="db dn-l pointer bg-near-black light-silver pv1 tc">Toggle Sidebar</div>
+<nav class="toggleable_sidebar sidebar-backing-l sans-serif">
+  <div class="sidebar bg-near-black fixed-l">
+    <div class="justify-center dn flex-l pv3">
+      <a href="/" class="sidebar-orbital-logo-l f1 decorative no-underline navy-inverse">Orbital</a>
+    </div>
+    <div class="">
+      {{template "app/skylab/sidebar.html:item" SkylabSidebarItem AdviserDashboard "dashboard_svg" "Dashboard"}}
+      {{template "app/skylab/sidebar.html:item" SkylabSidebarItem AdviserTeams "people_svg" "Teams"}}
+      {{template "app/skylab/sidebar.html:category" "Evaluationships"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdviserEvaluateeEvaluators "join_queue_svg" "Sort By Evaluatees"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdviserEvaluatorEvaluatees "leave_queue_svg" "Sort By Evaluators"}}
+      {{template "app/skylab/sidebar.html:category" "Milestone 1"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdviserM1ViewEvaluation "evaluation_svg" "View Evaluation"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdviserM1MakeEvaluation "submission_svg" "Make Evaluation"}}
+      {{template "app/skylab/sidebar.html:category" "Milestone 2"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdviserM2ViewEvaluation "evaluation_svg" "View Evaluations"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdviserM2MakeEvaluation "submission_svg" "Make Evaluations"}}
+      {{template "app/skylab/sidebar.html:category" "Milestone 3"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdviserM3ViewEvaluation "evaluation_svg" "View Evaluations"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdviserM3MakeEvaluation "submission_svg" "Make Evaluations"}}
+    </div>
+  </div>
+</nav>
+{{end}}
+<!-- End Adviser Sidebar -->
+
+<!-- Mentor Sidebar -->
+{{define "app/skylab/sidebar.html:mentor"}}
+<div id="toggle_mobile_sidebar" class="db dn-l pointer bg-near-black light-silver pv1 tc">Toggle Sidebar</div>
+<nav class="toggleable_sidebar sidebar-backing-l sans-serif">
+  <div class="sidebar bg-near-black fixed-l">
+    <div class="justify-center dn flex-l pv3">
+      <a href="/" class="sidebar-orbital-logo-l f1 decorative no-underline navy-inverse">Orbital</a>
+    </div>
+    <div class="">
+      {{template "app/skylab/sidebar.html:item" SkylabSidebarItem MentorDashboard "dashboard_svg" "Dashboard"}}
+    </div>
+  </div>
+</nav>
+{{end}}
+<!-- End Mentor Sidebar -->
+
+<!-- Admin Sidebar -->
+{{define "app/skylab/sidebar.html:admin"}}
+<div id="toggle_mobile_sidebar" class="db dn-l pointer bg-near-black light-silver pv1 tc">Toggle Sidebar</div>
+<nav class="toggleable_sidebar sidebar-backing-l sans-serif">
+  <div class="sidebar bg-near-black fixed-l">
+    <div class="justify-center dn flex-l pv3">
+      <a href="/" class="sidebar-orbital-logo-l f1 decorative no-underline navy-inverse">Orbital</a>
+    </div>
+    <div class="">
+      {{template "app/skylab/sidebar.html:item" SkylabSidebarItem AdminDashboard "dashboard_svg" "Dashboard"}}
+      {{template "app/skylab/sidebar.html:category" "Data Entry"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminCreateUser "person_svg" "User"}}
+
+      {{template "app/skylab/sidebar.html:category" "Manage"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminListCohorts "calendar_svg" "Cohorts"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminListPeriods "hourglass_svg" "Periods"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminListForms "document_svg" "Forms"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminListUsers "person_svg" "Users"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminListTeams "people_svg" "Teams"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminListApplications "paperstack_svg" "Applications"}}
+
+      {{template "app/skylab/sidebar.html:category" "View Form Response"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminListFeedbacks "feedback_svg" "Feedback"}}
+
+      {{template "app/skylab/sidebar.html:category" "Dev Utilities"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminDebugMode "bug_svg" "Debug Mode"}}
+      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminDumpJson "code_svg" "Dump JSON"}}
+    </div>
+  </div>
+</nav>
+{{end}}
+<!-- End Admin Sidebar -->
+
+<!-- Category -->
+{{define "app/skylab/sidebar.html:category"}}
+<div class="flex items-center justify-between pv1 ph3 white">
+  <span class=""><b>{{.}}</b></span>
+</div>
+{{end}}
+<!-- End Category -->
+
+<!-- Item -->
+{{define "app/skylab/sidebar.html:item"}}
+{{$SidebarItem := .}}
+<div class="flex items-center pv1 ph3 {{if eq SkylabCurrentSection $SidebarItem.Section}}bg-dark-blue{{end}}">
+  {{template "app/skylab/sidebar.html:sidebar_icon" $SidebarItem.Icon}}
+  <span class="ph1"></span>
+  <a
+    href="{{$SidebarItem.Section}}"
+    title="{{$SidebarItem.Section}}"
+    class="no-underline light-silver flex-item hover-text {{if eq SkylabCurrentSection $SidebarItem.Section}}white{{end}}"
+    >
+    {{$SidebarItem.Display}}
+  </a>
+</div>
+{{end}}
+<!-- End Item -->
+
+<!-- Item Indented -->
+{{define "app/skylab/sidebar.html:item_indented"}}
+{{$SidebarItem := .}}
+<div class="flex items-center pv1 ph3 {{if eq SkylabCurrentSection $SidebarItem.Section}}bg-dark-blue current-item{{else}}bg-dark-gray{{end}}">
+  {{template "app/skylab/sidebar.html:sidebar_icon" $SidebarItem.Icon}}
+  <span class="ph1"></span>
+  <a
+    href="{{$SidebarItem.Section}}"
+    title="{{$SidebarItem.Section}}"
+    class="pl2 no-underline light-silver flex-item hover-text {{if eq SkylabCurrentSection $SidebarItem.Section}}white{{end}}"
+    >
+    {{$SidebarItem.Display}}
+  </a>
+</div>
+{{end}}
+<!-- End Item Indented -->
+
+<!-- Icons -->
+{{define "app/skylab/sidebar.html:sidebar_icon"}}
+{{if eq "dashboard_svg" .}}
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 172 172" style=" fill:#000000;">
+    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M86,14.33333c-47.56315,0 -86,38.43685 -86,86c0,18.78451 6.15885,36.72917 16.34896,50.83854l11.64583,-8.51042c-7.13867,-9.88216 -11.89778,-22.17187 -13.21354,-35.16146h6.71875v-14.33333h-6.94271c1.39974,-14.5013 7.25065,-27.71484 15.90104,-38.29687l4.70313,4.70313l10.07813,-10.07812l-4.70312,-4.70312c10.61003,-8.6224 23.79558,-14.27734 38.29688,-15.67708v6.71875h14.33333v-6.71875c14.50131,1.39974 27.68685,7.05469 38.29688,15.67708l-4.70313,4.70313l10.07813,10.07813l4.70313,-4.70312c8.65039,10.58203 14.50131,23.79558 15.90104,38.29688h-6.94271v14.33333h6.71875c-1.31576,12.98958 -6.07487,25.2793 -13.21354,35.16146l11.64583,8.51042c10.1901,-14.10937 16.34896,-32.05403 16.34896,-50.83854c0,-47.56315 -38.43685,-86 -86,-86zM126.76042,59.57292l-39.19271,26.65104c-0.5319,-0.05599 -1.03581,-0.22396 -1.56771,-0.22396c-7.92253,0 -14.33333,6.41081 -14.33333,14.33333c0,7.92253 6.41081,14.33333 14.33333,14.33333c7.92253,0 14.33333,-6.41081 14.33333,-14.33333c0,-0.5319 -0.16797,-1.03581 -0.22396,-1.56771z"></path></g></g>
+  </svg>
+  <!-- Attribution -->
+  <a href="https://icons8.com/icon/3903/speed" class="dn">Speed icon by Icons8</a>
+{{else if eq "people_svg" .}}
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 172 172" style=" fill:#000000;">
+    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M54.13073,17.2c-31.2524,0.53893 -34.44622,22.21004 -28.17396,47.09844c-1.21547,0.69947 -3.21443,2.91979 -2.7099,6.86432c0.94027,7.35587 4.12925,9.21786 6.15885,9.37266c0.774,6.86853 8.1476,15.65272 10.7276,16.93125v11.46667c-5.73333,17.2 -40.13333,0 -40.13333,45.86667h68.8c0,-20.34187 11.40611,-29.10285 20.91771,-34.14245c-8.93253,-3.1304 -18.18291,-3.51982 -20.91771,-11.72422v-11.46667c2.58,-1.27853 9.94787,-10.05725 10.72761,-16.92005c0.45867,-1.62253 0.81745,-7.42717 0.81745,-8.73437c0,-7.16093 -0.10508,-21.96189 4.37839,-33.54896c-1.5652,-7.78587 -5.65665,-14.35224 -14.42292,-15.21797c-2.34493,-3.88147 -8.35526,-5.84531 -16.16979,-5.84531zM126.8388,22.93333c-6.44427,0 -11.42188,5.73333 -11.42188,5.73333c-36.93413,0 -16.43066,62.79917 -27.27812,71.82344c0,0 5.76746,8.54401 26.52786,8.54401v7.31224c-5.73333,15.52013 -34.4,9.78698 -34.4,38.45364h91.73333c0,-28.66667 -28.66667,-22.93351 -34.4,-38.45364v-7.37943c20.8636,0 25.69922,-8.26406 25.69922,-8.26406c-11.6788,-9.58613 8.69532,-77.76953 -36.46042,-77.76953z"></path></g></g>
+  </svg>
+  <!-- Attribution -->
+  <a href="https://icons8.com/icon/60018/team" class="dn">Team icon by Icons8</a>
+{{else if eq "submission_svg" .}}
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 172 172" style=" fill:#000000;">
+    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M43,14.33333c-7.84216,0 -14.33333,6.49117 -14.33333,14.33333v114.66667c0,7.84216 6.49117,14.33333 14.33333,14.33333h57.33333v-14.33333h-57.33333v-114.66667h50.16667v35.83333h35.83333v35.83333h14.33333v-43l-43,-43zM57.33333,86v14.33333h57.33333v-14.33333zM143.33333,107.5v21.5h-28.66667v14.33333h28.66667v21.5l28.66667,-28.66667zM57.33333,114.66667v14.33333h43v-14.33333z"></path></g></g>
+  </svg>
+  <!-- Attribution -->
+  <a href="https://icons8.com/icon/31203/submit-document" class="dn">Submit Document icon by Icons8</a>
+{{else if eq "evaluation_svg" .}}
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 172 172" style=" fill:#000000;">
+    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M28.66667,28.66667c-7.91917,0 -14.33333,6.41417 -14.33333,14.33333v86c0,7.91917 6.41417,14.33333 14.33333,14.33333h114.66667c7.91917,0 14.33333,-6.41417 14.33333,-14.33333v-86c0,-7.91917 -6.41417,-14.33333 -14.33333,-14.33333zM28.66667,43h114.66667v86h-114.66667zM121.83333,60.91667l-10.75,10.75l10.75,10.75l10.75,-10.75zM43,64.5v14.33333h50.16667v-14.33333zM121.83333,96.75l-10.75,10.75l10.75,10.75l10.75,-10.75zM43,100.33333v14.33333h35.83333v-14.33333z"></path></g></g>
+  </svg>
+  <!-- Attribution -->
+  <a href="https://icons8.com/icon/85939/report-card" class="dn">Report Card icon by Icons8</a>
+{{else if eq "feedback_svg" .}}
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 172 172" style=" fill:#000000;">
+    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M14.33333,35.83333v86c0,7.88333 6.45,14.33333 14.33333,14.33333h100.33333l28.66667,28.66667l-0.07167,-129c0,-7.88333 -6.37833,-14.33333 -14.26167,-14.33333h-114.66667c-7.88333,0 -14.33333,6.45 -14.33333,14.33333zM50.16667,43h71.66667v14.33333h-71.66667zM50.16667,71.66667h71.66667v14.33333h-71.66667zM50.16667,100.33333h50.16667v14.33333h-50.16667z"></path></g></g>
+  </svg>
+  <!-- Attribution -->
+  <a href="https://icons8.com/icon/82819/comments" class="dn">Comments icon by Icons8</a>
+{{else if eq "person_svg" .}}
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 172 172" style=" fill:#000000;">
+    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M106.41156,111.89406c-0.51063,-5.54969 -0.30906,-9.41969 -0.30906,-14.48563c2.51281,-1.31687 7.01438,-9.71531 7.76688,-16.81031c1.97531,-0.16125 5.09281,-2.08281 6.00656,-9.68844c0.48375,-4.085 -1.46469,-6.38281 -2.66062,-7.10844c3.21156,-9.66156 9.89,-39.56 -12.33563,-42.65062c-2.29781,-4.01781 -8.15656,-6.04688 -15.76219,-6.04688c-30.46281,0.56438 -34.13125,23.005 -27.45281,48.6975c-1.19594,0.72563 -3.14437,3.02344 -2.66062,7.10844c0.92719,7.60563 4.03125,9.52719 6.00656,9.68844c0.7525,7.095 5.42875,15.49344 7.955,16.81031c0,5.06594 0.18812,8.93594 -0.3225,14.48563c-6.02,16.20562 -46.68188,11.65031 -48.56313,42.90594h130.72c-1.88125,-31.25562 -42.36844,-26.70031 -48.38844,-42.90594z"></path></g></g>
+  </svg>
+  <!-- Attribution -->
+  <a href="https://icons8.com/icon/23265/user" class="dn">User icon by Icons8</a>
+{{else if eq "calendar_svg" .}}
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 172 172" style=" fill:#000000;">
+    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M41.28,0c-3.7625,0 -6.88,3.1175 -6.88,6.88v6.88h-20.64c-3.99094,0 -6.88,2.88906 -6.88,6.88v24.08h158.24v-24.08c0,-3.99094 -2.88906,-6.88 -6.88,-6.88h-20.64v-6.88c0,-3.7625 -3.1175,-6.88 -6.88,-6.88h-6.88c-3.7625,0 -6.88,3.1175 -6.88,6.88v6.88h-61.92v-6.88c0,-3.7625 -3.1175,-6.88 -6.88,-6.88zM41.28,6.88h6.88v20.64h-6.88zM123.84,6.88h6.88v20.64h-6.88zM6.88,51.6v106.64c0,3.99094 2.88906,6.88 6.88,6.88h144.48c3.99094,0 6.88,-2.88906 6.88,-6.88v-106.64zM41.28,72.24h17.2v17.2h-17.2zM65.36,72.24h17.2v17.2h-17.2zM89.44,72.24h17.2v17.2h-17.2zM113.52,72.24h17.2v17.2h-17.2zM41.28,96.32h17.2v17.2h-17.2zM65.36,96.32h17.2v17.2h-17.2zM89.44,96.32h17.2v17.2h-17.2zM113.52,96.32h17.2v17.2h-17.2zM41.28,120.4h17.2v17.2h-17.2zM65.36,120.4h17.2v17.2h-17.2zM89.44,120.4h17.2v17.2h-17.2zM113.52,120.4h17.2v17.2h-17.2z"></path></g></g>
+  </svg>
+  <!-- Attribution -->
+  <a href="https://icons8.com/icon/10053/calendar" class="dn">Calendar icon by Icons8</a>
+{{else if eq "hourglass_svg" .}}
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 172 172" style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M20.64,3.44v13.76c0,5.68406 4.63594,10.32 10.32,10.32h6.88v23.1125c0,10.34688 5.14656,20.06219 13.76,25.8l14.405,9.5675l-14.405,9.5675c-8.61344,5.73781 -13.76,15.45313 -13.76,25.8v23.1125h-6.88c-5.68406,0 -10.32,4.63594 -10.32,10.32v13.76h130.72v-13.76c0,-5.68406 -4.63594,-10.32 -10.32,-10.32h-6.88v-23.1125c0,-10.34687 -5.14656,-20.06219 -13.76,-25.8l-14.405,-9.5675l14.405,-9.5675c8.61344,-5.73781 13.76,-15.45312 13.76,-25.8v-23.1125h6.88c5.68406,0 10.32,-4.63594 10.32,-10.32v-13.76zM44.72,27.52h82.56v23.1125c0,8.04906 -4.04469,15.53375 -10.75,19.995l-18.705,12.47l-4.3,2.9025l4.3,2.9025l18.705,12.47c6.70531,4.47469 10.75,11.94594 10.75,19.995v23.1125h-82.56v-23.1125c0,-8.04906 4.04469,-15.52031 10.75,-19.995l18.705,-12.47l4.3,-2.9025l-4.3,-2.9025l-18.705,-12.47c-6.70531,-4.46125 -10.75,-11.94594 -10.75,-19.995zM58.48,51.6c0,17.50906 27.52,24.08 27.52,24.08c0,0 27.52,-6.93375 27.52,-24.08zM86,110.08c0,0 -22.84375,8.10281 -29.24,27.52h58.5875c-6.31562,-19.80687 -29.3475,-27.52 -29.3475,-27.52z"></path></g></g></svg>
+  <!-- Attribution -->
+  <a href="https://icons8.com/icon/15929/hourglass" class="dn">Hourglass icon by Icons8</a>
+{{else if eq "document_svg" .}}
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 172 172" style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M141.65347,50.4132l-37.26667,-37.26667c-1.07787,-1.07787 -2.53413,-1.67987 -4.05347,-1.67987h-60.2c-6.33533,0 -11.46667,5.13133 -11.46667,11.46667v126.13333c0,6.33533 5.13133,11.46667 11.46667,11.46667h91.73333c6.33533,0 11.46667,-5.13133 11.46667,-11.46667v-94.6c0,-1.51933 -0.602,-2.9756 -1.67987,-4.05347zM103.2,120.4h-45.86667c-3.1648,0 -5.73333,-2.56853 -5.73333,-5.73333c0,-3.1648 2.56853,-5.73333 5.73333,-5.73333h45.86667c3.1648,0 5.73333,2.56853 5.73333,5.73333c0,3.1648 -2.56853,5.73333 -5.73333,5.73333zM114.66667,97.46667h-57.33333c-3.1648,0 -5.73333,-2.56853 -5.73333,-5.73333c0,-3.1648 2.56853,-5.73333 5.73333,-5.73333h57.33333c3.1648,0 5.73333,2.56853 5.73333,5.73333c0,3.1648 -2.56853,5.73333 -5.73333,5.73333zM103.2,57.33333c-3.1648,0 -5.73333,-2.56853 -5.73333,-5.73333v-29.21707l34.9504,34.9504z"></path></g></g></svg>
+  <!-- Attribution -->
+  <a href="https://icons8.com/icon/59777/document" class="dn">Document icon by Icons8</a>
+{{else if eq "bug_svg" .}}
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 172 172" style=" fill:#000000;">
+    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M86,10.32c-8.12969,0 -15.25156,4.78375 -18.5975,11.825c5.52281,-1.11531 11.70406,-1.72 18.5975,-1.72c6.90688,0 13.07469,0.60469 18.5975,1.72c-3.3325,-7.04125 -10.4275,-11.825 -18.5975,-11.825zM86,27.305c-19.96812,0 -41.495,5.2675 -41.495,24.295c0,4.11188 0.56438,7.6325 1.6125,10.75c2.76813,0.26875 5.59,1.11531 9.03,2.0425c6.5575,1.77375 16.47438,4.4075 30.8525,4.4075c13.08813,0 22.44063,-1.98875 29.24,-3.44c3.95063,-0.84656 7.14875,-1.47812 10.2125,-1.6125c1.38406,-3.41312 2.0425,-7.44437 2.0425,-12.1475c0,-19.0275 -21.52687,-24.295 -41.495,-24.295zM10.32,27.52c-1.89469,0 -3.44,1.54531 -3.44,3.44c0,19.84719 4.515,34.10438 13.4375,42.4625c5.32125,4.97188 10.95156,6.61125 14.405,7.095c-0.29562,3.66844 -0.3225,8.14313 -0.3225,13.975c0,0.56438 0.09406,1.14219 0.1075,1.72h-27.6275c-1.935,0 -3.5475,1.6125 -3.5475,3.5475c0,1.935 1.6125,3.5475 3.5475,3.5475h28.0575c0.7525,6.18125 2.39188,12.33563 4.73,18.1675c-8.7075,2.08281 -32.7875,10.105 -32.7875,36.765c0,1.90813 1.54531,3.44 3.44,3.44c1.89469,0 3.44,-1.53187 3.44,-3.44c0,-23.65 23.24688,-29.48187 28.81,-30.53c7.83406,14.96938 21.21781,26.875 39.99,29.9925v-57.9425c0,-1.90812 1.54531,-3.44 3.44,-3.44c1.89469,0 3.44,1.53188 3.44,3.44v57.9425c18.77219,-3.1175 32.26344,-14.91562 40.0975,-29.885c5.87219,1.14219 28.7025,7.02781 28.7025,30.4225c0,1.90813 1.53188,3.44 3.44,3.44c1.90813,0 3.44,-1.53187 3.44,-3.44c0,-26.66 -24.08,-34.68219 -32.7875,-36.765c2.33813,-5.83187 3.9775,-11.98625 4.73,-18.1675h28.0575c1.935,0 3.5475,-1.6125 3.5475,-3.5475c0,-1.935 -1.6125,-3.5475 -3.5475,-3.5475h-27.6275c0.01344,-0.57781 0.1075,-1.15562 0.1075,-1.72c0,-5.71094 -0.02687,-10.29312 -0.5375,-13.975c3.44,-0.45687 9.20469,-2.02906 14.62,-7.095c8.9225,-8.35812 13.4375,-22.61531 13.4375,-42.4625c0,-1.89469 -1.53187,-3.44 -3.44,-3.44c-0.47031,0 -0.87344,0.14781 -1.29,0.3225c-0.41656,0.17469 -0.87344,0.33594 -1.1825,0.645c-0.61812,0.61813 -0.9675,1.51844 -0.9675,2.4725c0,17.49563 -3.78937,30.36875 -11.0725,37.3025c-4.54187,4.32688 -9.28531,5.28094 -11.5025,5.4825c-0.49719,0.04031 -0.645,0.1075 -0.86,0.1075c-1.62594,-2.17687 -4.21937,-3.3325 -8.2775,-3.3325c-2.6875,0 -5.83187,0.73906 -9.89,1.6125c-7.095,1.505 -16.82375,3.5475 -30.6375,3.5475c-15.29187,0 -25.77312,-2.86219 -32.68,-4.73c-3.95062,-1.075 -6.71875,-1.8275 -9.245,-1.8275c-4.31344,0 -6.74562,1.34375 -8.0625,4.515c-2.27094,-0.25531 -6.65156,-1.12875 -10.965,-5.16c-7.37719,-6.90687 -11.2875,-19.90094 -11.2875,-37.5175c0,-1.89469 -1.54531,-3.44 -3.44,-3.44z"></path></g></g>
+  </svg>
+  <!-- Attribution -->
+  <a href="https://icons8.com/icon/9227/bug" class="dn">Bug icon by Icons8</a>
+{{else if eq "code_svg" .}}
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 172 172" style=" fill:#000000;">
+    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M100.19,25.2625l-41.28,116.96l12.9,4.515l41.28,-116.96zM34.185,46.01l-29.885,35.5825l-3.655,4.4075l3.655,4.4075l29.885,35.69l10.6425,-8.815l-26.23,-31.2825l26.1225,-31.175zM137.815,46.01l-10.535,8.815l26.1225,31.175l-26.1225,31.175l10.6425,8.815l29.67,-35.5825l3.655,-4.4075l-3.655,-4.4075z"></path></g></g>
+  </svg>
+  <!-- Attribution -->
+  <a href="https://icons8.com/icon/11260/source-code" class="dn">Source Code icon by Icons8</a>
+{{else if eq "view_details_svg" .}}
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 172 172" style=" fill:#000000;">
+    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M144.48,13.76h-116.96c-1.89469,0 -3.44,1.54531 -3.44,3.44v137.6c0,1.90813 1.54531,3.44 3.44,3.44h116.96c1.90813,0 3.44,-1.53187 3.44,-3.44v-137.6c0,-1.89469 -1.53187,-3.44 -3.44,-3.44zM58.48,130.72h-10.32v-6.88h10.32zM58.48,103.2h-10.32v-6.88h10.32zM58.48,75.68h-10.32v-6.88h10.32zM58.48,48.16h-10.32v-6.88h10.32zM127.28,130.72h-58.48v-6.88h58.48zM127.28,103.2h-58.48v-6.88h58.48zM127.28,75.68h-58.48v-6.88h58.48zM127.28,48.16h-58.48v-6.88h58.48z"></path></g></g>
+  </svg>
+  <!-- Attribution -->
+  <a href="https://icons8.com/icon/11390/view-details" class="dn">View Details icon by Icons8</a>
+{{else if eq "paperstack_svg" .}}
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 172 172" style=" fill:#000000;">
+    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M54.79813,17.2c-1.44587,0.00752 -2.73467,0.91316 -3.23172,2.27094l-25.83359,72.24c-0.38073,1.05364 -0.22454,2.22668 0.41864,3.14398c0.64318,0.9173 1.69276,1.46393 2.81308,1.46508h114.07094c1.12032,-0.00115 2.1699,-0.54779 2.81308,-1.46508c0.64318,-0.9173 0.79938,-2.09034 0.41864,-3.14398l-20.94906,-58.54719c-8.3248,-5.848 -14.34426,-10.11575 -22.66906,-15.96375zM28.83016,103.2l-3.20484,9.21813c-0.35579,1.0522 -0.18163,2.21145 0.46762,3.11267c0.64925,0.90122 1.6937,1.43349 2.80442,1.4292h114.20531c1.11072,0.00429 2.15517,-0.52799 2.80442,-1.4292c0.64925,-0.90122 0.8234,-2.06047 0.46762,-3.11267l-3.20484,-9.21813zM28.83016,123.84l-3.20484,9.21813c-0.35579,1.0522 -0.18163,2.21145 0.46762,3.11267c0.64925,0.90122 1.6937,1.43349 2.80442,1.4292h114.20531c1.11072,0.00429 2.15517,-0.52799 2.80442,-1.4292c0.64925,-0.90122 0.8234,-2.06047 0.46762,-3.11267l-3.20484,-9.21813zM28.83016,144.48l-3.20484,9.21813c-0.35579,1.0522 -0.18163,2.21145 0.46762,3.11267c0.64925,0.90122 1.6937,1.43349 2.80442,1.4292h114.20531c1.11072,0.00429 2.15517,-0.52799 2.80442,-1.4292c0.64925,-0.90122 0.8234,-2.06047 0.46762,-3.11267l-3.20484,-9.21813z"></path></g></g>
+  </svg>
+  <!-- Attribution -->
+  <a href="https://icons8.com/icon/-ebNaUSr_Mqw/stack-of-paper" class="dn">Stack Of Paper icon by Icons8</a>
+{{else if eq "join_queue_svg" .}}
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 172 172" style=" fill:#000000;">
+    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M54.7175,6.7725c-0.14781,0.02688 -0.29562,0.06719 -0.43,0.1075c-1.59906,0.36281 -2.72781,1.80063 -2.6875,3.44v26.015l-7.8475,-7.8475c-0.83312,-0.86 -2.05594,-1.22281 -3.225,-0.9675c-1.29,0.22844 -2.32469,1.16906 -2.6875,2.41875c-0.36281,1.26313 0.01344,2.60688 0.9675,3.49375l13.33,13.2225c0.06719,0.1075 0.13438,0.215 0.215,0.3225l0.215,0.215c0.06719,0.08063 0.13438,0.14781 0.215,0.215c0.04031,0 0.06719,0 0.1075,0c0.22844,0.215 0.48375,0.38969 0.7525,0.5375c0.04031,0 0.06719,0 0.1075,0c0.06719,0.04031 0.14781,0.08063 0.215,0.1075c0.04031,0 0.06719,0 0.1075,0c0.45688,0.13438 0.92719,0.16125 1.3975,0.1075c0.06719,0 0.14781,0 0.215,0c0.29563,-0.06719 0.59125,-0.17469 0.86,-0.3225c0.45688,-0.22844 0.86,-0.56437 1.1825,-0.9675l13.545,-13.4375c1.37063,-1.37062 1.37063,-3.57437 0,-4.945c-1.37062,-1.37062 -3.57437,-1.37062 -4.945,0l-7.8475,7.8475v-26.015c0.04031,-0.99437 -0.36281,-1.94844 -1.075,-2.62031c-0.72562,-0.68531 -1.70656,-1.02125 -2.6875,-0.92719zM127.065,48.16c-6.00656,0 -11.18,1.35719 -15.3725,3.87c4.23281,2.24406 7.67281,5.88563 9.9975,10.6425c3.66844,7.51156 3.80281,16.05781 2.2575,22.2525c0.645,2.17688 0.83313,4.66281 0.5375,7.095c-0.69875,5.85875 -2.88906,9.47344 -5.16,11.7175c-0.87344,2.9025 -2.19031,6.14094 -4.085,8.9225c0,0.80625 -0.02687,1.57219 0,2.365c1.54531,0.95406 4.66281,2.20375 6.665,3.01c7.51156,3.02344 19.09469,7.71313 23.865,19.565h15.91c0.94063,0 1.8275,-0.38969 2.4725,-1.075c0.645,-0.68531 1.02125,-1.63937 0.9675,-2.58c-0.79281,-13.49125 -11.52937,-17.79125 -19.35,-20.9625c-4.16562,-1.69312 -8.08937,-3.26531 -9.245,-5.59c-0.17469,-2.20375 -0.12094,-4.00437 -0.1075,-6.02v-0.5375c1.89469,-2.20375 3.45344,-5.93937 4.1925,-9.245c1.62594,-1.08844 3.44,-3.26531 3.9775,-7.8475c0.24188,-2.01562 -0.09406,-3.82969 -0.86,-5.2675c1.67969,-4.6225 1.6125,-12.05344 -1.1825,-17.7375c-2.35156,-4.78375 -6.26187,-7.61906 -11.18,-8.2775l-1.1825,-2.365c-0.57781,-1.16906 -1.81406,-1.935 -3.1175,-1.935zM98.3625,51.6c-8.2775,0 -15.42625,2.35156 -20.5325,6.5575c2.94281,2.2575 5.375,5.24063 7.2025,8.9225c3.62813,7.29656 4.6225,17.02531 2.58,24.725c0.72563,2.32469 0.95406,4.90469 0.645,7.525c-0.73906,6.36938 -3.07719,10.23938 -5.4825,12.5775c-0.92719,3.225 -2.51281,7.08156 -4.6225,10.2125c-0.01344,1.31688 0.05375,2.45906 0.1075,3.7625c1.53188,1.12875 5.18688,2.70094 7.74,3.7625c8.61344,3.56094 20.86844,8.65375 25.585,21.8225l26.015,-0.1075c0.94063,0 1.8275,-0.38969 2.4725,-1.075c0.645,-0.68531 1.02125,-1.63937 0.9675,-2.58c-0.88687,-14.91562 -12.94031,-19.69937 -21.715,-23.22c-4.86437,-1.94844 -9.40625,-3.85656 -10.75,-6.665c-0.20156,-2.51281 -0.24187,-4.48812 -0.215,-6.7725v-0.645c2.17688,-2.41875 4.12531,-6.74562 4.945,-10.535c1.78719,-1.11531 3.78938,-3.56094 4.4075,-8.7075c0.26875,-2.2575 -0.18812,-4.35375 -1.075,-5.9125c1.92156,-5.03906 1.92156,-13.20906 -1.1825,-19.565c-2.63375,-5.38844 -7.00094,-8.69406 -12.5775,-9.3525l-1.505,-2.795c-0.57781,-1.16906 -1.70656,-1.935 -3.01,-1.935zM60.7375,55.04c-11.97281,0 -21.43281,4.44781 -26.7675,12.5775c-4.58219,6.97406 -5.54969,15.96375 -2.58,24.4025c-1.02125,1.57219 -1.6125,3.81625 -1.29,6.5575c0.65844,5.71094 2.78156,8.29094 4.73,9.46c0.88688,4.17906 2.96969,9.07031 5.375,11.7175v0.9675c0.02688,2.59344 0.12094,4.75688 -0.1075,7.6325c-1.45125,3.30563 -6.06031,5.34813 -11.2875,7.6325c-8.86875,3.89688 -20.98937,9.20469 -21.93,25.4775c-0.05375,0.94063 0.3225,1.89469 0.9675,2.58c0.645,0.68531 1.53188,1.075 2.4725,1.075h92.88c0.95406,0 1.81406,-0.38969 2.4725,-1.075c0.645,-0.68531 1.02125,-1.63937 0.9675,-2.58c-0.94062,-16.29969 -13.28969,-21.37906 -23.22,-25.4775c-5.56312,-2.29781 -10.46781,-4.35375 -11.9325,-7.6325c-0.22844,-2.87562 -0.13437,-5.03906 -0.1075,-7.6325v-0.9675c2.35156,-2.63375 4.39406,-7.53844 5.2675,-11.7175c1.94844,-1.16906 4.07156,-3.7625 4.73,-9.46c0.28219,-2.48594 -0.09406,-4.78375 -1.075,-6.45c2.19031,-5.56312 2.15,-14.90219 -1.3975,-22.0375c-2.83531,-5.6975 -7.56531,-9.11062 -13.4375,-9.7825l-1.6125,-3.3325c-0.57781,-1.1825 -1.80062,-1.935 -3.1175,-1.935z"></path></g></g>
+  </svg>
+  <!-- Attribution -->
+  <a href="https://icons8.com/icon/30327/joining-queue" class="dn">Joining Queue icon by Icons8</a>
+{{else if eq "leave_queue_svg" .}}
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 172 172" style=" fill:#000000;">
+    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M54.7175,6.7725c-0.14781,0.02688 -0.29562,0.06719 -0.43,0.1075c-0.1075,0.02688 -0.215,0.06719 -0.3225,0.1075c-0.1075,0.02688 -0.215,0.06719 -0.3225,0.1075c-0.22844,0.12094 -0.44344,0.26875 -0.645,0.43c-0.14781,0.09406 -0.29562,0.20156 -0.43,0.3225c-0.16125,0.16125 -0.30906,0.34938 -0.43,0.5375l-13.33,13.2225c-1.37062,1.37063 -1.37062,3.57438 0,4.945c1.37063,1.37063 3.57438,1.37063 4.945,0l7.8475,-7.8475v26.015c-0.01344,1.23625 0.63156,2.39188 1.70656,3.02344c1.075,0.61813 2.39187,0.61813 3.46687,0c1.075,-0.63156 1.72,-1.78719 1.70656,-3.02344v-26.015l7.8475,7.8475c1.37063,1.37063 3.57438,1.37063 4.945,0c1.37063,-1.37062 1.37063,-3.57437 0,-4.945l-13.33,-13.2225c-0.25531,-0.38969 -0.57781,-0.71219 -0.9675,-0.9675c-0.38969,-0.26875 -0.83312,-0.44344 -1.29,-0.5375c-0.30906,-0.08062 -0.645,-0.12094 -0.9675,-0.1075zM127.065,48.16c-6.00656,0 -11.18,1.35719 -15.3725,3.87c4.23281,2.24406 7.67281,5.88563 9.9975,10.6425c3.66844,7.51156 3.80281,16.05781 2.2575,22.2525c0.645,2.17688 0.83313,4.66281 0.5375,7.095c-0.69875,5.85875 -2.88906,9.47344 -5.16,11.7175c-0.87344,2.9025 -2.19031,6.14094 -4.085,8.9225c0,0.80625 -0.02687,1.57219 0,2.365c1.54531,0.95406 4.66281,2.20375 6.665,3.01c7.51156,3.02344 19.09469,7.71313 23.865,19.565h15.91c0.94063,0 1.8275,-0.38969 2.4725,-1.075c0.645,-0.68531 1.02125,-1.63937 0.9675,-2.58c-0.79281,-13.49125 -11.52937,-17.79125 -19.35,-20.9625c-4.16562,-1.69312 -8.08937,-3.26531 -9.245,-5.59c-0.17469,-2.20375 -0.12094,-4.00437 -0.1075,-6.02v-0.5375c1.89469,-2.20375 3.45344,-5.93937 4.1925,-9.245c1.62594,-1.08844 3.44,-3.26531 3.9775,-7.8475c0.24188,-2.01562 -0.09406,-3.82969 -0.86,-5.2675c1.67969,-4.6225 1.6125,-12.05344 -1.1825,-17.7375c-2.35156,-4.78375 -6.26187,-7.61906 -11.18,-8.2775l-1.1825,-2.365c-0.57781,-1.16906 -1.81406,-1.935 -3.1175,-1.935zM98.3625,51.6c-8.2775,0 -15.42625,2.35156 -20.5325,6.5575c2.94281,2.2575 5.375,5.24063 7.2025,8.9225c3.62813,7.29656 4.6225,17.02531 2.58,24.725c0.72563,2.32469 0.95406,4.90469 0.645,7.525c-0.73906,6.36938 -3.07719,10.23938 -5.4825,12.5775c-0.92719,3.225 -2.51281,7.08156 -4.6225,10.2125c-0.01344,1.31688 0.05375,2.45906 0.1075,3.7625c1.53188,1.12875 5.18688,2.70094 7.74,3.7625c8.61344,3.56094 20.86844,8.65375 25.585,21.8225l26.015,-0.1075c0.94063,0 1.8275,-0.38969 2.4725,-1.075c0.645,-0.68531 1.02125,-1.63937 0.9675,-2.58c-0.88687,-14.91562 -12.94031,-19.69937 -21.715,-23.22c-4.86437,-1.94844 -9.40625,-3.85656 -10.75,-6.665c-0.20156,-2.51281 -0.24187,-4.48812 -0.215,-6.7725v-0.645c2.17688,-2.41875 4.12531,-6.74562 4.945,-10.535c1.78719,-1.11531 3.78938,-3.56094 4.4075,-8.7075c0.26875,-2.2575 -0.18812,-4.35375 -1.075,-5.9125c1.92156,-5.03906 1.92156,-13.20906 -1.1825,-19.565c-2.63375,-5.38844 -7.00094,-8.69406 -12.5775,-9.3525l-1.505,-2.795c-0.57781,-1.16906 -1.70656,-1.935 -3.01,-1.935zM60.7375,55.04c-11.97281,0 -21.43281,4.44781 -26.7675,12.5775c-4.58219,6.97406 -5.54969,15.96375 -2.58,24.4025c-1.02125,1.57219 -1.6125,3.81625 -1.29,6.5575c0.65844,5.71094 2.78156,8.29094 4.73,9.46c0.88688,4.17906 2.96969,9.07031 5.375,11.7175v0.9675c0.02688,2.59344 0.12094,4.75688 -0.1075,7.6325c-1.45125,3.30563 -6.06031,5.34813 -11.2875,7.6325c-8.86875,3.89688 -20.98937,9.20469 -21.93,25.4775c-0.05375,0.94063 0.3225,1.89469 0.9675,2.58c0.645,0.68531 1.53188,1.075 2.4725,1.075h92.88c0.95406,0 1.81406,-0.38969 2.4725,-1.075c0.645,-0.68531 1.02125,-1.63937 0.9675,-2.58c-0.94062,-16.29969 -13.28969,-21.37906 -23.22,-25.4775c-5.56312,-2.29781 -10.46781,-4.35375 -11.9325,-7.6325c-0.22844,-2.87562 -0.13437,-5.03906 -0.1075,-7.6325v-0.9675c2.35156,-2.63375 4.39406,-7.53844 5.2675,-11.7175c1.94844,-1.16906 4.07156,-3.7625 4.73,-9.46c0.28219,-2.48594 -0.09406,-4.78375 -1.075,-6.45c2.19031,-5.56312 2.15,-14.90219 -1.3975,-22.0375c-2.83531,-5.6975 -7.56531,-9.11062 -13.4375,-9.7825l-1.6125,-3.3325c-0.57781,-1.1825 -1.80062,-1.935 -3.1175,-1.935z"></path></g></g>
+  </svg>
+  <!-- Attribution -->
+  <a href="https://icons8.com/icon/30326/leaving-queue" class="dn">Leaving Queue icon by Icons8</a>
+{{end}}
+{{end}}
+<!-- End Icons -->

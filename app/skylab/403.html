@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <title>403 Forbidden</title>
+</head>
+<body class="bipanel-l">
+  {{template "app/skylab/navbar.html"}}
+  <div class="sans-serif">
+    <div class="pa4">
+      <img src="/static/img/ssl_error.png" class="">
+      <h1 class="f-subheadline">403 Forbidden</h1>
+      <p class="f4">
+        {{if eq $.Role RoleApplicant}}
+        Sorry, you are not an applicant.
+        {{else if eq $.Role RoleStudent}}
+        Sorry, you are not a student.
+        {{else if eq $.Role RoleAdviser}}
+        Sorry, you are not an adviser.
+        {{else if eq $.Role RoleMentor}}
+        Sorry, you are not a mentor.
+        {{else if eq $.Role RoleAdmin}}
+        Sorry, you are not an admin.
+        {{else if not (eq $.Role RoleNull)}}
+        Sorry, you are not {{Txt_Aan $.Role}} {{$.Role}}.
+        {{else}}
+        Sorry, you are not authorized to view this page.
+        {{end}}
+        &nbsp;<a href="/" class="">Go to homepage.</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+  <title></title>
+</head>
+<body class="{{if SkylabCurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
+  {{template "app/skylab/navbar.html"}}
+  {{template "app/skylab/sidebar.html"}}
+  <div class="sans-serif pa2 pa4-l">
+    <div>
+      Cohorts:
+      {{range $i, $cohort := SkylabCohorts}}
+        {{if eq $.Cohort $cohort}}
+          <span class="ml1 underline">{{$cohort}}</span>
+        {{else}}
+        <a href="{{AdminListUsers}}/{{$cohort}}/{{$.Role}}" class="ml1">{{$cohort}}</a>
+        {{end}}
+      {{end}}
+    </div>
+    <div>
+      Roles:
+      {{range $i, $role := SkylabRoles}}
+        {{if eq $.Role $role}}
+          <span class="ml1 underline">{{$role}}</span>
+        {{else}}
+        <a href="{{AdminListUsers}}/{{$.Cohort}}/{{$role}}" class="ml1">{{$role}}</a>
+        {{end}}
+      {{end}}
+    </div>
+    <div class="pv3"></div>
+    <table id="table_id" class="compact stripe display" style="width:100%">
+      <thead>
+        <tr>
+          <th>UserID</th>
+          <th>Display Name</th>
+          <th>Email</th>
+          <th>Team</th>
+          <th>Adviser</th>
+          <th>Mentor</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range $i, $user := $.Users}}
+          {{$team := index $.Teams (index $.UserIDToTeamIndex $user.UserID)}}
+          <tr>
+            <td><a href="{{AdminUser}}/{{$user.UserID}}">{{$user.UserID}}</a></td>
+            <td>{{$user.Displayname}}</td>
+            <td>{{$user.Email}}</td>
+            <td><a href="{{AdminTeam}}/{{$team.TeamID}}">{{$team.TeamName}}</a></td>
+            {{if $team.Adviser.Valid}}
+              <td><a href="{{AdminUser}}/{{$team.Adviser.UserID}}">{{$team.Adviser.Displayname}}</a></td>
+            {{else}}
+              <td>-</td>
+            {{end}}
+            {{if $team.Mentor.Valid}}
+              <td><a href="{{AdminUser}}/{{$team.Mentor.UserID}}">{{$team.Mentor.Displayname}}</a></td>
+            {{else}}
+              <td>-</td>
+            {{end}}
+          </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+  <script nonce="{{HeadersCSPNonce}}">
+    $(document).ready(function () {
+      $('#table_id').DataTable({
+        scrollX: true,
+        iDisplayLength: 50,
+        columns: [
+          { width: "5%" },
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+      });
+    });
+  </script>
+</body>
+</html>

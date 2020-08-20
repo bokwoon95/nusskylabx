@@ -1,0 +1,51 @@
+# General
+**/.env
+todo.txt
+tmp/
+.tmp/
+skylab.log
+.air.conf
+/bfg*.jar
+/routes.md
+coverage.out
+*schemaspy*
+
+# Per-developer sql data
+**/temp*.sql
+
+# IntelliJ
+.idea/
+
+# JavaScript
+**/node_modules/
+
+# Static assets transpiled with webpack
+static/app/
+static/skylab/
+static/applicants/
+static/students/
+static/advisers/
+static/mentors/
+static/admins/
+static/vendor.js
+static/vendor.js.map
+
+# compiled binaries
+/nusskylabx*
+/air*
+/loadsql*
+/errcode*
+/qygen*
+
+# macos bs
+.DS_STORE
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent

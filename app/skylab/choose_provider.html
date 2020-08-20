@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <title>Choose a provider</title>
+</head>
+<body>
+  {{template "app/skylab/navbar.html"}}
+  <div class="sans-serif pa2 ph7-l pv4-l flex items-center justify-center">
+    <div class="widget">
+      <div class="widget-title bg-near-white pv2 ph3 flex justify-center">
+        <h2 class="ma0">Please choose a provider to sign up with</h2>
+      </div>
+      <div class="pa3">
+        <form method="get" action="{{$.RequestURL}}" class="dib">
+          <input type="hidden" name="provider" value="{{ProviderNUS}}">
+          <input type="hidden" name="magicstring" value="{{$.Magicstring}}">
+          <button type="submit" class="button pa0 bg-nus-blue flex items-center white">
+            <img src="/static/img/nus.svg" height="22" width="22" class="pa1">
+            <div class="mh2 f7">Signup with NUS</div>
+          </button>
+        </form>
+        <span class="ph2"></span>
+        <form method="get" action="{{$.RequestURL}}" class="dib">
+          <input type="hidden" name="provider" value="{{ProviderGoogle}}">
+          <input type="hidden" name="magicstring" value="{{$.Magicstring}}">
+          <button type="submit" class="button pa0 bg-google-blue flex items-center white">
+            <img src="/static/img/google.svg" height="30" width="30">
+            <div class="mh2 f7">Signup with Google</div>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

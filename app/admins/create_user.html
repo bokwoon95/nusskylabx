@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <title>Create User Role</title>
+</head>
+<body class="tripanel-l">
+  {{template "app/skylab/navbar.html"}}
+  {{template "app/skylab/sidebar.html"}}
+  <div class="sans-serif pa2 pa4-l">
+    {{template "helpers/flash/flash.html"}}
+    <form id="csv-form" method="post" action="{{AdminCreateUserConfirm}}" class="widget">
+      {{SkylabCsrfToken}}
+      <!-- <input type="hidden" name="dumpjson" value="true"> -->
+      <div class="widget-title pv2 ph3 bg-near-white">
+        <h4 class="ma0">Create User Role</h4>
+      </div>
+      <div class="pa3">
+        <div><b>CSV column format</b></div>
+        <pre>cohort, role, displayname, email</pre>
+        <div><b>Ctrl+Enter to proceed</b></div>
+        {{if $.Rows}}
+          <textarea name="csv" class="w-100 ba bw1 b--black-70 mb3" rows="20">{{$.Rows}}</textarea>
+        {{else}}
+          <textarea name="csv" class="w-100 ba bw1 b--black-70 mb3" rows="20"></textarea>
+        {{end}}
+        <button type="submit" class="button pa2 bg-light-green hover-bg-green">Proceed to confirmation page</button>
+      </div>
+    </form>
+  </div>
+  <script nonce="{{HeadersCSPNonce}}">
+    const form = document.querySelector("#csv-form");
+    if (form) {
+      form.addEventListener("keypress", function submitOnEnter(event) {
+        if(event.which === 13  && event.ctrlKey){
+          event.preventDefault();
+          form.submit();
+        }
+      });
+    }
+  </script>
+</body>
+</html>

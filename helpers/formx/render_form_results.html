@@ -1,0 +1,47 @@
+{{define "helpers/formx/render_form_results.html"}}
+  {{range $i, $qna := .}}
+    {{if eq $qna.Type QuestionTypeParagraph}}
+      <div><p>{{FormxSanitizeHTML $qna.Text}}</p></div>
+      <hr>
+    {{else if eq $qna.Type QuestionTypeShorttext}}
+      <div><p>{{FormxSanitizeHTML $qna.Text}}</p></div>
+      <div><p><b>A: </b>{{FormxAnswerValue $qna.Answer}}</p></div>
+      <hr>
+    {{else if eq $qna.Type QuestionTypeLongtext}}
+      <div><p>{{FormxSanitizeHTML $qna.Text}}</p></div>
+      <div><p><b>A: </b>{{FormxSanitizeHTML (FormxAnswerValue $qna.Answer)}}</p></div>
+      <hr>
+    {{else if eq $qna.Type QuestionTypeCheckbox}}
+      <div><p>{{FormxSanitizeHTML $qna.Text}}</p></div>
+      <div><p><b>A: </b>{{FormxCheckboxAnswers $qna}}</p></div>
+      <hr>
+    {{else if eq $qna.Type QuestionTypeSelect}}
+      <div><p>{{FormxSanitizeHTML $qna.Text}}</p></div>
+      <div><p><b>A: </b>{{FormxRadioSelectAnswers $qna}}</p></div>
+      <hr>
+    {{else if eq $qna.Type QuestionTypeRadio}}
+      <div><p>{{FormxSanitizeHTML $qna.Text}}</p></div>
+      <div><p><b>A: </b>{{FormxRadioSelectAnswers $qna}}</p></div>
+      <hr>
+    {{else if eq $qna.Type QuestionTypeMultiradio}}
+      <div><p>{{FormxSanitizeHTML $qna.Text}}</p></div>
+      <div>
+        {{range $i, $subqna := $qna.SubquestionAnswers}}
+          <p>
+            <div>{{FormxSanitizeHTML $subqna.Text}}</div>
+            <div><b>A: </b>{{FormxMultiradioAnswers $qna $subqna}}</div>
+          </p>
+        {{end}}
+      </div>
+      <hr>
+    {{else if eq $qna.Type QuestionTypeDate}}
+      <div><p>{{FormxSanitizeHTML $qna.Text}}</p></div>
+      <div><p><b>A: </b>{{FormxAnswerValue $qna.Answer}}</p></div>
+      <hr>
+    {{else if eq $qna.Type QuestionTypeTime}}
+      <div><p>{{FormxSanitizeHTML $qna.Text}}</p></div>
+      <div><p><b>A: </b>{{FormxAnswerValue $qna.Answer}}</p></div>
+      <hr>
+    {{end}}
+  {{end}}
+{{end}}

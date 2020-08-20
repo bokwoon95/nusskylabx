@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <title>{{$.Submission.Team.TeamName}} | {{SkylabMilestoneNameAbbrev $.Submission.SubmissionForm.Period.Milestone}} Submission</title>
+</head>
+<body class="{{if SkylabCurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
+  {{template "app/skylab/navbar.html"}}
+  {{template "app/skylab/sidebar.html"}}
+  <div class="sans-serif pa2 pa4-l">
+    <div class="ba br4 b--black-30 pa4">
+      {{template "helpers/flash/flash.html"}}
+      <h3 class="ma0">{{SkylabMilestoneName $.Submission.SubmissionForm.Period.Milestone}} Submission</h3>
+      {{if $.Submission.Submitted}}
+        <div class="gray">Submitted</div>
+      <div class="b">Evaluations</div>
+        <ul>
+        {{range $i, $evaluation := $.PeerEvaluations}}
+        <li>
+          {{$evaluation.Evaluator.TeamName}}
+          {{if and $evaluation.Valid $evaluation.Submitted}}
+          <a href="{{StudentTeamEvaluation}}/{{$evaluation.TeamEvaluationID}}" class="f6">view evaluation</a>
+          {{else if and $evaluation.Valid (not $evaluation.Submitted)}}
+          <a href="{{StudentTeamEvaluation}}/{{$evaluation.TeamEvaluationID}}" class="f6">view evaluation draft</a>
+          {{else}}
+            <span class="f6 gray">has not evaluated</span>
+          {{end}}
+        </li>
+        {{end}}
+        {{if $.AdviserEvaluation.Evaluator.Valid}}
+        <li>
+          {{$.AdviserEvaluation.Evaluator.Displayname}}
+          {{if $.AdviserEvaluation.Submitted}}
+          <a href="{{StudentUserEvaluation}}/{{$.AdviserEvaluation.UserEvaluationID}}" class="f6">view evaluation</a>
+          {{else if $.AdviserEvaluation.Valid}}
+          <a href="{{StudentUserEvaluation}}/{{$.AdviserEvaluation.UserEvaluationID}}" class="f6">view evaluation draft</a>
+          {{else}}
+            <span class="f6 gray">has not evaluated</span>
+          {{end}}
+        </li>
+        {{end}}
+        {{if $.MentorEvaluation.Evaluator.Valid}}
+        <li>
+          {{$.MentorEvaluation.Evaluator.Displayname}}
+          {{if $.MentorEvaluation.Submitted}}
+          <a href="{{StudentUserEvaluation}}/{{$.MentorEvaluation.UserEvaluationID}}" class="f6">view evaluation</a>
+          {{else if $.MentorEvaluation.Valid}}
+          <a href="{{StudentUserEvaluation}}/{{$.MentorEvaluation.UserEvaluationID}}" class="f6">view evaluation draft</a>
+          {{else}}
+            <span class="f6 gray">has not evaluated</span>
+          {{end}}
+        </li>
+        {{end}}
+        </ul>
+      {{else}}
+        <div class="gray">Draft</div>
+      {{end}}
+      <div class="pv3"></div>
+      <form id="submissionform" enctype="multipart/form-data" method="post" action="{{.UpdateURL}}">
+        {{SkylabCsrfToken}}
+        {{template "helpers/formx/render_form.html" FormxMergeQuestionsAnswers $.Submission.SubmissionForm.Questions $.Submission.SubmissionAnswers}}
+        <div class="">
+          {{if $.PreviewURL}}
+          <button type="submit" form="submissionform" formaction="{{$.PreviewURL}}" class="button pa2 bg-light-blue hover-bg-blue">
+            Preview
+          </button>
+          {{end}}
+          {{if $.Submission.Submitted}}
+          <button type="submit" class="button pa2 bg-light-green hover-bg-green">Update</button>
+          <span class="ml2"></span>
+          {{else if $.Submission.Valid}}
+          <button type="submit" class="button pa2 bg-light-green hover-bg-green">Save Draft</button>
+          <span class="ml2"></span>
+          <button
+            type="submit"
+            formaction="{{$.SubmitURL}}"
+            class="button pa2 bg-dark-green hover-bg-darker-green white"
+            >
+            Submit
+          </button>
+            {{else}}
+            <button type="submit" class="button pa2 bg-light-green hover-bg-green">Create Draft</button>
+            <span class="ml2"></span>
+            {{end}}
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/static/tinymce/tinymce.min.js"></script>
+  <script nonce="{{HeadersCSPNonce}}">
+    tinymce.init({
+      selector: "textarea",
+      statusbar: false,
+      menubar: false,
+      toolbar: "bold italic bullist numlist table",
+      plugins: "autoresize lists table",
+    })
+  </script>
+  <!-- End Scripts -->
+</body>
+</html>

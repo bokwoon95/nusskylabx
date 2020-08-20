@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <title>Login</title>
+</head>
+<body>
+  {{template "app/skylab/navbar.html"}}
+  <div class="sans-serif pa2 ph7-l pv4-l flex items-center justify-center">
+    <div class="widget">
+      <div class="widget-title bg-near-white pv2 ph3 flex justify-center">
+        <h2 class="ma0">Please choose a provider to login with</h2>
+      </div>
+      <div class="pa3">
+        <button class="button pa0 bg-nus-blue">
+          <a href="/login?provider=nus" class="no-underline white flex items-center hover-white">
+            <img src="/static/img/nus.svg" height="30" width="30" class="pa1">
+            <div class="mh2 f7">Login with NUS</div>
+          </a>
+        </button>
+        <span class="ph2"></span>
+        <button class="button pa0 bg-google-blue">
+          <a href="/login?provider=google" class="no-underline white flex items-center hover-white">
+            <img src="/static/img/google.svg" height="30" width="30">
+            <div class="mh2 f7">Login with Google</div>
+          </a>
+        </button>
+        <!-- <span class="ph2"></span> -->
+        <!-- <button class="button pa0 bg&#45;google&#45;blue"> -->
+        <!--   <a href="/login?provider=facebook" class="no&#45;underline white flex items&#45;center hover&#45;white"> -->
+        <!--     <img src="/static/img/google.svg" height="30" width="30"> -->
+        <!--     <div class="mh2 f7">Login with Facebook</div> -->
+        <!--   </a> -->
+        <!-- </button> -->
+      </div>
+    </div>
+  </div>
+</body>
+</html>

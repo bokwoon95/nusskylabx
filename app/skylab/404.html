@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <title>404 Not Found</title>
+</head>
+<body class="bipanel-l">
+  {{template "app/skylab/navbar.html"}}
+  <div class="sans-serif">
+    <div class="pa4">
+      <img src="/static/img/ssl_error.png" class="">
+      <h1 class="f-subheadline">404 Not Found</h1>
+      <!-- <div class=""> -->
+      <!--   OOPSIE WOOPSIE!! -->
+      <!--   Uwu We make a fucky wucky!! -->
+      <!--   A wittle fucko boingo! -->
+      <!--   The code monkeys at our headquarters are working VEWY HAWD to fix this! -->
+      <!-- </div> -->
+      <p class="f4">
+        This URL does not exist: {{$.URL}}.
+        &nbsp;<a href="/" class="">Go to homepage.</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

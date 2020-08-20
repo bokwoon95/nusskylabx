@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+  <link rel="stylesheet" href="/static/micromodal.css">
+  <title></title>
+</head>
+<body class="{{if SkylabCurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
+  {{template "app/skylab/navbar.html"}}
+  {{template "app/skylab/sidebar.html"}}
+  <div class="sans-serif pa2 pa4-l">
+    {{template "helpers/flash/flash.html"}}
+    <div>
+      Cohorts:
+      {{range $i, $cohort := SkylabCohorts}}
+        {{if eq $.Cohort $cohort}}
+          <span class="ml1 underline">{{$cohort}}</span>
+        {{else}}
+        <a href="{{AdminListForms}}/{{$cohort}}" class="ml1">{{$cohort}}</a>
+        {{end}}
+      {{end}}
+    </div>
+    <div class="pv2"></div>
+    <div>
+      <button type="button" id="select-all" class="button ph2 bg-moon-gray hover-bg-light-silver">Select All</button>
+      <button type="button" id="unselect-all" class="button ph2 bg-light-gray hover-bg-light-silver">Unselect All</button>
+    </div>
+    <div class="pv1"></div>
+    <div>
+      <button type="button" id="create-form" class="button ph2 bg-light-green hover-bg-green">Create</button>
+      <form id="delete-form-form" method="post" action="{{AdminListForms}}/delete" class="dn">
+        {{SkylabCsrfToken}}
+        <div id="delete-form-form-inputs"></div>
+      </form>
+      <button type="button" id="delete-form" class="button ph2 bg-light-red hover-bg-red dn">Delete</button>
+      <button type="button" id="cohort-duplicate" class="button ph2 bg-light-blue hover-bg-blue dn">Duplicate Form(s) for Cohort</button>
+      <button type="button" id="period-duplicate" class="button ph2 bg-lightest-blue hover-bg-blue dn">Duplicate Form for Period</button>
+    </div>
+    <div class="pv2"></div>
+    <table id="table_id" class="compact stripe display" style="width:100%">
+      <thead>
+        <tr>
+          <th>FormID</th>
+          <th>Cohort</th>
+          <th>Stage</th>
+          <th>Milestone</th>
+          <th>Name</th>
+          <th>Subsection</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range $i, $form := $.Forms}}
+        <tr>
+          <td><a href="{{AdminForm}}/{{$form.FormID}}/edit">{{$form.FormID}}</a></td>
+          <td>{{$form.Period.Cohort}}</td>
+          <td>{{$form.Period.Stage}}</td>
+          <td>{{$form.Period.Milestone}}</td>
+          <td>{{$form.Name}}</td>
+          <td>{{$form.Subsection}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- CreateForm -->
+  <form method="post" action="{{AdminListForms}}/create" class="modal micromodal-slide sans-serif" id="create-form-form" aria-hidden="true">
+    {{SkylabCsrfToken}}
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+      <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+        <header class="modal__header">
+          <h2 class="modal__title" id="modal-1-title">
+            Create Form
+          </h2>
+          <button type="button" class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+        </header>
+        <main class="modal__content" id="modal-1-content">
+          <p class="w5 sans-serif">
+            <p>
+              <div class="b">Cohort</div>
+              <div>{{SkylabSelectCohort "cohort" $.Cohort "form-input pointer"}}</div>
+            </p>
+            <p>
+              <div class="b">Stage</div>
+              <div>{{SkylabSelectStageOptional "stage" StageSubmission "form-input pointer"}}</div>
+            </p>
+            <p>
+              <div class="b">Milestone</div>
+              <div>{{SkylabSelectMilestoneOptional "milestone" Milestone1 "form-input pointer"}}</div>
+            </p>
+            <p>
+              <div class="b">Name</div>
+              <div><input type="text" name="name" class="form-input" placeholder="optional"></div>
+            </p>
+            <p>
+              <div class="b">Subsection</div>
+              <div><input type="text" name="subsection" class="form-input" placeholder="optional"></div>
+            </p>
+          </p>
+        </main>
+        <footer class="modal__footer">
+          <button type="button" type="submit" class="button ph2 bg-light-green hover-bg-green">Submit</button>
+          <button type="button" class="button ph2 bg-light-gray hover-bg-gray" data-micromodal-close aria-label="Close this dialog window">Close</button>
+        </footer>
+      </div>
+    </div>
+  </form>
+  <!-- End CreateForm -->
+
+  <!-- DuplicateForm -->
+  <form method="post" action="{{AdminListForms}}/duplicate" class="modal micromodal-slide sans-serif" id="duplicate-form-for-period" aria-hidden="true">
+    {{SkylabCsrfToken}}
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+      <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+        <header class="modal__header">
+          <h2 class="modal__title" id="modal-1-title">
+            Duplicate Form
+          </h2>
+          <button type="button" class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+        </header>
+        <main class="modal__content" id="modal-1-content">
+          <p>
+            <div class="b">Select which period to duplicate the form for</div>
+            <div class="formIDList"></div>
+            {{SkylabSelectCohort "cohort" CohortLatest "form-input pointer"}}
+            {{SkylabSelectStageOptional "stage" StageSubmission "form-input pointer"}}
+            {{SkylabSelectMilestoneOptional "milestone" Milestone1 "form-input pointer"}}
+          </p>
+        </main>
+        <footer class="modal__footer">
+          <button type="submit" class="button ph2 bg-light-green hover-bg-green">Submit</button>
+          <button type="button" class="button ph2 bg-light-gray hover-bg-gray" data-micromodal-close aria-label="Close this dialog window">Close</button>
+        </footer>
+      </div>
+    </div>
+  </form>
+  <!-- End DuplicateForm -->
+
+  <!-- DuplicateForms -->
+  <form method="post" action="{{AdminListForms}}/duplicate" class="modal micromodal-slide sans-serif" id="duplicate-forms-for-cohort" aria-hidden="true">
+    {{SkylabCsrfToken}}
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+      <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+        <header class="modal__header">
+          <h2 class="modal__title" id="modal-1-title">
+            Duplicate Forms
+          </h2>
+          <button type="button" class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+        </header>
+        <main class="modal__content" id="modal-1-content">
+          <p>
+            <div class="b">Select which cohort to duplicate the form(s) for</div>
+            <div class="formIDList"></div>
+            {{SkylabSelectCohort "cohort" CohortLatest "form-input pointer"}}
+          </p>
+        </main>
+        <footer class="modal__footer">
+          <button type="submit" class="button ph2 bg-light-green hover-bg-green">Submit</button>
+          <button type="button" class="button ph2 bg-light-gray hover-bg-gray" data-micromodal-close aria-label="Close this dialog window">Close</button>
+        </footer>
+      </div>
+    </div>
+  </form>
+  <!-- End DuplicateForms -->
+
+  <script nonce="{{HeadersCSPNonce}}">
+    $(document).ready(function() {
+      $("#table_id").DataTable({
+        order: [],
+        scrollX: true,
+        iDisplayLength: 50,
+        columns: [{ width: "6%" }, { width: "5%" }, null, null, null, null],
+      });
+    });
+  </script>
+  <script src="/static/vendor.js"></script>
+  <script src="/static/admins/list_forms.js"></script>
+</body>
+</html>

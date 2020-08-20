@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <title>{{SkylabMilestoneName $.Milestone}} Evaluation</title>
+</head>
+<body class="tripanel-l">
+  {{template "app/skylab/navbar.html"}}
+  {{template "app/skylab/sidebar.html"}}
+  <div class="sans-serif pa2 pa4-l">
+    <h3 class="ma0 mb4">{{SkylabMilestoneName $.Milestone}}</h3>
+    <div class="widget mb4">
+      <!-- WidgetTitle -->
+      <div class="widget-title pv2 ph3 bg-near-white flex justify-between items-center">
+        <div>
+          <h5 class="ma0">Teams to evaluate</h5>
+        </div>
+        <button class="button pa2 bg-light-green hover-bg-green invisible">&nbsp;</button>
+      </div>
+      <!-- End WidgetTitle -->
+
+      <!-- WidgetBody -->
+      <div class="pa3">
+        <!-- Evaluations -->
+        {{range $i, $evaluation := $.Evaluations}}
+        <div class="flex mt2">
+          <div class="order-1 flex items-center">
+            <span class="gray">[{{$evaluation.Evaluatee.Team.TeamID}}] [{{$evaluation.Evaluatee.Team.ProjectLevel}}]</span>
+            {{$evaluation.Evaluatee.Team.TeamName}}
+          </div>
+          <div class="order-2 dotted-spacer"></div>
+          <div class="order-3 tr">
+            {{if $evaluation.Evaluatee.Submitted}}
+            <form method="get" action="{{StudentTeamEvaluation}}/{{$evaluation.TeamEvaluationID}}/edit" class="dib">
+                {{if $evaluation.Submitted}}
+                  <button type="submit" class="button ph2 bg-near-white hover-bg-light-silver ml1">Edit Evaluation</button>
+                {{else if $evaluation.Valid}}
+                  <button type="submit" class="button ph2 bg-near-white hover-bg-light-silver ml1">Edit/Submit Evaluation</button>
+                {{else}}
+                  {{SkylabCsrfToken}}
+                  <input type="hidden" name="milestone" value="{{$.Milestone}}">
+                  <input type="hidden" name="submissionID" value="{{$evaluation.Evaluatee.SubmissionID}}">
+                  <button
+                    type="submit"
+                    formmethod="post"
+                    formaction="{{StudentTeamEvaluation}}/create"
+                    class="button ph2 bg-near-white hover-bg-light-silver ml1"
+                    >
+                    Start Evaluation
+                  </button>
+                {{end}}
+              </form>
+            {{else if $evaluation.Evaluatee.Valid}}
+              <div class="gray">has not submitted</div>
+            {{else}}
+              <div class="gray">has not submitted</div>
+            {{end}}
+          </div>
+        </div>
+        {{end}}
+        <!-- End Evaluations -->
+      </div>
+      <!-- End WidgetBody -->
+    </div>
+  </div>
+</body>
+</html>

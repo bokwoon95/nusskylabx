@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title></title>
+</head>
+<body>
+  <h3>if statements</h3>
+  {{if $.True}}
+    <div>True is true</div>
+  {{end}}
+  {{if eq $.Five 5}}
+    <div>Five is 5</div>
+  {{end}}
+
+  <h3>Subsection One</h3>
+  {{template "subsection_one" $.SubsectionOne}}
+
+  <h3>Subsection Two</h3>
+  {{template "subsection_one" $.SubsectionTwo}}
+
+  <h3>Hello World</h3>
+  {{template "hello_world.html"}}
+</body>
+</html>
+
+{{define "subsection_one"}}
+  <div>This subsection is defined in {{$.Filename}}</div>
+  <div>The random word is {{$.RandomWord}}</div>
+{{end}}

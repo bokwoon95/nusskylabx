@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <title>Jsonify</title>
+</head>
+<body class="tripanel-l">
+  {{template "app/skylab/navbar.html"}}
+  {{template "app/skylab/sidebar.html"}}
+  <div class="sans-serif pa2 pa4-l">
+    <div class="f4">{{SkylabSanitizeHTML $.Title}}</div>
+    <div class="mid-gray">{{SkylabSanitizeHTML $.Description}}</div>
+    <div><a href="{{$.DemoLink}}">Demo Link.</a></div>
+    <div class="f6">{{SkylabSanitizeHTML $.PageData}}</div>
+    <div class="pv1"></div>
+    <b>Enter to submit, Shift + Enter for newline</b>
+    <form id="url-form" method="get" action="{{AdminDumpJson}}/url">
+      <p><textarea name="url" rows="20" cols="60"></textarea></p>
+      <button type="submit">View</button>
+      <button type="submit" formtarget="_blank">View in new tab</button>
+    </form>
+  </div>
+  <script nonce="{{HeadersCSPNonce}}">
+    const form = document.querySelector("#url-form");
+    if (form) {
+      form.addEventListener("keypress", function submitOnEnter(event) {
+        if(event.which === 13  && !event.shiftKey){
+          event.preventDefault();
+          form.submit();
+        }
+      });
+    }
+  </script>
+</body>
+</html>

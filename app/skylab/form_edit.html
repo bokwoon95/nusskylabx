@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <title></title>
+</head>
+<body class="{{if SkylabCurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
+  {{template "app/skylab/navbar.html"}}
+  {{template "app/skylab/sidebar.html"}}
+  <div class="sans-serif pa2 pa4-l">
+    {{template "helpers/flash/flash.html"}}
+    <h2>{{$.Title}}</h2>
+    <form method="post" action="{{$.UpdateURL}}">
+      <button type="submit" formaction="{{$.PreviewURL}}">Preview</button>
+      <button type="submit">Save</button>
+      <div class="pv1"></div>
+      <textarea id="formx" name="data"></textarea>
+      <div class="pv1"></div>
+      <button type="submit" formaction="{{$.PreviewURL}}">Preview</button>
+      <button type="submit">Save</button>
+    </form>
+  </div>
+  <div id="data-questions" data-questions="{{_Stringify $.QuestionsAnswers}}"></div>
+  <script src="/static/vendor.js"></script>
+  <script src="/static/skylab/form_edit.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "app/skylab/head.html"}}
+  <title>Applicant</title>
+</head>
+<body class="bipanel-l">
+  {{template "app/skylab/navbar.html"}}
+  <div class="sans-serif pa2 pa4-l">
+    {{template "helpers/flash/flash.html"}}
+    <div class="flex-l">
+      <div class="w-50-l pa2-l">
+        <div class="widget pa3">
+          <h3>You don't have an application</h3>
+          <form method="post" action="/applicant/application/create">
+            {{SkylabCsrfToken}}
+            <button
+              type="submit"
+              class="button pa2 bg-light-green hover-bg-green"
+              >
+              Create one now
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="w-50-l pa2-l mt2 mt0-l">
+        <div class="widget pa3">
+          <h3>Join a friend's application</h3>
+          <form method="get" action="/applicant/application/join" autocomplete="off">
+            <input type="text" name="magicstring" class="form-input" autocomplete="off" placeholder="magicstring">
+            <button type="submit" class="button pa2 bg-light-green hover-bg-green mh2">Join</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
