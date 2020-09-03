@@ -13,17 +13,21 @@ const selected = new Set<string>();
 const selectAllBtn = document.querySelector("#select-all-btn");
 const unselectAllBtn = document.querySelector("#unselect-all-btn");
 const createBtn = document.querySelector("#create-btn");
+const editBtn = document.querySelector("#edit-btn");
 const deleteBtn = document.querySelector("#delete-btn");
 const cohortDuplicateBtn = document.querySelector("#cohort-duplicate-btn");
 
 function redraw() {
   if (selected.size === 1) {
+    showElement(editBtn);
     showElement(deleteBtn);
     showElement(cohortDuplicateBtn);
   } else if (selected.size > 1) {
+    hideElement(editBtn);
     showElement(deleteBtn);
     showElement(cohortDuplicateBtn);
   } else {
+    hideElement(editBtn);
     hideElement(deleteBtn);
     hideElement(cohortDuplicateBtn);
   }
