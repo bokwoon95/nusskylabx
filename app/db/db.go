@@ -1,6 +1,9 @@
 package db
 
 import (
+	"database/sql"
+	"errors"
+
 	sq "github.com/bokwoon95/go-structured-query/postgres"
 	"github.com/bokwoon95/nusskylabx/app/skylab"
 	"github.com/bokwoon95/nusskylabx/helpers/erro"
@@ -35,10 +38,7 @@ func (d DB) CreateUser(user skylab.User, cohort string) (skylab.User, error) {
 			user.UserID = row.Int(u.USER_ID)
 		}).
 		Fetch(d.skylb.DB)
-	if err != nil {
-		return user, erro.Wrap(err)
-	}
-	if !user.Valid {
+	if errors.Is(err, sql.ErrNoRows) {
 		err = sq.WithLog(d.skylb.Log, sq.Lstats).
 			From(u).
 			Where(
@@ -53,6 +53,8 @@ func (d DB) CreateUser(user skylab.User, cohort string) (skylab.User, error) {
 		if err != nil {
 			return user, erro.Wrap(err)
 		}
+	} else if err != nil {
+		return user, erro.Wrap(err)
 	}
 	ur := tables.USER_ROLES()
 	ins := sq.WithLog(d.skylb.Log, sq.Lstats).InsertInto(ur)
