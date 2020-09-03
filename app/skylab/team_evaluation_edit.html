@@ -7,64 +7,90 @@
 <body class="{{if SkylabCurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
   {{template "app/skylab/navbar.html"}}
   {{template "app/skylab/sidebar.html"}}
-  <div class="sans-serif pa2 pa4-l">
-    <div class="widget pa4">
-      {{template "helpers/flash/flash.html"}}
-      <div class="mb3 flex justify-between">
-        <div>
-          <a href="?layout=adjacent" class="no-underline">
-            <button class="button f6 pv1 ph2 bg-light-red hover-bg-red">side-by-side</button>
-          </a>
-          <span class="ph2"></span>
-          <a href="{{$.SubmissionURL}}" class="no-underline">
-            <button class="button f6 pv1 ph2 bg-light-red hover-bg-red">submission</button>
-          </a>
-        </div>
-        {{if $.PreviewURL}}
-          <button type="submit" form="evaluationform" formaction="{{$.PreviewURL}}" class="button f6 ph2 pv1 bg-light-green hover-bg-green">
-            Update &amp; Preview
-          </button>
-        {{end}}
-      </div>
-      <h4 class="ma0">{{SkylabMilestoneName $.TeamEvaluation.EvaluationForm.Period.Milestone}} Evaluation</h4>
-      <div class="">
-        My Team &rarr;
-        evaluating <span class="gray">[{{$.TeamEvaluation.Evaluatee.Team.TeamID}}] [{{$.TeamEvaluation.Evaluatee.Team.ProjectLevel}}]</span>
-        &nbsp;{{$.TeamEvaluation.Evaluatee.Team.TeamName}}
-      </div>
-      {{if $.TeamEvaluation.Submitted}}
-        <div class="gray">Submitted</div>
-      {{else}}
-        <div class="gray">Draft</div>
-      {{end}}
-      <div class="pv3"></div>
-      <form id="evaluationform" method="post" action="{{.UpdateURL}}">
-        {{SkylabCsrfToken}}
-        {{$evaluationData := FormxMergeQuestionsAnswers $.TeamEvaluation.EvaluationForm.Questions $.TeamEvaluation.EvaluationAnswers}}
-        {{template "helpers/formx/render_form.html" $evaluationData}}
+  <div class="sans-serif">
+    <div class="flex vh-100">
+      <div id="left" class="widget overflow-y-auto ma1 pa3">
+        <div class="pv1"></div>
+        <h4 class="ma0">{{SkylabMilestoneName $.TeamEvaluation.EvaluationForm.Period.Milestone}} Submission</h4>
         <div class="">
-          {{if $.TeamEvaluation.Submitted}}
-          <button type="submit" class="button pa2 bg-light-green hover-bg-green">Update</button>
-          <span class="ml2"></span>
-          <span class="gray">Submitted</span>
-          {{else if $.TeamEvaluation.Valid}}
-          <button type="submit" class="button pa2 bg-light-green hover-bg-green">Save Draft</button>
-          <span class="ml2"></span>
-          <button
-            type="submit"
-            formaction="{{$.SubmitURL}}"
-            class="button pa2 bg-dark-green hover-bg-darker-green white"
-            >
-            Submit
-          </button>
-            {{else}}
-            <button type="submit" class="button pa2 bg-light-green hover-bg-green">Create Draft</button>
-            <span class="ml2"></span>
-            {{end}}
+          Submitted by: <span class="gray">[{{$.TeamEvaluation.Evaluatee.Team.TeamID}}] [{{$.TeamEvaluation.Evaluatee.Team.ProjectLevel}}]</span> 
+          &nbsp;{{$.TeamEvaluation.Evaluatee.Team.TeamName}}
         </div>
-      </form>
-    </div>
+        <div class="pv2"></div>
+        {{$submissionData := FormxMergeQuestionsAnswers $.TeamEvaluation.Evaluatee.SubmissionForm.Questions $.TeamEvaluation.Evaluatee.SubmissionAnswers}}
+        {{template "helpers/formx/render_form_results.html" $submissionData}}
+      </div>
+      <div id="right" class="widget overflow-y-auto ma1 pa3">
+        {{template "helpers/flash/flash.html"}}
+        <div class="pv1"></div>
+        {{define "actions"}}
+          <div class="">
+            {{if $.TeamEvaluation.Submitted}}
+              <button type="submit" form="evaluationform" class="button pa2 bg-light-green hover-bg-green">Update</button>
+              {{if $.PreviewURL}}
+                <button type="submit" form="evaluationform" formaction="{{$.PreviewURL}}" class="button pa2 bg-light-blue hover-bg-blue">
+                  Update &amp; Preview
+                </button>
+              {{end}}
+              <span class="ml2"></span>
+              <span class="gray">Submitted</span>
+              {{else if $.TeamEvaluation.Valid}}
+              <button type="submit" form="evaluationform" class="button pa2 bg-light-green hover-bg-green">Save Draft</button>
+              <span class="ml2"></span>
+              <button
+                type="submit"
+                form="evaluationform"
+                formaction="{{$.SubmitURL}}"
+                class="button pa2 bg-dark-green hover-bg-darker-green white"
+                >
+                Submit
+              </button>
+            {{else}}
+              <button type="submit" form="evaluationform" class="button pa2 bg-light-green hover-bg-green">Create Draft</button>
+              {{if $.PreviewURL}}
+                <button type="submit" form="evaluationform" formaction="{{$.PreviewURL}}" class="button pa2 bg-light-blue hover-bg-blue">
+                  Create Draft &amp; Preview
+                </button>
+              {{end}}
+              <span class="ml2"></span>
+            {{end}}
+          </div>
+        {{end}}
+        {{template "actions" .}}
+        <p></p>
+        <h4 class="ma0">My Evaluation</h4>
+        <form id="evaluationform" method="post" action="{{.UpdateURL}}">
+          {{SkylabCsrfToken}}
+          {{$evaluationData := FormxMergeQuestionsAnswers $.TeamEvaluation.EvaluationForm.Questions $.TeamEvaluation.EvaluationAnswers}}
+          {{template "helpers/formx/render_form.html" $evaluationData}}
+          {{template "actions" .}}
+          <div class="pv3"></div>
+        </form>
+      </div>
   </div>
+  <script src="https://unpkg.com/split.js/dist/split.min.js"></script>
+  <script nonce="{{HeadersCSPNonce}}">
+    // https://github.com/nathancahill/split/tree/master/packages/splitjs#flex-layout
+    const key = "split-sizes";
+    const value = localStorage.getItem(key)
+    var sizes = [50, 50] // default sizes
+    if (value) {
+        sizes = JSON.parse(value) // restore the last saved split pane state
+    }
+    Split(['#left', '#right'], {
+      sizes: sizes,
+      gutterSize: 8,
+      elementStyle: (dimension, size, gutterSize) => ({
+          'flex-basis': `calc(${size}% - ${gutterSize}px)`,
+      }),
+      gutterStyle: (dimension, gutterSize) => ({
+          'flex-basis':  `${gutterSize}px`,
+      }),
+      onDragEnd: function(sizes) {
+        localStorage.setItem(key, JSON.stringify(sizes))
+      },
+    })
+  </script>
 
   <!-- Scripts -->
   <script src="/static/tinymce/tinymce.min.js"></script>

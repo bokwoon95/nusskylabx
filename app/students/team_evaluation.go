@@ -12,7 +12,6 @@ import (
 	"github.com/bokwoon95/nusskylabx/app/skylab"
 	"github.com/bokwoon95/nusskylabx/tables"
 
-	"github.com/bokwoon95/nusskylabx/helpers/cookies"
 	"github.com/bokwoon95/nusskylabx/helpers/erro"
 	"github.com/bokwoon95/nusskylabx/helpers/flash"
 	"github.com/bokwoon95/nusskylabx/helpers/formutil"
@@ -49,57 +48,11 @@ func (stu Students) TeamEvaluationEdit(w http.ResponseWriter, r *http.Request) {
 	data.UpdateURL = skylab.StudentTeamEvaluation + "/" + strconv.Itoa(teamEvaluationID) + "/update"
 	data.SubmitURL = skylab.StudentTeamEvaluation + "/" + strconv.Itoa(teamEvaluationID) + "/submit"
 	funcs := formx.Funcs(nil, stu.skylb.Policy)
-	const layoutCookiename = "_student_team_evaluation_edit_layout"
-	const (
-		LayoutAdjacent   = "adjacent"
-		LayoutEvaluation = "evaluation"
-		LayoutSubmission = "submission"
+	stu.skylb.Render(w, r, data, funcs,
+		"app/skylab/team_evaluation_edit.html",
+		"helpers/formx/render_form.html",
+		"helpers/formx/render_form_results.html",
 	)
-	var layout string
-	switch r.FormValue("layout") {
-	case LayoutEvaluation:
-		layout = LayoutEvaluation
-	case LayoutSubmission:
-		layout = LayoutSubmission
-	case LayoutAdjacent:
-		layout = LayoutAdjacent
-	default:
-		switch cookies.GetCookieValue(r, layoutCookiename) {
-		case LayoutEvaluation:
-			layout = LayoutEvaluation
-		case LayoutSubmission:
-			layout = LayoutSubmission
-		case LayoutAdjacent:
-			fallthrough
-		default:
-			layout = LayoutAdjacent
-		}
-	}
-	switch layout {
-	case LayoutEvaluation:
-		cookies.SetCookie(w, layoutCookiename, LayoutEvaluation)
-		stu.skylb.Render(w, r, data, funcs,
-			"app/skylab/team_evaluation_edit.html",
-			"helpers/formx/render_form.html",
-			"helpers/formx/render_form_results.html",
-		)
-	case LayoutSubmission:
-		cookies.SetCookie(w, layoutCookiename, LayoutSubmission)
-		stu.skylb.Render(w, r, data, funcs,
-			"app/skylab/team_evaluation_edit.html",
-			"helpers/formx/render_form.html",
-			"helpers/formx/render_form_results.html",
-		)
-	case LayoutAdjacent:
-		fallthrough
-	default:
-		cookies.SetCookie(w, layoutCookiename, LayoutAdjacent)
-		stu.skylb.Render(w, r, data, funcs,
-			"app/skylab/team_evaluation_edit_adjacent.html",
-			"helpers/formx/render_form.html",
-			"helpers/formx/render_form_results.html",
-		)
-	}
 }
 
 func (stu Students) CanViewTeamEvaluation(next http.Handler) http.Handler {

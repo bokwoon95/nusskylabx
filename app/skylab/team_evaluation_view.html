@@ -10,11 +10,30 @@
   <div class="sans-serif pa2 pa4-l">
     {{template "helpers/flash/flash.html"}}
     <div class="ba br4 b--black-30 pa4">
-      <div class="mb3">
-        <a href="{{$.SubmissionURL}}">
-          <button class="button f6 pv1 ph2 bg-light-red hover-bg-red">View Submission</button>
+      <!-- <div class="mb3"> -->
+      <!--   <a href="{{$.SubmissionURL}}"> -->
+      <!--     <button class="button f6 pv1 ph2 bg&#45;light&#45;red hover&#45;bg&#45;red">View Submission</button> -->
+      <!--   </a> -->
+      <!-- </div> -->
+      {{define "actions"}}
+        {{if $.EditURL}}
+        <a href="{{$.EditURL}}">
+          <button type="submit" formaction="{{$.EditURL}}" class="button pa2 ph3 bg-light-blue hover-bg-blue">
+            Edit
+          </button>
         </a>
-      </div>
+        {{end}}
+        {{if $.TeamEvaluation.Submitted}}
+        {{else if and $.TeamEvaluation.Valid $.SubmitURL}}
+          <span class="ml2"></span>
+          <form method="post" action="{{$.SubmitURL}}" class="dib">
+            {{SkylabCsrfToken}}
+            <button type="submit" class="button pa2 bg-dark-green hover-bg-darker-green white">Submit</button>
+          </form>
+        {{end}}
+      {{end}}
+      {{template "actions" .}}
+      <p></p>
       <h4 class="ma0">{{SkylabMilestoneName $.TeamEvaluation.EvaluationForm.Period.Milestone}} Evaluation</h4>
       <div class="">
         <span class="gray">[{{$.TeamEvaluation.Evaluator.TeamID}}] [{{$.TeamEvaluation.Evaluator.ProjectLevel}}]</span> 
@@ -30,21 +49,7 @@
       <div class="pv3"></div>
       {{$evaluationData := FormxMergeQuestionsAnswers $.TeamEvaluation.EvaluationForm.Questions $.TeamEvaluation.EvaluationAnswers}}
       {{template "helpers/formx/render_form_results.html" $evaluationData}}
-      {{if $.EditURL}}
-      <a href="{{$.EditURL}}">
-        <button type="submit" formaction="{{$.EditURL}}" class="button pa2 ph3 bg-light-blue hover-bg-blue">
-          Edit
-        </button>
-      </a>
-      {{end}}
-      {{if $.TeamEvaluation.Submitted}}
-      {{else if and $.TeamEvaluation.Valid $.SubmitURL}}
-        <span class="ml2"></span>
-        <form method="post" action="{{$.SubmitURL}}" class="dib">
-          {{SkylabCsrfToken}}
-          <button type="submit" class="button pa2 bg-dark-green hover-bg-darker-green white">Submit</button>
-        </form>
-      {{end}}
+      {{template "actions" .}}
     </div>
   </div>
 

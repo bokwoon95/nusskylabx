@@ -10,6 +10,34 @@
   <div class="sans-serif pa2 pa4-l">
     <div class="ba br4 b--black-30 pa4">
       {{template "helpers/flash/flash.html"}}
+      {{define "actions"}}
+        <div class="">
+          {{if $.Submission.Submitted}}
+            <button type="submit" form="submissionform" class="button pa2 bg-light-green hover-bg-green">Update</button>
+            {{if $.PreviewURL}}
+              <button type="submit" form="submissionform" formaction="{{$.PreviewURL}}" class="button pa2 bg-light-blue hover-bg-blue">
+                Update &amp; Preview
+              </button>
+            {{end}}
+            <span class="ml2"></span>
+            {{else if $.Submission.Valid}}
+            <button type="submit" class="button pa2 bg-light-green hover-bg-green">Save Draft</button>
+            <span class="ml2"></span>
+            <button
+              type="submit"
+              formaction="{{$.SubmitURL}}"
+              class="button pa2 bg-dark-green hover-bg-darker-green white"
+              >
+              Submit
+            </button>
+          {{else}}
+            <button type="submit" class="button pa2 bg-light-green hover-bg-green">Create Draft</button>
+            <span class="ml2"></span>
+          {{end}}
+        </div>
+      {{end}}
+      {{template "actions" .}}
+      <p></p>
       <h3 class="ma0">{{SkylabMilestoneName $.Submission.SubmissionForm.Period.Milestone}} Submission</h3>
       {{if $.Submission.Submitted}}
         <div class="gray">Submitted</div>
@@ -59,30 +87,7 @@
       <form id="submissionform" enctype="multipart/form-data" method="post" action="{{.UpdateURL}}">
         {{SkylabCsrfToken}}
         {{template "helpers/formx/render_form.html" FormxMergeQuestionsAnswers $.Submission.SubmissionForm.Questions $.Submission.SubmissionAnswers}}
-        <div class="">
-          {{if $.PreviewURL}}
-          <button type="submit" form="submissionform" formaction="{{$.PreviewURL}}" class="button pa2 bg-light-blue hover-bg-blue">
-            Preview
-          </button>
-          {{end}}
-          {{if $.Submission.Submitted}}
-          <button type="submit" class="button pa2 bg-light-green hover-bg-green">Update</button>
-          <span class="ml2"></span>
-          {{else if $.Submission.Valid}}
-          <button type="submit" class="button pa2 bg-light-green hover-bg-green">Save Draft</button>
-          <span class="ml2"></span>
-          <button
-            type="submit"
-            formaction="{{$.SubmitURL}}"
-            class="button pa2 bg-dark-green hover-bg-darker-green white"
-            >
-            Submit
-          </button>
-            {{else}}
-            <button type="submit" class="button pa2 bg-light-green hover-bg-green">Create Draft</button>
-            <span class="ml2"></span>
-            {{end}}
-        </div>
+        {{template "actions" .}}
       </form>
     </div>
   </div>
