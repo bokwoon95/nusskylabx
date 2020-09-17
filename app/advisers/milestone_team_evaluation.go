@@ -29,18 +29,18 @@ func (adv Advisers) MilestoneTeamEvaluation(section string) http.HandlerFunc {
 		// it. The key is the teamID, the value is the index of the slice of
 		// team evaluations in data.EvaluationGroups.
 		teamGroups := make(map[int]int)
-		advisers_teams := sq.NewCTE("advisers_teams", sq.
+		advisers_teams := sq.
 			Select(t.TEAM_ID).
 			From(t).
-			Where(t.ADVISER_USER_ROLE_ID.EqInt(user.Roles[skylab.RoleAdviser])),
-		)
+			Where(t.ADVISER_USER_ROLE_ID.EqInt(user.Roles[skylab.RoleAdviser])).
+			CTE("advisers_teams")
 		err := sq.WithLog(adv.skylb.Log, sq.Lstats).
 			With(advisers_teams).
 			From(te).
 			Where(
 				te.MILESTONE.EqString(milestone),
-				te.EVALUATEE_TEAM_ID.In(sq.Select(advisers_teams.Get("team_id")).From(advisers_teams)),
-				te.EVALUATOR_TEAM_ID.In(sq.Select(advisers_teams.Get("team_id")).From(advisers_teams)),
+				te.EVALUATEE_TEAM_ID.In(sq.Select(advisers_teams["team_id"]).From(advisers_teams)),
+				te.EVALUATOR_TEAM_ID.In(sq.Select(advisers_teams["team_id"]).From(advisers_teams)),
 			).
 			OrderBy(
 				te.EVALUATEE_TEAM_ID,

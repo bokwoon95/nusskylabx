@@ -110,14 +110,18 @@ func (adm Admins) ListPeriodsCreate(next http.Handler) http.Handler {
 		end := timeutil.ParseDateTimeString(enddate, endtime)
 		p := tables.PERIODS()
 		var count int
-		stmt := sq.NewCTE("stmt", sq.InsertInto(p).
+		stmt := sq.
+			InsertInto(p).
 			Columns(p.COHORT, p.STAGE, p.MILESTONE, p.START_AT, p.END_AT).
 			Values(cohort, stage, milestone, start, end).
-			OnConflict().DoNothing().ReturningOne(),
-		)
-		err := sq.WithLog(adm.skylb.Log, sq.Lverbose).With(stmt).From(stmt).SelectRowx(func(row *sq.Row) {
-			count = row.Int(sq.Count())
-		}).Fetch(adm.skylb.DB)
+			OnConflict().DoNothing().ReturningOne().
+			CTE("stmt")
+		err := sq.WithLog(adm.skylb.Log, sq.Lverbose).
+			From(stmt).
+			SelectRowx(func(row *sq.Row) {
+				count = row.Int(sq.Count())
+			}).
+			Fetch(adm.skylb.DB)
 		if err != nil {
 			msgs[flash.Error] = append(msgs[flash.Success], erro.Wrap(err).Error())
 		}
