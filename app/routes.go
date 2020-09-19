@@ -582,11 +582,4 @@ func AdminRoutes(skylb skylab.Skylab) {
 	// /admin/testmail
 	adminsMux.Get(skylab.AdminTestmail, adm.Testmail)
 	adminsMux.Post(skylab.AdminTestmail, adm.TestmailPost)
-
-	// /debug-mode
-	adminsMux.Get(skylab.AdminDebugMode, adm.DebugMode)
-	// /debug-mode/on
-	adminsMux.With(adm.DebugOn).Post(skylab.AdminDebugMode+"/on", skylb.Redirect(skylab.AdminDebugMode))
-	// /debug-mode/off
-	adminsMux.With(adm.DebugOff).Post(skylab.AdminDebugMode+"/off", skylb.Redirect(skylab.AdminDebugMode))
 }

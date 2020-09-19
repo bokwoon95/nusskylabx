@@ -57,7 +57,6 @@ const (
 	AdminListApplications  = "/admin/applications"
 	AdminApplication       = "/admin/application"
 	AdminListFeedbacks     = "/admin/feedbacks"
-	AdminDebugMode         = "/debug-mode"
 	AdminDumpJson          = "/dump-json"
 	AdminTestmail          = "/testmail" // experimental
 )
@@ -108,7 +107,6 @@ var sectionSymbols = map[string]string{
 	AdminListApplications:  "AdminListApplications",
 	AdminApplication:       "AdminApplication",
 	AdminListFeedbacks:     "AdminListFeedbacks",
-	AdminDebugMode:         "AdminDebugMode",
 	AdminDumpJson:          "AdminDumpJson",
 	AdminTestmail:          "AdminTestmail", // experimental
 }

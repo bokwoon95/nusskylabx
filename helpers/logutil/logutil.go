@@ -11,7 +11,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/bokwoon95/nusskylabx/helpers/dbutil"
 	"github.com/go-chi/chi/middleware"
 )
 
@@ -48,10 +47,9 @@ func NewLogger(w io.Writer) *Logger {
 // the request (if present) and strips away the machine name part of the
 // string.
 //
-// NOTE: The Request ID is initially set by the chi middleware.RequestID
-// middleware function, this function merely picks up on it. If
-// middleware.RequestID was not called prior to this, GetReqID will simply
-// return an empty string
+// The Request ID is initially set by the chi middleware.RequestID middleware
+// function, this function merely picks up on it. If middleware.RequestID was
+// not called prior to this, GetReqID will simply return an empty string
 func GetReqID(ctx context.Context) string {
 	reqID := middleware.GetReqID(ctx)
 	// Remove everything before the first slash in reqID
@@ -148,18 +146,4 @@ func (l *Logger) RequestPrintf(r *http.Request, format string, v ...interface{})
 	}
 	reqID := GetReqID(r.Context())
 	_ = l.debug.Output(2, fmt.Sprintf("RequestID:"+reqID+" "+format, v...))
-}
-
-// SqlPrintf takes in the same arguments as sql.DB.Query/ sql.DB.QueryRow/
-// sql.DB.Exec, and logs the exact sql statement that was carried out including
-// the arguments. Useful for debugging SQL queries, as it may show some
-// arguments having unexpected values in the logger output.
-func (l *Logger) SqlPrintf(query string, v ...interface{}) {
-	if l.debug.Writer() == ioutil.Discard {
-		return
-	}
-	l.debug.SetFlags(0)
-	defer l.debug.SetFlags(flagDebug)
-	pc, filename, linenr, _ := runtime.Caller(1)
-	_ = l.debug.Output(2, fmt.Sprintf("file:line[%s:%d] function[%s]: "+dbutil.InterpolateSql(query, v...), filename, linenr, runtime.FuncForPC(pc).Name()))
 }
