@@ -32,7 +32,7 @@ func (adv Advisers) EvaluateeEvaluators(w http.ResponseWriter, r *http.Request) 
 	// get list of teamIDs under adviser
 	t := tables.TEAMS()
 	var adviserTeamIDs []int64
-	err := sq.WithLog(adv.skylb.Log, sq.Lstats).
+	err := sq.WithDefaultLog(sq.Lstats).
 		From(t).
 		Where(t.ADVISER_USER_ROLE_ID.EqInt(user.Roles[skylab.RoleAdviser])).
 		GroupBy(t.ADVISER_USER_ROLE_ID).
@@ -48,7 +48,7 @@ func (adv Advisers) EvaluateeEvaluators(w http.ResponseWriter, r *http.Request) 
 	// fill in data.EvaluateeEvaluators accordingly
 	tp := tables.TEAM_EVALUATION_PAIRS()
 	var evaluateeTeamID, evaluatorTeamID int
-	err = sq.WithLog(adv.skylb.Log, sq.Lverbose).
+	err = sq.WithDefaultLog(sq.Lverbose).
 		From(tp).
 		Join(t, t.TEAM_ID.Eq(tp.EVALUATEE_TEAM_ID)).
 		Where(
@@ -92,7 +92,7 @@ func (adv Advisers) EvaluateeEvaluators(w http.ResponseWriter, r *http.Request) 
 	vt := tables.V_TEAMS()
 	var team skylab.Team
 	data.Teams = make(map[int]skylab.Team)
-	err = sq.WithLog(adv.skylb.Log, sq.Lverbose).
+	err = sq.WithDefaultLog(sq.Lverbose).
 		From(vt).
 		Where(vt.ADVISER_USER_ROLE_ID.EqInt(user.Roles[skylab.RoleAdviser])).
 		Selectx(func(row *sq.Row) {
@@ -183,7 +183,7 @@ func (adv Advisers) EvaluateeEvaluatorsUpdate(w http.ResponseWriter, r *http.Req
 		adv.skylb.InternalServerError(w, r, err)
 		return
 	}
-	_, err = sq.WithLog(adv.skylb.Log, sq.Lstats).
+	_, err = sq.WithDefaultLog(sq.Lstats).
 		DeleteFrom(tp).
 		Where(sq.RowValue{tp.EVALUATEE_TEAM_ID, tp.EVALUATOR_TEAM_ID}.In(fields)).
 		Exec(adv.skylb.DB, sq.ErowsAffected)

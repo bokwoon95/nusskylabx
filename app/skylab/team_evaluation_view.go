@@ -28,7 +28,7 @@ func (skylb Skylab) TeamEvaluationView(role string) http.HandlerFunc {
 			return
 		}
 		te := tables.V_TEAM_EVALUATIONS()
-		err = sq.WithLog(skylb.Log, sq.Lstats).
+		err = sq.WithDefaultLog(sq.Lstats).
 			From(te).
 			Where(te.TEAM_EVALUATION_ID.EqInt(teamEvaluationID)).
 			SelectRowx((&data.TeamEvaluation).RowMapper(te)).

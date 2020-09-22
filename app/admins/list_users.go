@@ -44,7 +44,7 @@ func (adm Admins) ListUsers(w http.ResponseWriter, r *http.Request) {
 	data.UserIDToTeamIndex = make(map[int]int)
 	var user skylab.User
 	u, ur := tables.USERS(), tables.USER_ROLES()
-	err := sq.WithLog(adm.skylb.Log, sq.Lverbose).From(u).Join(ur, ur.USER_ID.Eq(u.USER_ID)).Where(
+	err := sq.WithDefaultLog(sq.Lverbose).From(u).Join(ur, ur.USER_ID.Eq(u.USER_ID)).Where(
 		ur.COHORT.EqString(cohort),
 		ur.ROLE.EqString(role),
 	).OrderBy(u.USER_ID).Selectx(func(row *sq.Row) {
@@ -67,7 +67,7 @@ func (adm Admins) ListUsers(w http.ResponseWriter, r *http.Request) {
 		t := tables.V_TEAMS()
 		var team skylab.Team
 		var student1UserID, student2UserID int
-		err = sq.WithLog(adm.skylb.Log, sq.Lverbose).
+		err = sq.WithDefaultLog(sq.Lverbose).
 			From(t).
 			Where(t.COHORT.EqString(cohort)).
 			Selectx(func(row *sq.Row) {

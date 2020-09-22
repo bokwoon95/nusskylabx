@@ -38,7 +38,7 @@ func (skylb Skylab) SubmissionEdit(role string) http.HandlerFunc {
 			skylb.Render(w, r, data, funcs, "app/skylab/submission_edit.html", "helpers/formx/render_form.html")
 		}
 		s := tables.V_SUBMISSIONS()
-		err = sq.WithLog(skylb.Log, sq.Lstats).
+		err = sq.WithDefaultLog(sq.Lstats).
 			From(s).
 			Where(s.SUBMISSION_ID.EqInt(submissionID)).
 			SelectRowx((&data.Submission).RowMapper(s)).
@@ -64,7 +64,7 @@ func (skylb Skylab) SubmissionEdit(role string) http.HandlerFunc {
 		// Team evaluations
 		te := tables.V_TEAM_EVALUATIONS()
 		var teamEvaluation TeamEvaluation
-		err = sq.WithLog(skylb.Log, sq.Lstats).
+		err = sq.WithDefaultLog(sq.Lstats).
 			From(te).
 			Where(te.SUBMISSION_ID.EqInt(submissionID)).
 			Selectx((&teamEvaluation).RowMapper(te), func() {
@@ -79,7 +79,7 @@ func (skylb Skylab) SubmissionEdit(role string) http.HandlerFunc {
 		// Adviser + Mentor Evaluations
 		ue := tables.V_USER_EVALUATIONS()
 		var userEvaluation UserEvaluation
-		err = sq.WithLog(skylb.Log, sq.Lstats).
+		err = sq.WithDefaultLog(sq.Lstats).
 			From(ue).
 			Where(ue.SUBMISSION_ID.EqInt(submissionID)).
 			Selectx((&userEvaluation).RowMapper(ue), func() {

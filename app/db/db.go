@@ -28,7 +28,7 @@ func (d DB) CreateUser(user skylab.User, cohort string) (skylab.User, error) {
 		return user, erro.Wrap(skylab.ErrEmailEmpty)
 	}
 	u := tables.USERS()
-	err := sq.WithLog(d.skylb.Log, sq.Lstats).
+	err := sq.WithDefaultLog(sq.Lstats).
 		InsertInto(u).
 		Columns(u.DISPLAYNAME, u.EMAIL).
 		Values(user.Displayname, user.Email).
@@ -39,7 +39,7 @@ func (d DB) CreateUser(user skylab.User, cohort string) (skylab.User, error) {
 		}).
 		Fetch(d.skylb.DB)
 	if errors.Is(err, sql.ErrNoRows) {
-		err = sq.WithLog(d.skylb.Log, sq.Lstats).
+		err = sq.WithDefaultLog(sq.Lstats).
 			From(u).
 			Where(
 				u.EMAIL.EqString(user.Email),
@@ -57,7 +57,7 @@ func (d DB) CreateUser(user skylab.User, cohort string) (skylab.User, error) {
 		return user, erro.Wrap(err)
 	}
 	ur := tables.USER_ROLES()
-	ins := sq.WithLog(d.skylb.Log, sq.Lstats).InsertInto(ur)
+	ins := sq.WithDefaultLog(sq.Lstats).InsertInto(ur)
 	for role := range user.Roles {
 		ins = ins.InsertRow(
 			ur.COHORT.SetString(cohort),
@@ -71,7 +71,7 @@ func (d DB) CreateUser(user skylab.User, cohort string) (skylab.User, error) {
 	}
 	var userRoleID int
 	var role string
-	err = sq.WithLog(d.skylb.Log, sq.Lstats).
+	err = sq.WithDefaultLog(sq.Lstats).
 		From(ur).
 		Where(
 			ur.COHORT.EqString(cohort),

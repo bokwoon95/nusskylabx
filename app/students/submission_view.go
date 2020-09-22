@@ -35,7 +35,7 @@ func (stu Students) SubmissionView(w http.ResponseWriter, r *http.Request) {
 		stu.skylb.Render(w, r, data, funcs, "app/skylab/submission_view.html", "helpers/formx/render_form_results.html")
 	}
 	s := tables.V_SUBMISSIONS()
-	err = sq.WithLog(stu.skylb.Log, sq.Lverbose).
+	err = sq.WithDefaultLog(sq.Lverbose).
 		From(s).
 		Where(s.SUBMISSION_ID.EqInt(submissionID)).
 		SelectRowx((&data.Submission).RowMapper(s)).
@@ -107,7 +107,7 @@ func (stu Students) CanViewSubmission(next http.Handler) http.Handler {
 
 		// Else check if user's team is an evaluator of submission's team
 		tp := tables.TEAM_EVALUATION_PAIRS()
-		rowsAffected, err := sq.WithLog(stu.skylb.Log, sq.Lstats).
+		rowsAffected, err := sq.WithDefaultLog(sq.Lstats).
 			SelectOne().
 			From(tp).
 			Where(

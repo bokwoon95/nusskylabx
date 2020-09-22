@@ -38,8 +38,7 @@ func (adm Admins) ListPeriods(w http.ResponseWriter, r *http.Request) {
 	p := tables.PERIODS()
 	me, se := tables.MILESTONE_ENUM(), tables.STAGE_ENUM()
 	var period skylab.Period
-	err := sq.
-		WithLog(adm.skylb.Log, sq.Lverbose).
+	err := sq.WithDefaultLog(sq.Lverbose).
 		From(p).
 		Where(p.COHORT.EqString(cohort)).
 		OrderBy(
@@ -73,7 +72,7 @@ func (adm Admins) ListPeriodsDelete(next http.Handler) http.Handler {
 		msgs := make(map[string][]string)
 		periodIDs := r.Form["periodID"]
 		p := tables.PERIODS()
-		rowsAffected, err := sq.WithLog(adm.skylb.Log, sq.Lverbose).
+		rowsAffected, err := sq.WithDefaultLog(sq.Lverbose).
 			DeleteFrom(p).
 			Where(p.PERIOD_ID.In(periodIDs)).
 			Exec(adm.skylb.DB, sq.ErowsAffected)
@@ -116,7 +115,7 @@ func (adm Admins) ListPeriodsCreate(next http.Handler) http.Handler {
 			Values(cohort, stage, milestone, start, end).
 			OnConflict().DoNothing().ReturningOne().
 			CTE("stmt")
-		err := sq.WithLog(adm.skylb.Log, sq.Lverbose).
+		err := sq.WithDefaultLog(sq.Lverbose).
 			From(stmt).
 			SelectRowx(func(row *sq.Row) {
 				count = row.Int(sq.Count())
@@ -159,7 +158,7 @@ func (adm Admins) ListPeriodsDuplicate(next http.Handler) http.Handler {
 		r = urlparams.SetString(r, "cohort", cohort)
 		periodIDs := r.Form["periodID"]
 		p1, p2, p3 := tables.PERIODS().As("p1"), tables.PERIODS().As("p2"), tables.PERIODS().As("p3")
-		rowsAffected, err := sq.WithLog(adm.skylb.Log, sq.Lverbose).
+		rowsAffected, err := sq.WithDefaultLog(sq.Lverbose).
 			InsertInto(p1).
 			Columns(p1.COHORT, p1.STAGE, p1.MILESTONE, p1.START_AT, p1.END_AT).
 			Select(

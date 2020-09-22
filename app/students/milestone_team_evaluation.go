@@ -25,7 +25,7 @@ func (stu Students) MilestoneTeamEvaluation(section string) http.HandlerFunc {
 		evaluation := &skylab.TeamEvaluation{}
 		data.Milestone = milestone
 		te, urs := tables.V_TEAM_EVALUATIONS(), tables.USER_ROLES_STUDENTS()
-		err := sq.WithLog(stu.skylb.Log, sq.Lstats).
+		err := sq.WithDefaultLog(sq.Lstats).
 			From(te).
 			Where(
 				te.COHORT.EqString(stu.skylb.CurrentCohort()),

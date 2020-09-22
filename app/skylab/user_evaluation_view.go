@@ -34,7 +34,7 @@ func (skylb Skylab) UserEvaluationView(role string) http.HandlerFunc {
 			skylb.Render(w, r, data, funcs, "app/skylab/user_evaluation_view.html", "helpers/formx/render_form_results.html")
 		}
 		ue := tables.V_USER_EVALUATIONS()
-		err = sq.WithLog(skylb.Log, sq.Lstats).
+		err = sq.WithDefaultLog(sq.Lstats).
 			From(ue).
 			Where(ue.USER_EVALUATION_ID.EqInt(userEvaluationID)).
 			SelectRowx((&data.Evaluation).RowMapper(ue)).

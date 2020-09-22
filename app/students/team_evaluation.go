@@ -29,7 +29,7 @@ func (stu Students) TeamEvaluationEdit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	te := tables.V_TEAM_EVALUATIONS()
-	err = sq.WithLog(stu.skylb.Log, sq.Lstats).
+	err = sq.WithDefaultLog(sq.Lstats).
 		From(te).
 		Where(te.TEAM_EVALUATION_ID.EqInt(teamEvaluationID)).
 		SelectRowx((&data.TeamEvaluation).RowMapper(te)).
@@ -68,7 +68,7 @@ func (stu Students) CanViewTeamEvaluation(next http.Handler) http.Handler {
 		// Get user's teamID
 		urs := tables.USER_ROLES_STUDENTS()
 		var userTeamID int
-		err = sq.WithLog(stu.skylb.Log, sq.Lstats).
+		err = sq.WithDefaultLog(sq.Lstats).
 			From(urs).
 			Where(urs.USER_ROLE_ID.EqInt(user.Roles[skylab.RoleStudent])).
 			SelectRowx(func(row *sq.Row) { userTeamID = row.Int(urs.TEAM_ID) }).
@@ -86,7 +86,7 @@ func (stu Students) CanViewTeamEvaluation(next http.Handler) http.Handler {
 		// Get the evaluator/evaluatee teamID for the given team evaluation
 		var evaluatorTeamID, evaluateeTeamID int
 		te, s := tables.TEAM_EVALUATIONS(), tables.SUBMISSIONS()
-		err = sq.WithLog(stu.skylb.Log, sq.Lstats).
+		err = sq.WithDefaultLog(sq.Lstats).
 			From(te).
 			Join(s, s.SUBMISSION_ID.Eq(te.EVALUATEE_SUBMISSION_ID)).
 			Where(te.TEAM_EVALUATION_ID.EqInt(teamEvaluationID)).
@@ -132,7 +132,7 @@ func (stu Students) CanEditTeamEvaluation(next http.Handler) http.Handler {
 		// Get user's teamID
 		urs := tables.USER_ROLES_STUDENTS()
 		var userTeamID int
-		err = sq.WithLog(stu.skylb.Log, sq.Lstats).
+		err = sq.WithDefaultLog(sq.Lstats).
 			From(urs).
 			Where(urs.USER_ROLE_ID.EqInt(user.Roles[skylab.RoleStudent])).
 			SelectRowx(func(row *sq.Row) { userTeamID = row.Int(urs.TEAM_ID) }).
@@ -150,7 +150,7 @@ func (stu Students) CanEditTeamEvaluation(next http.Handler) http.Handler {
 		// Get the evaluator/evaluatee teamID for the given team evaluation
 		var evaluatorTeamID, evaluateeTeamID int
 		te, s := tables.TEAM_EVALUATIONS(), tables.SUBMISSIONS()
-		err = sq.WithLog(stu.skylb.Log, sq.Lstats).
+		err = sq.WithDefaultLog(sq.Lstats).
 			From(te).
 			Join(s, s.SUBMISSION_ID.Eq(te.EVALUATEE_SUBMISSION_ID)).
 			Where(te.TEAM_EVALUATION_ID.EqInt(teamEvaluationID)).
@@ -198,7 +198,7 @@ func (stu Students) TeamEvaluationCreate(w http.ResponseWriter, r *http.Request)
 	// Get user's (evaluator) teamID
 	urs := tables.USER_ROLES_STUDENTS()
 	var evaluatorTeamID int
-	err = sq.WithLog(stu.skylb.Log, sq.Lstats).
+	err = sq.WithDefaultLog(sq.Lstats).
 		From(urs).
 		Where(urs.USER_ROLE_ID.EqInt(user.Roles[skylab.RoleStudent])).
 		SelectRowx(func(row *sq.Row) { evaluatorTeamID = row.Int(urs.TEAM_ID) }).
@@ -215,7 +215,7 @@ func (stu Students) TeamEvaluationCreate(w http.ResponseWriter, r *http.Request)
 
 	// Ensure the user's team is authorized to evaluate this submission's team
 	s, tp := tables.SUBMISSIONS(), tables.TEAM_EVALUATION_PAIRS()
-	rowsAffected, err := sq.WithLog(stu.skylb.Log, sq.Lstats).
+	rowsAffected, err := sq.WithDefaultLog(sq.Lstats).
 		From(s).
 		Join(tp, tp.EVALUATEE_TEAM_ID.Eq(s.TEAM_ID)).
 		Where(
@@ -237,7 +237,7 @@ func (stu Students) TeamEvaluationCreate(w http.ResponseWriter, r *http.Request)
 	// See if the teamEvaluationID already exists. If so, redirect to it.
 	te := tables.TEAM_EVALUATIONS()
 	var teamEvaluationID int
-	err = sq.WithLog(stu.skylb.Log, sq.Lstats).
+	err = sq.WithDefaultLog(sq.Lstats).
 		From(te).
 		Where(
 			te.EVALUATOR_TEAM_ID.EqInt(evaluatorTeamID),
@@ -270,7 +270,7 @@ func (stu Students) TeamEvaluationCreate(w http.ResponseWriter, r *http.Request)
 	}
 	f, p := tables.FORMS(), tables.PERIODS()
 	var evaluationFormID int
-	err = sq.WithLog(stu.skylb.Log, sq.Lstats).
+	err = sq.WithDefaultLog(sq.Lstats).
 		From(f).
 		Join(p, p.PERIOD_ID.Eq(f.PERIOD_ID)).
 		Where(
@@ -292,7 +292,7 @@ func (stu Students) TeamEvaluationCreate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	err = sq.WithLog(stu.skylb.Log, sq.Lverbose).
+	err = sq.WithDefaultLog(sq.Lverbose).
 		InsertInto(te).
 		Columns(te.EVALUATOR_TEAM_ID, te.EVALUATEE_SUBMISSION_ID, te.EVALUATION_FORM_ID).
 		Values(evaluatorTeamID, submissionID, evaluationFormID).
@@ -337,7 +337,7 @@ func (stu Students) TeamEvaluationSubmit(next http.Handler) http.Handler {
 			return
 		}
 		te := tables.TEAM_EVALUATIONS()
-		_, err = sq.WithLog(stu.skylb.Log, sq.Lstats).
+		_, err = sq.WithDefaultLog(sq.Lstats).
 			Update(te).
 			Set(te.SUBMITTED.SetBool(true)).
 			Where(te.TEAM_EVALUATION_ID.EqInt(teamEvaluationID)).

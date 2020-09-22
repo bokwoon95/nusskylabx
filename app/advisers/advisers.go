@@ -37,7 +37,7 @@ func milestoneFromSection(section string) (milestone string) {
 func (adv Advisers) getTeamIDs(user skylab.User) (teamIDs []int, err error) {
 	t := tables.TEAMS()
 	var adviserTeamIDs []int64
-	err = sq.WithLog(adv.skylb.Log, sq.Lstats).
+	err = sq.WithDefaultLog(sq.Lstats).
 		From(t).
 		Where(t.ADVISER_USER_ROLE_ID.EqInt(user.Roles[skylab.RoleAdviser])).
 		GroupBy(t.ADVISER_USER_ROLE_ID).

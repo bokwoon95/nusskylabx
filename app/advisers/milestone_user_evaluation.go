@@ -28,7 +28,7 @@ func (adv Advisers) MilestoneUserEvaluation(section string) http.HandlerFunc {
 		data.Milestone = milestone
 		ue := tables.V_USER_EVALUATIONS()
 		userEvaluation := &skylab.UserEvaluation{}
-		err := sq.WithLog(adv.skylb.Log, sq.Lstats).
+		err := sq.WithDefaultLog(sq.Lstats).
 			From(ue).
 			Where(
 				ue.EVALUATOR_USER_ID.EqInt(user.Roles[skylab.RoleAdviser]),

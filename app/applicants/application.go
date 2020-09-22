@@ -23,7 +23,7 @@ func (apt Applicants) Application(w http.ResponseWriter, r *http.Request) {
 	r = apt.skylb.SetRoleSection(w, r, skylab.RoleApplicant, skylab.SectionPreserve)
 	user, _ := r.Context().Value(skylab.ContextUser).(skylab.User)
 	a := tables.V_APPLICATIONS()
-	rowsAffected, err := sq.WithLog(apt.skylb.Log, sq.Lstats).
+	rowsAffected, err := sq.WithDefaultLog(sq.Lstats).
 		SelectOne().
 		From(a).
 		Where(
@@ -41,7 +41,7 @@ func (apt Applicants) Application(w http.ResponseWriter, r *http.Request) {
 	}
 	var data skylab.ApplicationEdit
 	data.ApplicantUserID = user.UserID
-	err = sq.WithLog(apt.skylb.Log, sq.Lverbose).
+	err = sq.WithDefaultLog(sq.Lverbose).
 		From(a).
 		Where(
 			sq.String(user.Email).In(sq.Fields{a.APPLICANT1_EMAIL, a.APPLICANT2_EMAIL}),
@@ -94,7 +94,7 @@ func (apt Applicants) MagicstringVerifier(next http.Handler) http.Handler {
 			return
 		}
 		a := tables.APPLICATIONS()
-		rowsAffected, err := sq.WithLog(apt.skylb.Log, sq.Lstats).
+		rowsAffected, err := sq.WithDefaultLog(sq.Lstats).
 			SelectOne().
 			From(a).
 			Where(a.MAGICSTRING.EqString(magicstring)).
@@ -120,7 +120,7 @@ func (apt Applicants) IdempotentCreateApplication(next http.Handler) http.Handle
 			apt.skylb.NotLoggedIn(w, r)
 			return
 		}
-		_, err := sq.WithLog(apt.skylb.Log, sq.Lstats).
+		_, err := sq.WithDefaultLog(sq.Lstats).
 			Select(tables.IDEMPOTENT_CREATE_APPLICATION(user.Displayname, user.Email)).
 			Exec(apt.skylb.DB, sq.ErowsAffected)
 		if err != nil {
@@ -238,7 +238,7 @@ func (apt Applicants) UpdateApplication(next http.Handler) http.Handler {
 		applicantAnswers := formx.ExtractAnswers(r.Form, applicantQuestions)
 		// Upsert application + applicant form data
 		userRoleID := user.Roles[skylab.RoleApplicant]
-		_, err = sq.WithLog(apt.skylb.Log, sq.Lverbose).
+		_, err = sq.WithDefaultLog(sq.Lverbose).
 			Select(tables.UPSERT_APPLICATION_DATA(userRoleID, applicantAnswers, applicationAnswers)).
 			Exec(apt.skylb.DB, sq.ErowsAffected)
 		if err != nil {
@@ -278,7 +278,7 @@ func (apt Applicants) SubmitApplication(next http.Handler) http.Handler {
 			msgs[flash.Error] = []string{"You cannot submit your application as you are still missing a second team member"}
 			goto Next
 		}
-		_, err = sq.WithLog(apt.skylb.Log, sq.Lstats).
+		_, err = sq.WithDefaultLog(sq.Lstats).
 			Update(a).
 			Set(a.SUBMITTED.SetBool(true)).
 			Where(a.APPLICATION_ID.EqInt(applicationID)).

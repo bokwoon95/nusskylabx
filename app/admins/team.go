@@ -19,7 +19,7 @@ func (adm Admins) TeamView(w http.ResponseWriter, r *http.Request) {
 	}
 	var data skylab.TeamView
 	t := tables.V_TEAMS()
-	err = sq.WithLog(adm.skylb.Log, sq.Lverbose).
+	err = sq.WithDefaultLog(sq.Lverbose).
 		From(t).
 		Where(t.TEAM_ID.EqInt(teamID)).
 		SelectRowx((&data.Team).RowMapper(t)).

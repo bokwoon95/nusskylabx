@@ -37,7 +37,7 @@ func (stu Students) CanEditTeamFeedback(next http.Handler) http.Handler {
 			return
 		}
 		t, ft := tables.V_TEAMS(), tables.FEEDBACK_ON_TEAMS()
-		rowsAffected, err := sq.WithLog(stu.skylb.Log, sq.Lverbose).
+		rowsAffected, err := sq.WithDefaultLog(sq.Lverbose).
 			SelectOne().
 			From(ft).
 			Join(t, t.TEAM_ID.Eq(ft.EVALUATOR_TEAM_ID)).

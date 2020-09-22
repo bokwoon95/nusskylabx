@@ -25,7 +25,7 @@ func (adv Advisers) CanViewTeamEvaluation(next http.Handler) http.Handler {
 			return
 		}
 		te, s := tables.TEAM_EVALUATIONS(), tables.SUBMISSIONS()
-		rowsAffected, err := sq.WithLog(adv.skylb.Log, sq.Lstats).
+		rowsAffected, err := sq.WithDefaultLog(sq.Lstats).
 			SelectOne().
 			From(te).
 			Join(s, s.SUBMISSION_ID.Eq(te.EVALUATEE_SUBMISSION_ID)).

@@ -28,7 +28,7 @@ func (skylb Skylab) UserEvaluationEdit(role string) http.HandlerFunc {
 			return
 		}
 		ue := tables.V_USER_EVALUATIONS()
-		err = sq.WithLog(skylb.Log, sq.Lstats).
+		err = sq.WithDefaultLog(sq.Lstats).
 			From(ue).
 			Where(ue.USER_EVALUATION_ID.EqInt(userEvaluationID)).
 			SelectRowx((&data.Evaluation).RowMapper(ue)).

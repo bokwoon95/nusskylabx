@@ -32,7 +32,7 @@ func (adm Admins) ListApplications(w http.ResponseWriter, r *http.Request) {
 	var application skylab.Application
 	data.Cohort = cohort
 	a := tables.V_APPLICATIONS()
-	err := sq.WithLog(adm.skylb.Log, sq.Lverbose).
+	err := sq.WithDefaultLog(sq.Lverbose).
 		From(a).
 		Where(
 			a.COHORT.EqString(cohort),

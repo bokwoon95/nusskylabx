@@ -20,7 +20,7 @@ func (stu Students) Team(w http.ResponseWriter, r *http.Request) {
 	user, _ := r.Context().Value(skylab.ContextUser).(skylab.User)
 	studentUserRoleID := user.Roles[skylab.RoleStudent]
 	t := tables.V_TEAMS()
-	err := sq.WithLog(stu.skylb.Log, sq.Lverbose).
+	err := sq.WithDefaultLog(sq.Lverbose).
 		From(t).
 		Where(sq.Int(studentUserRoleID).In(sq.Fields{t.STUDENT1_USER_ROLE_ID, t.STUDENT2_USER_ID})).
 		SelectRowx((&data.Team).RowMapper(t)).

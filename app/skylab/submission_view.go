@@ -34,7 +34,7 @@ func (skylb Skylab) SubmissionView(role string) http.HandlerFunc {
 			skylb.Render(w, r, data, funcs, "app/skylab/submission_view.html", "helpers/formx/render_form_results.html")
 		}
 		s := tables.V_SUBMISSIONS()
-		err = sq.WithLog(skylb.Log, sq.Lverbose).
+		err = sq.WithDefaultLog(sq.Lverbose).
 			From(s).
 			Where(s.SUBMISSION_ID.EqInt(submissionID)).
 			SelectRowx((&data.Submission).RowMapper(s)).

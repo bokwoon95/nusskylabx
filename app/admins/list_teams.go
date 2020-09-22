@@ -32,7 +32,7 @@ func (adm Admins) ListTeams(w http.ResponseWriter, r *http.Request) {
 	data.Cohort = cohort
 	t := tables.V_TEAMS()
 	team := &skylab.Team{}
-	err := sq.WithLog(adm.skylb.Log, sq.Lverbose).
+	err := sq.WithDefaultLog(sq.Lverbose).
 		From(t).
 		Where(t.COHORT.EqString(cohort)).
 		Selectx(team.RowMapper(t), func() { data.Teams = append(data.Teams, *team) }).

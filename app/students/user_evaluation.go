@@ -52,7 +52,7 @@ func (stu Students) CanViewUserEvaluation(next http.Handler) http.Handler {
 
 		// Check if the evaluatorUserRoleID is either the team's adviser or mentor
 		t := tables.TEAMS()
-		rowsAffected, err := sq.WithLog(stu.skylb.Log, sq.Lstats).
+		rowsAffected, err := sq.WithDefaultLog(sq.Lstats).
 			SelectOne().
 			From(t).
 			Where(

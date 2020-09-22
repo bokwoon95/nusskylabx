@@ -27,7 +27,7 @@ func (adv Advisers) CanViewUserEvaluation(next http.Handler) http.Handler {
 			return
 		}
 		ue := tables.USER_EVALUATIONS()
-		rowsAffected, err := sq.WithLog(adv.skylb.Log, sq.Lverbose).
+		rowsAffected, err := sq.WithDefaultLog(sq.Lverbose).
 			SelectOne().
 			From(ue).
 			Where(
@@ -57,7 +57,7 @@ func (adv Advisers) CanEditUserEvaluation(next http.Handler) http.Handler {
 			return
 		}
 		ue := tables.USER_EVALUATIONS()
-		rowsAffected, err := sq.WithLog(adv.skylb.Log, sq.Lstats).
+		rowsAffected, err := sq.WithDefaultLog(sq.Lstats).
 			SelectOne().
 			From(ue).
 			Where(
@@ -98,7 +98,7 @@ func (adv Advisers) UserEvaluationCreate(next http.Handler) http.Handler {
 		// Get the formID for the milestone evaluation
 		p, f := tables.PERIODS(), tables.FORMS()
 		var formID int
-		err = sq.WithLog(adv.skylb.Log, sq.Lverbose).
+		err = sq.WithDefaultLog(sq.Lverbose).
 			From(f).
 			Join(p, p.PERIOD_ID.Eq(f.PERIOD_ID)).
 			Where(
@@ -123,7 +123,7 @@ func (adv Advisers) UserEvaluationCreate(next http.Handler) http.Handler {
 		// Insert or select a user evaluation, returning the userEvaluationID
 		ue := tables.USER_EVALUATIONS()
 		var userEvaluationID int
-		err = sq.WithLog(adv.skylb.Log, sq.Lverbose).
+		err = sq.WithDefaultLog(sq.Lverbose).
 			InsertInto(ue).
 			Columns(ue.EVALUATOR_USER_ROLE_ID, ue.EVALUATEE_SUBMISSION_ID, ue.EVALUATION_FORM_ID).
 			Values(user.Roles[skylab.RoleAdviser], submissionID, formID).
@@ -135,7 +135,7 @@ func (adv Advisers) UserEvaluationCreate(next http.Handler) http.Handler {
 			return
 		}
 		if errors.Is(err, sql.ErrNoRows) {
-			err = sq.WithLog(adv.skylb.Log, sq.Lverbose).
+			err = sq.WithDefaultLog(sq.Lverbose).
 				From(ue).
 				Where(
 					ue.EVALUATOR_USER_ROLE_ID.EqInt(user.Roles[skylab.RoleAdviser]),
@@ -166,7 +166,7 @@ func (adv Advisers) UserEvaluationUpdate(next http.Handler) http.Handler {
 		var questions formx.Questions
 		var answers formx.Answers
 		ue, f := tables.USER_EVALUATIONS(), tables.FORMS()
-		err = sq.WithLog(adv.skylb.Log, sq.Lstats).
+		err = sq.WithDefaultLog(sq.Lstats).
 			From(ue).
 			Join(f, f.FORM_ID.Eq(ue.EVALUATION_FORM_ID)).
 			Where(ue.USER_EVALUATION_ID.EqInt(userEvaluationID)).
@@ -191,7 +191,7 @@ func (adv Advisers) UserEvaluationUpdate(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		}
-		_, err = sq.WithLog(adv.skylb.Log, sq.Lstats).
+		_, err = sq.WithDefaultLog(sq.Lstats).
 			Update(ue).
 			Set(ue.EVALUATION_DATA.Set(answers)).
 			Where(ue.USER_EVALUATION_ID.EqInt(userEvaluationID)).
@@ -216,7 +216,7 @@ func (adv Advisers) UserEvaluationSubmit(next http.Handler) http.Handler {
 			return
 		}
 		ue := tables.USER_EVALUATIONS()
-		_, err = sq.WithLog(adv.skylb.Log, sq.Lstats).
+		_, err = sq.WithDefaultLog(sq.Lstats).
 			Update(ue).
 			Set(ue.SUBMITTED.SetBool(true)).
 			Where(ue.USER_EVALUATION_ID.EqInt(userEvaluationID)).

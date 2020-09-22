@@ -28,7 +28,7 @@ func (adm Admins) UserView(w http.ResponseWriter, r *http.Request) {
 	var data skylab.UserView
 	u := tables.USERS()
 	// Get User
-	err = sq.WithLog(adm.skylb.Log, sq.Lverbose).
+	err = sq.WithDefaultLog(sq.Lverbose).
 		From(u).
 		Where(u.USER_ID.EqInt(userID)).
 		SelectRowx(func(row *sq.Row) {
@@ -52,7 +52,7 @@ func (adm Admins) UserView(w http.ResponseWriter, r *http.Request) {
 	ur := tables.USER_ROLES()
 	// Get Roles
 	data.User.Roles = make(map[string]int)
-	err = sq.WithLog(adm.skylb.Log, sq.Lverbose).
+	err = sq.WithDefaultLog(sq.Lverbose).
 		From(ur).
 		Where(ur.USER_ID.EqInt(userID)).
 		Selectx(func(row *sq.Row) {
@@ -68,7 +68,7 @@ func (adm Admins) UserView(w http.ResponseWriter, r *http.Request) {
 	}
 	t, urs := tables.TEAMS(), tables.USER_ROLES_STUDENTS()
 	// Get Team
-	err = sq.WithLog(adm.skylb.Log, sq.Lverbose).
+	err = sq.WithDefaultLog(sq.Lverbose).
 		From(t).
 		Join(urs, urs.TEAM_ID.Eq(t.TEAM_ID)).
 		Where(urs.USER_ROLE_ID.EqInt(data.User.Roles[skylab.RoleStudent])).
@@ -92,7 +92,7 @@ func (adm Admins) UserView(w http.ResponseWriter, r *http.Request) {
 	}
 	var team skylab.Team
 	// Get AdvisingTeams
-	err = sq.WithLog(adm.skylb.Log, sq.Lverbose).From(t).Where(
+	err = sq.WithDefaultLog(sq.Lverbose).From(t).Where(
 		t.ADVISER_USER_ROLE_ID.EqInt(data.User.Roles[skylab.RoleAdviser]),
 	).Selectx(func(row *sq.Row) {
 		team.Valid = row.IntValid(t.TEAM_ID)
@@ -109,7 +109,7 @@ func (adm Admins) UserView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Get MentoringTeams
-	err = sq.WithLog(adm.skylb.Log, sq.Lverbose).From(t).Where(
+	err = sq.WithDefaultLog(sq.Lverbose).From(t).Where(
 		t.MENTOR_USER_ROLE_ID.EqInt(data.User.Roles[skylab.RoleMentor]),
 	).Selectx(func(row *sq.Row) {
 		team.Valid = row.IntValid(t.TEAM_ID)

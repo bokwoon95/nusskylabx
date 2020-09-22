@@ -21,7 +21,7 @@ func (adv Advisers) CanViewSubmission(next http.Handler) http.Handler {
 			return
 		}
 		t, s := tables.TEAMS(), tables.SUBMISSIONS()
-		rowsAffected, err := sq.WithLog(adv.skylb.Log, sq.Lstats).
+		rowsAffected, err := sq.WithDefaultLog(sq.Lstats).
 			SelectOne().
 			From(t).
 			Where(

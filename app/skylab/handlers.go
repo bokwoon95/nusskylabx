@@ -71,7 +71,7 @@ func (skylb Skylab) RedirectUserrole(w http.ResponseWriter, r *http.Request) {
 	var role string
 	var userRoleID int
 	u, ur := tables.USERS(), tables.USER_ROLES()
-	err := sq.WithLog(skylb.Log, sq.Lverbose).
+	err := sq.WithDefaultLog(sq.Lverbose).
 		From(u).
 		Join(ur, ur.USER_ID.Eq(u.USER_ID)).
 		Where(

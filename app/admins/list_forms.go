@@ -40,7 +40,7 @@ func (adm Admins) ListForms(w http.ResponseWriter, r *http.Request) {
 	f, p := tables.FORMS(), tables.PERIODS()
 	me, se := tables.MILESTONE_ENUM(), tables.STAGE_ENUM()
 	var form skylab.Form
-	err := sq.WithLog(adm.skylb.Log, sq.Lstats).
+	err := sq.WithDefaultLog(sq.Lstats).
 		From(f).
 		Join(p, p.PERIOD_ID.Eq(f.PERIOD_ID)).
 		Where(p.COHORT.EqString(cohort)).
@@ -100,7 +100,7 @@ func (adm Admins) ListFormsCreate(next http.Handler) http.Handler {
 		// select or create periodID with cohort, stage, milestone
 		var periodID int
 		p, f := tables.PERIODS(), tables.FORMS()
-		err := sq.WithLog(adm.skylb.Log, sq.Lverbose).
+		err := sq.WithDefaultLog(sq.Lverbose).
 			From(p).
 			Where(
 				p.COHORT.EqString(cohort),
@@ -110,7 +110,7 @@ func (adm Admins) ListFormsCreate(next http.Handler) http.Handler {
 			SelectRowx(func(row *sq.Row) { periodID = row.Int(p.PERIOD_ID) }).
 			Fetch(adm.skylb.DB)
 		if errors.Is(err, sql.ErrNoRows) {
-			err = sq.WithLog(adm.skylb.Log, sq.Lverbose).
+			err = sq.WithDefaultLog(sq.Lverbose).
 				InsertInto(p).Columns(p.COHORT, p.STAGE, p.MILESTONE).Values(cohort, stage, milestone).
 				ReturningRowx(func(row *sq.Row) { periodID = row.Int(p.PERIOD_ID) }).
 				Fetch(adm.skylb.DB)
@@ -123,7 +123,7 @@ func (adm Admins) ListFormsCreate(next http.Handler) http.Handler {
 
 		// select or create formID with periodID, name, subsection
 		var formID int
-		err = sq.WithLog(adm.skylb.Log, sq.Lverbose).
+		err = sq.WithDefaultLog(sq.Lverbose).
 			From(f).
 			Where(
 				f.PERIOD_ID.EqInt(periodID),
@@ -133,7 +133,7 @@ func (adm Admins) ListFormsCreate(next http.Handler) http.Handler {
 			SelectRowx(func(row *sq.Row) { formID = row.Int(f.FORM_ID) }).
 			Fetch(adm.skylb.DB)
 		if errors.Is(err, sql.ErrNoRows) {
-			err = sq.WithLog(adm.skylb.Log, sq.Lverbose).
+			err = sq.WithDefaultLog(sq.Lverbose).
 				InsertInto(f).Columns(f.PERIOD_ID, f.NAME, f.SUBSECTION).Values(periodID, name, subsection).
 				ReturningRowx(func(row *sq.Row) { formID = row.Int(f.FORM_ID) }).
 				Fetch(adm.skylb.DB)
@@ -232,7 +232,7 @@ func (adm Admins) duplicateForm(formID string, cohort, stage, milestone string) 
 		milestoneField = p2.MILESTONE
 	}
 	var periodID int
-	err := sq.WithLog(adm.skylb.Log, sq.Lverbose).
+	err := sq.WithDefaultLog(sq.Lverbose).
 		InsertInto(p1).
 		Columns(p1.COHORT, p1.STAGE, p1.MILESTONE, p1.START_AT, p1.END_AT).
 		Select(sq.
@@ -265,7 +265,7 @@ func (adm Admins) duplicateForm(formID string, cohort, stage, milestone string) 
 	if err != nil {
 		return erro.Wrap(err)
 	}
-	rowsAffected, err := sq.WithLog(adm.skylb.Log, sq.Lverbose).
+	rowsAffected, err := sq.WithDefaultLog(sq.Lverbose).
 		InsertInto(f1).
 		Columns(f1.PERIOD_ID, f1.NAME, f1.SUBSECTION, f1.QUESTIONS).
 		Select(sq.
@@ -294,7 +294,7 @@ func (adm Admins) ListFormsDelete(next http.Handler) http.Handler {
 		}
 		formIDs := r.Form["formID"]
 		f := tables.FORMS()
-		rowsAffected, err := sq.WithLog(adm.skylb.Log, sq.Lverbose).
+		rowsAffected, err := sq.WithDefaultLog(sq.Lverbose).
 			DeleteFrom(f).
 			Where(f.FORM_ID.In(formIDs)).
 			Exec(adm.skylb.DB, sq.ErowsAffected)

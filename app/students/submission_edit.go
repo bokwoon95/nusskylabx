@@ -39,7 +39,7 @@ func (stu Students) SubmissionEdit(w http.ResponseWriter, r *http.Request) {
 		stu.skylb.Render(w, r, data, funcs, "app/skylab/submission_edit.html", "helpers/formx/render_form.html")
 	}
 	s := tables.V_SUBMISSIONS()
-	err = sq.WithLog(stu.skylb.Log, sq.Lstats).
+	err = sq.WithDefaultLog(sq.Lstats).
 		From(s).
 		Where(s.SUBMISSION_ID.EqInt(submissionID)).
 		SelectRowx((&data.Submission).RowMapper(s)).
@@ -62,7 +62,7 @@ func (stu Students) SubmissionEdit(w http.ResponseWriter, r *http.Request) {
 	// Team evaluations
 	te := tables.V_TEAM_EVALUATIONS()
 	var teamEvaluation skylab.TeamEvaluation
-	err = sq.WithLog(stu.skylb.Log, sq.Lstats).
+	err = sq.WithDefaultLog(sq.Lstats).
 		From(te).
 		Where(te.SUBMISSION_ID.EqInt(submissionID)).
 		Selectx((&teamEvaluation).RowMapper(te), func() {
@@ -77,7 +77,7 @@ func (stu Students) SubmissionEdit(w http.ResponseWriter, r *http.Request) {
 	// Adviser + Mentor Evaluations
 	ue := tables.V_USER_EVALUATIONS()
 	var userEvaluation skylab.UserEvaluation
-	err = sq.WithLog(stu.skylb.Log, sq.Lstats).
+	err = sq.WithDefaultLog(sq.Lstats).
 		From(ue).
 		Where(ue.SUBMISSION_ID.EqInt(submissionID)).
 		Selectx((&userEvaluation).RowMapper(ue), func() {
@@ -117,7 +117,7 @@ func (stu Students) IdempotentSubmissionCreate(next http.Handler) http.Handler {
 		user, _ := r.Context().Value(skylab.ContextUser).(skylab.User)
 		ur, urs := tables.USER_ROLES(), tables.USER_ROLES_STUDENTS()
 		var teamID int
-		err := sq.WithLog(stu.skylb.Log, sq.Lverbose).
+		err := sq.WithDefaultLog(sq.Lverbose).
 			From(ur).
 			LeftJoin(urs, urs.USER_ROLE_ID.Eq(ur.USER_ROLE_ID)).
 			Where(
@@ -144,7 +144,7 @@ func (stu Students) IdempotentSubmissionCreate(next http.Handler) http.Handler {
 		// Get the formID for the milestone submission
 		p, f := tables.PERIODS(), tables.FORMS()
 		var formID int
-		err = sq.WithLog(stu.skylb.Log, sq.Lverbose).
+		err = sq.WithDefaultLog(sq.Lverbose).
 			From(f).
 			Join(p, p.PERIOD_ID.Eq(f.PERIOD_ID)).
 			Where(
@@ -172,7 +172,7 @@ func (stu Students) IdempotentSubmissionCreate(next http.Handler) http.Handler {
 		// simply SELECT for it instead.
 		s := tables.SUBMISSIONS()
 		var submissionID int
-		err = sq.WithLog(stu.skylb.Log, sq.Lverbose).
+		err = sq.WithDefaultLog(sq.Lverbose).
 			InsertInto(s).
 			Columns(s.TEAM_ID, s.SUBMISSION_FORM_ID).
 			Values(teamID, formID).
@@ -237,7 +237,7 @@ func (stu Students) SubmissionSubmit(next http.Handler) http.Handler {
 			return
 		}
 		s := tables.SUBMISSIONS()
-		_, err = sq.WithLog(stu.skylb.Log, sq.Lverbose).
+		_, err = sq.WithDefaultLog(sq.Lverbose).
 			Update(s).
 			Set(s.SUBMITTED.SetBool(true)).
 			Where(s.SUBMISSION_ID.EqInt(submissionID)).

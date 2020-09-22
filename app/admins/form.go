@@ -65,7 +65,7 @@ func (adm Admins) FormUpdate(next http.Handler) http.Handler {
 		_ = formutil.ParseForm(r)
 		data := r.FormValue("data")
 		f := tables.FORMS()
-		_, err = sq.WithLog(adm.skylb.Log, sq.Lstats).
+		_, err = sq.WithDefaultLog(sq.Lstats).
 			Update(f).
 			Set(f.QUESTIONS.Set(data)).
 			Where(f.FORM_ID.EqInt(formID)).

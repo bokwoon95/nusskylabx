@@ -20,7 +20,7 @@ func (apt Applicants) Applicant(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	a := tables.V_APPLICATIONS()
-	rowsAffected, err := sq.WithLog(apt.skylb.Log, sq.Lstats).
+	rowsAffected, err := sq.WithDefaultLog(sq.Lstats).
 		SelectOne().
 		From(a).
 		Where(

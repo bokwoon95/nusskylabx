@@ -34,7 +34,7 @@ func (adv Advisers) MilestoneTeamEvaluation(section string) http.HandlerFunc {
 			From(t).
 			Where(t.ADVISER_USER_ROLE_ID.EqInt(user.Roles[skylab.RoleAdviser])).
 			CTE("advisers_teams")
-		err := sq.WithLog(adv.skylb.Log, sq.Lstats).
+		err := sq.WithDefaultLog(sq.Lstats).
 			With(advisers_teams).
 			From(te).
 			Where(

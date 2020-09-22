@@ -250,7 +250,7 @@ func (skylb Skylab) RedirectAfterLogout(w http.ResponseWriter, r *http.Request) 
 func (skylb Skylab) SessionIdIsValidRole(sessionID string, role string) (valid bool, err error) {
 	sessionHash := skylb.Hash([]byte(sessionID))
 	ss, ur := tables.SESSIONS(), tables.USER_ROLES()
-	rowsAffected, err := sq.WithLog(skylb.Log, sq.Lverbose).
+	rowsAffected, err := sq.WithDefaultLog(sq.Lverbose).
 		From(ss).
 		Join(ur, ur.USER_ID.Eq(ss.USER_ID)).
 		Where(
