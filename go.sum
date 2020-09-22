@@ -63,6 +63,10 @@ github.com/bkaradzic/go-lz4 v1.0.0/go.mod h1:0YdlkowM3VswSROI7qDxhRvJ3sLhlFrRRwj
 github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869/go.mod h1:Ekp36dRnpXw/yCqJaO+ZrUyxD+3VXMFFr56k5XYrpB4=
 github.com/bokwoon95/go-structured-query v0.2.1 h1:3Q6S5k5z2PRkYc1ZoeoUuvi58FHmd8DS3g+1lc7ZxgY=
 github.com/bokwoon95/go-structured-query v0.2.1/go.mod h1:DPhEkp4UUjqrQ1++cMf0N3s8WdWeeSoqybCXGqOONAk=
+github.com/bokwoon95/go-structured-query v0.2.3 h1:pCs6HRBZNxYhucvF0ZHbSIf9fHE29hEgw61zM9a/iYo=
+github.com/bokwoon95/go-structured-query v0.2.3/go.mod h1:DPhEkp4UUjqrQ1++cMf0N3s8WdWeeSoqybCXGqOONAk=
+github.com/bokwoon95/go-structured-query v0.4.0 h1:4ss/wh+F+M6uHdzL4wEn4Zgyw8j3QjfT52zLhx+uUH0=
+github.com/bokwoon95/go-structured-query v0.4.0/go.mod h1:DPhEkp4UUjqrQ1++cMf0N3s8WdWeeSoqybCXGqOONAk=
 github.com/brianvoe/gofakeit v3.18.0+incompatible h1:wDOmHc9DLG4nRjUVVaxA+CEglKOW72Y5+4WNxUIkjM8=
 github.com/brianvoe/gofakeit v3.18.0+incompatible/go.mod h1:kfwdRA90vvNhPutZWfH7WPaDzUjz+CZFqG+rPkOjGOc=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
