@@ -7,7 +7,7 @@ go 1.14
 require (
 	cloud.google.com/go v0.66.0 // indirect
 	github.com/DATA-DOG/go-txdb v0.1.3
-	github.com/bokwoon95/go-structured-query v0.4.0
+	github.com/bokwoon95/go-structured-query v0.4.1
 	github.com/brianvoe/gofakeit v3.18.0+incompatible
 	github.com/containerd/containerd v1.4.0 // indirect
 	github.com/davecgh/go-spew v1.1.1

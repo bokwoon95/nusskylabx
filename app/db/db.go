@@ -57,15 +57,17 @@ func (d DB) CreateUser(user skylab.User, cohort string) (skylab.User, error) {
 		return user, erro.Wrap(err)
 	}
 	ur := tables.USER_ROLES()
-	ins := sq.WithDefaultLog(sq.Lstats).InsertInto(ur)
-	for role := range user.Roles {
-		ins = ins.InsertRow(
-			ur.COHORT.SetString(cohort),
-			ur.USER_ID.SetInt(user.UserID),
-			ur.ROLE.SetString(role),
-		)
-	}
-	_, err = ins.OnConflict().DoNothing().Exec(d.skylb.DB, sq.ErowsAffected)
+	_, err = sq.WithDefaultLog(sq.Lstats).
+		InsertInto(ur).
+		Valuesx(func(col *sq.Column) {
+			for role := range user.Roles {
+				col.SetString(ur.COHORT, cohort)
+				col.SetInt(ur.USER_ID, user.UserID)
+				col.SetString(ur.ROLE, role)
+			}
+		}).
+		OnConflict().DoNothing().
+		Exec(d.skylb.DB, sq.ErowsAffected)
 	if err != nil {
 		return user, erro.Wrap(err)
 	}
