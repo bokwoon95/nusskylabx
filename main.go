@@ -23,6 +23,7 @@ func main() {
 	flag.Parse()
 	log.SetFlags(log.LstdFlags | log.Llongfile)
 	skylab.LoadDotenv()
+	// ENTRYPOINT: All routes are registered here
 	skylb, err := app.NewSkylab(skylab.Config{
 		BaseURL:       os.Getenv("BASE_URL"),
 		Port:          os.Getenv("PORT"),

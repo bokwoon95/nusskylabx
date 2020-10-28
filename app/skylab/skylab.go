@@ -87,11 +87,7 @@ type Config struct {
 	SmtpPassword  string
 }
 
-// Skylab represents a common backend object that handles anything web related,
-// but is blind to the database. It parses HTTP requests into Go variables to
-// be handed to the Orbital object for database persistence/processing.
-// The Apt & Stu & Adv & Mnt & Adm & Shr structs will embed the Skylab struct,
-// hence inheriting any methods and fields exported by Skylab
+// Skylab is the server struct.
 type Skylab struct {
 	BaseURL     string
 	port        string
@@ -105,6 +101,7 @@ type Skylab struct {
 	DisableCsrf bool
 
 	// Mailer
+	// NOTE: not used
 	MailerEnabled bool
 	SmtpHost      string
 	SmtpPort      int
@@ -119,7 +116,7 @@ type Skylab struct {
 }
 
 // NewWithoutDB creates a new instance of Skylab that initializes everything
-// except the database connection
+// except the database connection.
 func NewWithoutDB(config Config) Skylab {
 	skylb := Skylab{}
 
@@ -214,7 +211,7 @@ func New(config Config) (Skylab, error) {
 // NewWithTestDB creates a new instance of Skylab with a test database. The
 // test database reuses the same DATABASE_URL as the actual database, except
 // all changes are rolled back once the test database is closed i.e.
-// DB.Close(). This makes it fantastic for running database tests on, without
+// DB.Close(). This makes it easy for running database-related tests, without
 // affecting the actual state of the database. You can optionally provide a
 // txdbIdentifier string to id the test database being created, or you can
 // leave it blank for a random identifier to be used. I assume databases with
