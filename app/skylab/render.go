@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/bokwoon95/nusskylabx/helpers/cookies"
+	"github.com/bokwoon95/nusskylabx/helpers/erro"
 	"github.com/bokwoon95/nusskylabx/helpers/flash"
 	"github.com/bokwoon95/nusskylabx/helpers/headers"
 	"github.com/davecgh/go-spew/spew"
@@ -97,6 +98,89 @@ func (skylb Skylab) Render(w http.ResponseWriter, r *http.Request, data interfac
 	w.Header().Set("Content-Type", "text/html")
 	w.Header().Set("X-CSRF-Token", csrf.Token(r))
 	_, _ = buf.WriteTo(w)
+}
+
+func (skylb Skylab) Render2(w http.ResponseWriter, r *http.Request, templateName string, data map[string]interface{}) {
+	base := make(map[string]interface{}) // find better name
+	var predatum []map[string]interface{}
+	predatum = append(predatum,
+		GetVars(r.Context()),
+		data,
+	)
+	for _, predata := range predatum {
+		for key, value := range predata {
+			base[key] = value
+		}
+	}
+	if shouldJSONify(w, r) {
+		skylb.renderJSON(w, r, base)
+		return
+	}
+	buf := skylb.Bufpool.Get()
+	defer skylb.Bufpool.Put(buf)
+	err := skylb.Templates.Execute(buf, base)
+	if err != nil {
+		_, sourcefile, linenr, _ := runtime.Caller(1)
+		skylb.InternalServerError(w, r,
+			fmt.Errorf("%s:%d tried to render %s and failed: %w", sourcefile, linenr, templateName, err),
+		)
+		return
+	}
+	// If no error, set headers and write temporary buffer into w http.ResponseWriter
+	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("X-CSRF-Token", csrf.Token(r))
+	_, _ = buf.WriteTo(w)
+}
+
+func (skylb Skylab) getTemplates() (*template.Template, error) {
+	t := template.New("")
+	filenames := []string{
+		ProjectRootDir + "app/skylab/head.html",
+		ProjectRootDir + "app/skylab/navbar.html",
+		ProjectRootDir + "app/skylab/sidebar.html",
+		ProjectRootDir + "helpers/flash/flash.html",
+	}
+	funcs := template.FuncMap{}
+	funcs = skylb.addConsts(funcs)
+	// TODO: need to convert stateful functions (that take in the current request) into variables
+	// funcs = skylb.NavbarFuncs(funcs, w, r)
+	funcs = skylb.AddInputSelects(funcs)
+	funcs = AddSections(funcs)
+	// funcs = flash.Funcs(funcs, w, r, skylb.SecretKey)
+	// funcs = headers.Funcs(funcs, r)
+	// funcs["SkylabParentTemplateFilename"] = func() string { return filename } // needed for head.html, do not remove
+	funcs["SkylabSidebarItem"] = sidebarItem
+	funcs["SkylabBaseURL"] = func() string { return skylb.BaseURLWithProtocol() }
+	funcs["SkylabMilestoneName"] = MilestoneName
+	funcs["SkylabMilestoneNameAbbrev"] = MilestoneNameAbbrev
+	funcs["SkylabSanitizeHTML"] = SanitizeHTML(skylb.Policy)
+	funcs["SkylabSGTime"] = SGTime
+	t, err := t.Funcs(funcs).Option("missingkey=zero").ParseFiles(filenames...)
+	if err != nil {
+		return t, erro.Wrap(err)
+	}
+	globs := []string{
+		"app/*.html",
+		"app/admins/*.html",
+		"app/advisers/*.html",
+		"app/applicants/*.html",
+		"app/mentors/*.html",
+		"app/students/*.html",
+	}
+	for _, glob := range globs {
+		files, err := filepath.Glob(ProjectRootDir + glob)
+		if err != nil {
+			return t, erro.Wrap(err)
+		}
+		for _, file := range files {
+			name := strings.TrimPrefix(file, ProjectRootDir)
+			t, err = t.New(name).ParseFiles(file)
+			if err != nil {
+				return t, erro.Wrap(err)
+			}
+		}
+	}
+	return t, nil
 }
 
 func SanitizeHTML(policy *bluemonday.Policy) func(string) template.HTML {

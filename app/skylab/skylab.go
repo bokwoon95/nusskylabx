@@ -99,6 +99,7 @@ type Skylab struct {
 	Bufpool     *bpool.BufferPool
 	Log         *logutil.Logger
 	DisableCsrf bool
+	Templates   *template.Template
 
 	// Mailer
 	// NOTE: not used
