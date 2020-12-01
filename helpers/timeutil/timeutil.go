@@ -3,7 +3,6 @@ package timeutil
 
 import (
 	"database/sql"
-	"html/template"
 	"regexp"
 	"strconv"
 	"strings"
@@ -20,9 +19,9 @@ type Timestatus struct {
 	InvalidStartEnd bool
 }
 
-func Funcs(funcs template.FuncMap) template.FuncMap {
+func Funcs(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs["TimeutilResolveTimestatus"] = ResolveTimestatus
 	return funcs

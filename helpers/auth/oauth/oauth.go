@@ -7,7 +7,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -32,9 +31,9 @@ func IsValidProvider(provider string) bool {
 	return providers[provider]
 }
 
-func AddConstProvider(funcs template.FuncMap) template.FuncMap {
+func AddConstProvider(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs["ProviderGoogle"] = func() string { return ProviderGoogle }
 	funcs["ProviderFacebook"] = func() string { return ProviderFacebook }

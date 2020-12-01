@@ -9,7 +9,6 @@ import (
 	"encoding/base64"
 	"encoding/gob"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strings"
 
@@ -142,9 +141,9 @@ func IsValidProvider(provider string) bool {
 	return openid.IsValidProvider(provider) || oauth.IsValidProvider(provider)
 }
 
-func AddConstProvider(funcs template.FuncMap) template.FuncMap {
+func AddConstProvider(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs = openid.AddConstProvider(funcs)
 	funcs = oauth.AddConstProvider(funcs)

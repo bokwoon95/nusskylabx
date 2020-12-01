@@ -2,7 +2,6 @@ package skylab
 
 import (
 	"context"
-	"html/template"
 	"net/http"
 
 	"github.com/bokwoon95/nusskylabx/helpers/erro"
@@ -40,9 +39,9 @@ func ProjectLevels() []string {
 }
 
 // addConstProjectLevel adds ProjectLevel consts to FuncMap
-func addConstProjectLevel(funcs template.FuncMap) template.FuncMap {
+func addConstProjectLevel(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs["SkylabProjectLevels"] = func() []string { return ProjectLevels() }
 	funcs["ProjectLevelVostok"] = func() string { return ProjectLevelVostok }
@@ -90,9 +89,9 @@ func Roles() []string {
 }
 
 // addConstRole adds Role consts to FuncMap
-func addConstRole(funcs template.FuncMap) template.FuncMap {
+func addConstRole(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs["SkylabRoles"] = func() []string { return Roles() }
 	funcs["RoleApplicant"] = func() string { return RoleApplicant }
@@ -135,9 +134,9 @@ func ApplicationStatuses() []string {
 }
 
 // addConstApplicationStatus adds ApplicationStatus consts to FuncMap
-func addConstApplicationStatus(funcs template.FuncMap) template.FuncMap {
+func addConstApplicationStatus(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs["SkylabApplicationStatuses"] = func() []string { return ApplicationStatuses() }
 	funcs["ApplicationStatusPending"] = func() string { return ApplicationStatusPending }
@@ -187,9 +186,9 @@ func TeamStatuses() []string {
 }
 
 // addConstTeamStatus adds TeamStatus consts to FuncMap
-func addConstTeamStatus(funcs template.FuncMap) template.FuncMap {
+func addConstTeamStatus(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs["SkylabTeamStatuses"] = func() []string { return TeamStatuses() }
 	funcs["TeamStatusGood"] = func() string { return TeamStatusGood }
@@ -230,9 +229,9 @@ func Stages() []string {
 }
 
 // addConstStage adds Stage consts to FuncMap
-func addConstStage(funcs template.FuncMap) template.FuncMap {
+func addConstStage(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs["SkylabStages"] = func() []string { return Stages() }
 	funcs["StageApplication"] = func() string { return StageApplication }
@@ -275,9 +274,9 @@ func Milestones() []string {
 }
 
 // addConstMilestone adds Milestone consts to FuncMap
-func addConstMilestone(funcs template.FuncMap) template.FuncMap {
+func addConstMilestone(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs["SkylabMilestones"] = func() []string { return Milestones() }
 	funcs["Milestone1"] = func() string { return Milestone1 }

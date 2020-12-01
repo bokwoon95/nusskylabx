@@ -97,9 +97,9 @@ type UserEdit struct {
 	TeamBaseURL    string
 }
 
-func UserViewFuncs(funcs template.FuncMap, data UserView) template.FuncMap {
+func UserViewFuncs(funcs map[string]interface{}, data UserView) map[string]interface{} {
 	if funcs == nil {
-		funcs = make(template.FuncMap)
+		funcs = make(map[string]interface{})
 	}
 	funcs["DisplayTeams"] = displayTeams(data.TeamBaseURL)
 	return funcs

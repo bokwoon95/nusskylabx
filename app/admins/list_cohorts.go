@@ -2,7 +2,6 @@ package admins
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
 	"strconv"
 
@@ -38,7 +37,7 @@ func (adm Admins) ListCohorts(w http.ResponseWriter, r *http.Request) {
 		msgs[flash.Error] = []string{"Could not compute the next cohort after " + adm.skylb.LatestCohort()}
 	}
 	r, _ = adm.skylb.SetFlashMsgs(w, r, msgs)
-	funcs := template.FuncMap{}
+	funcs := map[string]interface{}{}
 	adm.skylb.Render(w, r, data, funcs, "app/admins/list_cohorts.html")
 }
 

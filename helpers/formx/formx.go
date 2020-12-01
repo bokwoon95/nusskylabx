@@ -132,9 +132,9 @@ const (
 	QuestionTypeNull       = ""
 )
 
-func addQuestionTypes(funcs template.FuncMap) template.FuncMap {
+func addQuestionTypes(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs["QuestionTypeParagraph"] = func() string { return QuestionTypeParagraph }
 	funcs["QuestionTypeShorttext"] = func() string { return QuestionTypeShorttext }
@@ -149,9 +149,9 @@ func addQuestionTypes(funcs template.FuncMap) template.FuncMap {
 	return funcs
 }
 
-func Funcs(funcs template.FuncMap, policy *bluemonday.Policy) template.FuncMap {
+func Funcs(funcs map[string]interface{}, policy *bluemonday.Policy) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs = addQuestionTypes(funcs)
 	funcs["idfy"] = idfy

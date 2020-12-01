@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"strings"
@@ -32,9 +31,9 @@ const (
 	actionError    // Used if an unknown error occurs i.e. server side error
 )
 
-func addCreateUserActions(funcs template.FuncMap) template.FuncMap {
+func addCreateUserActions(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs["actionCreateUser"] = func() createUserAction { return actionCreateUser }
 	funcs["actionCreateRole"] = func() createUserAction { return actionCreateRole }
@@ -197,7 +196,7 @@ func (adm Admins) CreateUserConfirm(w http.ResponseWriter, r *http.Request) {
 			data.SortedUsers[user.Action] = append(data.SortedUsers[user.Action], user)
 		}
 	}
-	funcs := template.FuncMap{}
+	funcs := map[string]interface{}{}
 	funcs = addCreateUserActions(funcs)
 	funcs = templateutil.Funcs(funcs)
 	funcs["bitwiseOr"] = bitwiseOr

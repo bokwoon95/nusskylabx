@@ -1,7 +1,6 @@
 package advisers
 
 import (
-	"html/template"
 	"net/http"
 	"strconv"
 
@@ -98,7 +97,7 @@ func (adv Advisers) EvaluatorEvaluatees(w http.ResponseWriter, r *http.Request) 
 		adv.skylb.InternalServerError(w, r, err)
 		return
 	}
-	funcs := template.FuncMap{}
+	funcs := map[string]interface{}{}
 	funcs = templateutil.Funcs(funcs)
 	funcs = templateutil.Sql(funcs)
 	adv.skylb.Render(w, r, data, funcs, "app/advisers/evaluator_evaluatees.html")

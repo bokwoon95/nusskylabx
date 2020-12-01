@@ -1,7 +1,6 @@
 package admins
 
 import (
-	"html/template"
 	"net/http"
 	"strconv"
 
@@ -49,7 +48,7 @@ func (adm Admins) FormEdit(w http.ResponseWriter, r *http.Request) {
 	data.QuestionsAnswers = formx.MergeQuestionsAnswers(data.Form.Questions, formx.Answers{})
 	data.PreviewURL = skylab.AdminForm + "/" + strconv.Itoa(formID) + "/preview"
 	data.UpdateURL = skylab.AdminForm + "/" + strconv.Itoa(formID) + "/update"
-	funcs := template.FuncMap{}
+	funcs := map[string]interface{}{}
 	funcs = templateutil.Funcs(funcs)
 	adm.skylb.Render(w, r, data, funcs, "app/skylab/form_edit.html")
 }
@@ -101,7 +100,7 @@ func (adm Admins) FormView(w http.ResponseWriter, r *http.Request) {
 	data.QuestionsAnswers = formx.MergeQuestionsAnswers(questions, formx.Answers{})
 	data.EditURL = skylab.AdminForm + "/" + strconv.Itoa(formID) + "/edit"
 	data.UpdateURL = skylab.AdminForm + "/" + strconv.Itoa(formID) + "/update"
-	funcs := template.FuncMap{}
+	funcs := map[string]interface{}{}
 	funcs = formx.Funcs(funcs, adm.skylb.Policy)
 	adm.skylb.Render(w, r, data, funcs, "app/skylab/form_view.html", "helpers/formx/render_form.html")
 }

@@ -3,15 +3,14 @@ package templateutil
 import (
 	"database/sql"
 	"fmt"
-	"html/template"
 	"strconv"
 	"time"
 )
 
 // Sql contains Template Functions for working with "database/sql" types
-func Sql(funcs template.FuncMap) template.FuncMap {
+func Sql(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs["Sql_NullValue"] = NullValue
 	return funcs

@@ -53,7 +53,7 @@ func TemplatesFuncmap(w http.ResponseWriter, r *http.Request) {
 		},
 		TemperatureCelcius: random.Float64(),
 	}
-	funcs := template.FuncMap{
+	funcs := map[string]interface{}{
 		"C_To_F":      CelciusToFarenheit,
 		"hello_world": HelloWorld,
 	}

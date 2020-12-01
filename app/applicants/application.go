@@ -3,7 +3,6 @@ package applicants
 import (
 	"database/sql"
 	"fmt"
-	"html/template"
 	"net/http"
 	"regexp"
 	"strings"
@@ -53,7 +52,7 @@ func (apt Applicants) Application(w http.ResponseWriter, r *http.Request) {
 		apt.skylb.InternalServerError(w, r, err)
 		return
 	}
-	funcs := template.FuncMap{}
+	funcs := map[string]interface{}{}
 	funcs = formx.Funcs(funcs, apt.skylb.Policy)
 	apt.skylb.Render(w, r, data, funcs, "app/applicants/application.html", "helpers/formx/render_form.html")
 }

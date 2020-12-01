@@ -27,7 +27,7 @@ import (
 // template "app/skylab/navbar.html") are injected. If you want to add any
 // globally available template functions or templates files, this is the place
 // to do it
-func (skylb Skylab) Render(w http.ResponseWriter, r *http.Request, data interface{}, funcs template.FuncMap, filename string, filenames ...string) {
+func (skylb Skylab) Render(w http.ResponseWriter, r *http.Request, data interface{}, funcs map[string]interface{}, filename string, filenames ...string) {
 	// if requested, render JSON instead of HTML and return
 	if shouldJSONify(w, r) {
 		skylb.renderJSON(w, r, data)
@@ -51,7 +51,7 @@ func (skylb Skylab) Render(w http.ResponseWriter, r *http.Request, data interfac
 	}
 	// Add global template functions
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs = skylb.addConsts(funcs)
 	funcs = skylb.NavbarFuncs(funcs, w, r)
@@ -162,7 +162,7 @@ func (skylb Skylab) getTemplates() (*template.Template, error) {
 		ProjectRootDir + "app/skylab/sidebar.html",
 		ProjectRootDir + "helpers/flash/flash.html",
 	}
-	funcs := template.FuncMap{}
+	funcs := map[string]interface{}{}
 	// funcs = skylb.addConsts(funcs)
 	funcs = skylb.AddInputSelects(funcs)
 	funcs = AddSections(funcs)
@@ -270,9 +270,9 @@ func (skylb Skylab) renderJSON(w http.ResponseWriter, r *http.Request, data inte
 }
 
 // addConsts adds all Orbital/Skylab related consts to FuncMap
-func (skylb Skylab) addConsts(funcs template.FuncMap) template.FuncMap {
+func (skylb Skylab) addConsts(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs = skylb.addConstCohort(funcs)
 	funcs = addConstProjectLevel(funcs)
@@ -284,7 +284,7 @@ func (skylb Skylab) addConsts(funcs template.FuncMap) template.FuncMap {
 	return funcs
 }
 
-func (skylb Skylab) addConstCohort(funcs template.FuncMap) template.FuncMap {
+func (skylb Skylab) addConstCohort(funcs map[string]interface{}) map[string]interface{} {
 	// cohorts := skylb.Cohorts()
 	latest := skylb.LatestCohort()
 	current := skylb.CurrentCohort()

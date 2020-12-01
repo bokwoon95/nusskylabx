@@ -2,7 +2,6 @@ package skylab
 
 import (
 	"context"
-	"html/template"
 	"net/http"
 
 	"github.com/bokwoon95/nusskylabx/helpers/cookies"
@@ -111,7 +110,7 @@ var sectionSymbols = map[string]string{
 	AdminTestmail:          "AdminTestmail", // experimental
 }
 
-func AddSections(funcs template.FuncMap) template.FuncMap {
+func AddSections(funcs map[string]interface{}) map[string]interface{} {
 	for section, symbol := range sectionSymbols {
 		section, symbol := section, symbol
 		funcs[symbol] = func() string { return section }

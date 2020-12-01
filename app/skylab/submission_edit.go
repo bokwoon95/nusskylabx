@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strconv"
 
@@ -31,7 +30,7 @@ func (skylb Skylab) SubmissionEdit(role string) http.HandlerFunc {
 			return
 		}
 		render := func(data SubmissionEditData, msgs map[string][]string) {
-			var funcs template.FuncMap
+			var funcs map[string]interface{}
 			funcs = formx.Funcs(funcs, skylb.Policy)
 			r = skylb.SetRoleSection(w, r, role, skylb.getSectionFromSubmissionID(submissionID, role))
 			r, _ = skylb.SetFlashMsgs(w, r, msgs)

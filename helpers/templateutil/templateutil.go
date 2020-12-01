@@ -7,15 +7,14 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"strings"
 	"time"
 )
 
 // Funcs contains miscellaneous Template Functions
-func Funcs(funcs template.FuncMap) template.FuncMap {
+func Funcs(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs["_Stringify"] = Stringify
 	funcs["_Sha1Hash"] = Sha1Hash

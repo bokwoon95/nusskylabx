@@ -40,9 +40,9 @@ func InputSelect(vds []ValueDisplay, name, defaultValue, class string) template.
 	return template.HTML(buf.String())
 }
 
-func (skylb Skylab) AddInputSelects(funcs template.FuncMap) template.FuncMap {
+func (skylb Skylab) AddInputSelects(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs["SkylabSelectCohort"] = skylb.InputSelectCohort
 	funcs["SkylabSelectCohortOptional"] = skylb.InputSelectCohortOptional

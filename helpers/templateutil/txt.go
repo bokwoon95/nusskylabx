@@ -2,16 +2,15 @@ package templateutil
 
 import (
 	"fmt"
-	"html/template"
 	"strconv"
 	"strings"
 	"unicode"
 )
 
 // Txt contains Template Functions that make text more presentable
-func Txt(funcs template.FuncMap) template.FuncMap {
+func Txt(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs["Txt_Aan"] = Aan
 	funcs["Txt_Itoa"] = Itoa

@@ -1,14 +1,13 @@
 package skylab
 
 import (
-	"html/template"
 	"net/http"
 )
 
 // NavbarFuncs contain the Template Functions required for rendering the navbar "app/skylab/navbar.html"
-func (skylb Skylab) NavbarFuncs(funcs template.FuncMap, w http.ResponseWriter, r *http.Request) template.FuncMap {
+func (skylb Skylab) NavbarFuncs(funcs map[string]interface{}, w http.ResponseWriter, r *http.Request) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs = addConstRole(funcs)
 	funcs["SkylabCsrfToken"] = csrfToken(r)

@@ -1,7 +1,6 @@
 package skylab
 
 import (
-	"html/template"
 	"net/http"
 	"strings"
 
@@ -30,6 +29,6 @@ func (skylb Skylab) ChooseProvider(next http.Handler) http.Handler {
 			Magicstring: magicstring,
 			RequestURL:  r.RequestURI,
 		}
-		skylb.Render(w, r, data, auth.AddConstProvider(template.FuncMap{}), "app/skylab/choose_provider.html")
+		skylb.Render(w, r, data, auth.AddConstProvider(map[string]interface{}{}), "app/skylab/choose_provider.html")
 	})
 }

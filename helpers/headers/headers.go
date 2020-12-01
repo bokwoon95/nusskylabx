@@ -3,7 +3,6 @@ package headers
 
 import (
 	"context"
-	"html/template"
 	"net/http"
 	"regexp"
 	"strings"
@@ -11,7 +10,7 @@ import (
 	"github.com/bokwoon95/nusskylabx/helpers/random"
 )
 
-func Funcs(funcs template.FuncMap, r *http.Request) template.FuncMap {
+func Funcs(funcs map[string]interface{}, r *http.Request) map[string]interface{} {
 	funcs["HeadersCSPNonce"] = func() string {
 		nonce, _ := r.Context().Value(CspNonceCtxkey).(string)
 		return nonce

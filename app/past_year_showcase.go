@@ -1,7 +1,6 @@
 package app
 
 import (
-	"html/template"
 	"math/rand"
 	"net/http"
 	"time"
@@ -42,7 +41,7 @@ func (ap App) PastYearShowcase(w http.ResponseWriter, r *http.Request) {
 	data.ProjectLevel = projectlevel
 	data.Numbers = make([]int, 100)
 	rand.Seed(time.Now().UnixNano())
-	funcs := template.FuncMap{
+	funcs := map[string]interface{}{
 		"RandomTeamName": random.TeamName,
 		"RandomInt":      func() int { return rand.Intn(100000) },
 	}

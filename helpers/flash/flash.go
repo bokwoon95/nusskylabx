@@ -4,7 +4,6 @@ package flash
 import (
 	"context"
 	"errors"
-	"html/template"
 	"net/http"
 	"time"
 
@@ -34,9 +33,9 @@ const (
 	Warning = "warning"
 )
 
-func Funcs(funcs template.FuncMap, w http.ResponseWriter, r *http.Request, key string) template.FuncMap {
+func Funcs(funcs map[string]interface{}, w http.ResponseWriter, r *http.Request, key string) map[string]interface{} {
 	if funcs == nil {
-		funcs = template.FuncMap{}
+		funcs = map[string]interface{}{}
 	}
 	funcs["FlashMsgSuccess"] = func() string { return Success }
 	funcs["FlashMsgError"] = func() string { return Error }
