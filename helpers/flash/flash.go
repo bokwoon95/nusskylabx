@@ -55,6 +55,9 @@ func Funcs(funcs template.FuncMap, w http.ResponseWriter, r *http.Request, key s
 	return funcs
 }
 
+func SetVars() {
+}
+
 type Encoder struct {
 	Key string
 }

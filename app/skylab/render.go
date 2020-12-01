@@ -101,24 +101,46 @@ func (skylb Skylab) Render(w http.ResponseWriter, r *http.Request, data interfac
 }
 
 func (skylb Skylab) Render2(w http.ResponseWriter, r *http.Request, templateName string, data map[string]interface{}) {
-	base := make(map[string]interface{}) // find better name
-	var predatum []map[string]interface{}
-	predatum = append(predatum,
+	mainData := make(map[string]interface{})
+	var dataList []map[string]interface{}
+	dataList = append(dataList,
 		GetVars(r.Context()),
 		data,
 	)
-	for _, predata := range predatum {
-		for key, value := range predata {
-			base[key] = value
+	for _, DATA := range dataList {
+		for key, value := range DATA {
+			mainData[key] = value
 		}
 	}
+	skylabData := make(map[string]interface{})
+	if DATA, ok := mainData["skylab"]; ok {
+		if MAPDATA, ok := DATA.(map[string]interface{}); ok {
+			skylabData = MAPDATA
+		}
+	}
+	skylabData["ParentTemplateFilename"] = templateName
+	skylabData["CSRFToken"] = csrf.TemplateField(r)
+	skylabData["IsProd"] = skylb.IsProd
+
+	role, _ := r.Context().Value(ContextCurrentRole).(string)
+	skylabData["CurrentRole"] = role
+
+	section, _ := r.Context().Value(ContextCurrentSection).(string)
+	skylabData["CurrentSection"] = section
+
+	user, _ := r.Context().Value(ContextUser).(User)
+	skylabData["User"] = user
+
+	admin, _ := r.Context().Value(ContextAdmin).(User)
+	skylabData["Admin"] = admin
+
 	if shouldJSONify(w, r) {
-		skylb.renderJSON(w, r, base)
+		skylb.renderJSON(w, r, mainData)
 		return
 	}
 	buf := skylb.Bufpool.Get()
 	defer skylb.Bufpool.Put(buf)
-	err := skylb.Templates.Execute(buf, base)
+	err := skylb.Templates.Execute(buf, mainData)
 	if err != nil {
 		_, sourcefile, linenr, _ := runtime.Caller(1)
 		skylb.InternalServerError(w, r,
@@ -141,16 +163,16 @@ func (skylb Skylab) getTemplates() (*template.Template, error) {
 		ProjectRootDir + "helpers/flash/flash.html",
 	}
 	funcs := template.FuncMap{}
-	funcs = skylb.addConsts(funcs)
-	// TODO: need to convert stateful functions (that take in the current request) into variables
-	// funcs = skylb.NavbarFuncs(funcs, w, r)
+	// funcs = skylb.addConsts(funcs)
 	funcs = skylb.AddInputSelects(funcs)
 	funcs = AddSections(funcs)
 	// funcs = flash.Funcs(funcs, w, r, skylb.SecretKey)
 	// funcs = headers.Funcs(funcs, r)
-	// funcs["SkylabParentTemplateFilename"] = func() string { return filename } // needed for head.html, do not remove
+	funcs["SkylabUserIsRole"] = userIsRole
+	funcs["SkylabUserIsApplicantOnly"] = userIsApplicantOnly
+	funcs["SkylabAdminCreateUser"] = AdminCreateUser
 	funcs["SkylabSidebarItem"] = sidebarItem
-	funcs["SkylabBaseURL"] = func() string { return skylb.BaseURLWithProtocol() }
+	funcs["SkylabBaseURL"] = skylb.BaseURLWithProtocol()
 	funcs["SkylabMilestoneName"] = MilestoneName
 	funcs["SkylabMilestoneNameAbbrev"] = MilestoneNameAbbrev
 	funcs["SkylabSanitizeHTML"] = SanitizeHTML(skylb.Policy)
