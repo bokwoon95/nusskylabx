@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   {{template "app/skylab/head.html"}}
-  <title>{{SkylabMilestoneName $.Milestone}} Evaluation</title>
+  <title>{{MilestoneName $.Milestone}} Evaluation</title>
 </head>
 <body class="tripanel-l">
   {{template "app/skylab/navbar.html"}}
   {{template "app/skylab/sidebar.html"}}
   <div class="sans-serif pa2 pa4-l">
-    <h3 class="ma0 mb4">{{SkylabMilestoneName $.Milestone}}</h3>
+    <h3 class="ma0 mb4">{{MilestoneName $.Milestone}}</h3>
     <div class="widget mb4">
       <!-- WidgetTitle -->
       <div class="widget-title pv2 ph3 bg-near-white flex justify-between items-center">
@@ -38,7 +38,7 @@
                 {{else if $evaluation.Valid}}
                   <button type="submit" class="button ph2 bg-near-white hover-bg-light-silver ml1">Edit/Submit Evaluation</button>
                 {{else}}
-                  {{SkylabCsrfToken}}
+                  {{$.skylab.CSRFToken}}
                   <input type="hidden" name="milestone" value="{{$.Milestone}}">
                   <input type="hidden" name="submissionID" value="{{$evaluation.Evaluatee.SubmissionID}}">
                   <button
@@ -64,7 +64,7 @@
       <!-- End WidgetBody -->
     </div>
     <div class="gray">
-      {{SkylabSGTime $.Period.StartAt}} — {{SkylabSGTime $.Period.EndAt}}
+      {{SGTime $.Period.StartAt}} — {{SGTime $.Period.EndAt}}
       {{$timestatus := TimeutilResolveTimestatus $.Period.StartAt $.Period.EndAt}}&nbsp;
       {{if $timestatus.IsOpen}}
       open

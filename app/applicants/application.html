@@ -60,7 +60,7 @@
         <!-- End Team Member 2 -->
 
         <form method="post" action="/applicant/application/update" autocomplete="off" class="">
-          {{SkylabCsrfToken}}
+          {{$.skylab.CSRFToken}}
           {{$ApplicationData := FormxMergeQuestionsAnswers $.Application.ApplicationForm.Questions $.Application.ApplicationAnswers}}
           {{$ApplicantData := FormxMergeQuestionsAnswers $.Application.ApplicantForm.Questions $.Application.Applicant1Answers}}
           {{if eq $.ApplicantUserID $.Application.Applicant2.UserID}}

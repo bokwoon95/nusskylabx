@@ -13,7 +13,7 @@
         <div class="widget pa3">
           <h3>You don't have an application</h3>
           <form method="post" action="/applicant/application/create">
-            {{SkylabCsrfToken}}
+            {{$.skylab.CSRFToken}}
             <button
               type="submit"
               class="button pa2 bg-light-green hover-bg-green"

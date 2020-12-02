@@ -4,11 +4,25 @@ package flash
 import (
 	"context"
 	"errors"
+	"html/template"
+	"io/ioutil"
 	"net/http"
+	"os"
+	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/bokwoon95/nusskylabx/helpers/cookies"
 	"github.com/bokwoon95/nusskylabx/helpers/erro"
+)
+
+var (
+	// sourcefile is the path to this file
+	_, sourcefile, _, _ = runtime.Caller(0)
+	// ProjectRootDir will point to wherever this project's root directory is located
+	// on the user's computer. It is calculated as an offset of two
+	// directories up from the flash.go file
+	ProjectRootDir = filepath.Join(filepath.Dir(sourcefile), ".."+string(os.PathSeparator)+"..") + string(os.PathSeparator)
 )
 
 // FlashMsg represents a flash message
@@ -54,7 +68,46 @@ func Funcs(funcs map[string]interface{}, w http.ResponseWriter, r *http.Request,
 	return funcs
 }
 
-func SetVars() {
+func GetData(w http.ResponseWriter, r *http.Request, key string, sanitizeHTML func(string) template.HTML) map[string]interface{} {
+	data := make(map[string]interface{})
+	data["Success"] = Success
+	data["Error"] = Error
+	data["Warning"] = Warning
+	fe := NewEncoder(key)
+	flashmsgsMap, err := fe.GetFlashMsgs(w, r)
+	data["GetFlashMsg"] = func(name string) (FlashMsg, error) {
+		err := err
+		flashmsgs := flashmsgsMap[name]
+		if len(flashmsgs) > 0 {
+			return flashmsgs[0], err
+		}
+		return FlashMsg{}, err
+	}
+	data["GetFlashMsgs"] = func(name string) ([]FlashMsg, error) {
+		err := err
+		return flashmsgsMap[name], err
+	}
+	if sanitizeHTML == nil {
+		sanitizeHTML = func(s string) template.HTML {
+			return template.HTML(s)
+		}
+	}
+	data["SanitizeHTML"] = sanitizeHTML
+	return data
+}
+
+func GetTemplate() (*template.Template, error) {
+	b, err := ioutil.ReadFile(ProjectRootDir + "helpers/flash/flash.html")
+	if err != nil {
+		return nil, erro.Wrap(err)
+	}
+	t, err := template.
+		New("helpers/flash/flash.html").
+		Parse(string(b))
+	if err != nil {
+		return t, erro.Wrap(err)
+	}
+	return t, nil
 }
 
 type Encoder struct {

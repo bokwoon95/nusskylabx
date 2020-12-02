@@ -10,7 +10,7 @@
   <div class="sans-serif pa2 pa4-l">
     {{template "helpers/flash/flash.html"}}
     <form id="csv-form" method="post" action="{{AdminCreateUserConfirm}}" class="widget">
-      {{SkylabCsrfToken}}
+      {{$.skylab.CSRFToken}}
       <!-- <input type="hidden" name="dumpjson" value="true"> -->
       <div class="widget-title pv2 ph3 bg-near-white">
         <h4 class="ma0">Create User Role</h4>

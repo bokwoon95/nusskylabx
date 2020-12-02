@@ -9,7 +9,6 @@ import (
 
 	"github.com/bokwoon95/nusskylabx/app/skylab"
 	"github.com/bokwoon95/nusskylabx/helpers/headers"
-	"github.com/bokwoon95/nusskylabx/helpers/random"
 )
 
 func (ap App) PastYearShowcase(w http.ResponseWriter, r *http.Request) {
@@ -31,19 +30,11 @@ func (ap App) PastYearShowcase(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type Data struct {
-		Cohort       string
-		ProjectLevel string
-		Numbers      []int
-	}
-	var data Data
-	data.Cohort = cohort
-	data.ProjectLevel = projectlevel
-	data.Numbers = make([]int, 100)
+	data := make(map[string]interface{})
+	data["Cohort"] = cohort
+	data["ProjectLevel"] = projectlevel
+	data["Numbers"] = make([]int, 100)
 	rand.Seed(time.Now().UnixNano())
-	funcs := map[string]interface{}{
-		"RandomTeamName": random.TeamName,
-		"RandomInt":      func() int { return rand.Intn(100000) },
-	}
-	ap.skylb.Render(w, r, data, funcs, "app/past_year_showcase.html")
+	data["RandomInt"] = func() int { return rand.Intn(100000) }
+	ap.skylb.Wender(w, r, "app/past_year_showcase.html", data)
 }

@@ -6,5 +6,5 @@ import (
 
 func (ap App) Landing(w http.ResponseWriter, r *http.Request) {
 	ap.skylb.Log.TraceRequest(r)
-	ap.skylb.Render(w, r, nil, nil, "app/landing.html")
+	ap.skylb.Wender(w, r, "app/landing.html", nil)
 }

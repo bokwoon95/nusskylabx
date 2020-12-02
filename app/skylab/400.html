@@ -10,7 +10,7 @@
     <div class="pa4">
       <img src="/static/img/ssl_error.png" class="">
       <h1 class="f-subheadline">400 Bad Request</h1>
-      <p class="f4">{{SkylabSanitizeHTML $.Msg}}</p>
+      <p class="f4">{{SanitizeHTML $.Msg}}</p>
       <pre>{{$.Location}}</pre>
       <a href="#" class="goback">&lt; Back</a>
       <script nonce="{{HeadersCSPNonce}}">

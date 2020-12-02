@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="/static/micromodal.css">
   <title></title>
 </head>
-<body class="{{if SkylabCurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
+<body class="{{if $.skylab.CurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
   {{template "app/skylab/navbar.html"}}
   {{template "app/skylab/sidebar.html"}}
   <div class="sans-serif pa2 pa4-l">
@@ -31,7 +31,7 @@
     <div>
       <button type="button" id="create-btn" class="button ph2 bg-light-green hover-bg-green">Create</button>
       <form id="delete-btn-form" method="post" action="{{AdminListPeriods}}/delete" class="dib">
-        {{SkylabCsrfToken}}
+        {{$.skylab.CSRFToken}}
         <span id="delete-btn-list"></span>
         <button type="button" id="delete-btn" class="button ph2 bg-light-red hover-bg-red dn">Delete</button>
       </form>
@@ -57,8 +57,8 @@
           <td>{{$period.Cohort}}</td>
           <td>{{$period.Stage}}</td>
           <td>{{$period.Milestone}}</td>
-          <td>{{SkylabSGTime $period.StartAt}}</td>
-          <td>{{SkylabSGTime $period.EndAt}}</td>
+          <td>{{SGTime $period.StartAt}}</td>
+          <td>{{SGTime $period.EndAt}}</td>
         </tr>
         {{end}}
       </tbody>
@@ -67,7 +67,7 @@
 
   <!-- CreateForm -->
   <form id="create-btn-form" method="post" action="{{AdminListPeriods}}/create" class="modal micromodal-slide sans-serif" aria-hidden="true">
-    {{SkylabCsrfToken}}
+    {{$.skylab.CSRFToken}}
     <div class="modal__overlay" tabindex="-1" data-micromodal-close>
       <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
         <header class="modal__header">
@@ -117,7 +117,7 @@
 
   <!-- CohortDuplicate -->
   <form id="cohort-duplicate-form" method="post" action="{{AdminListPeriods}}/duplicate" class="modal micromodal-slide sans-serif" aria-hidden="true">
-    {{SkylabCsrfToken}}
+    {{$.skylab.CSRFToken}}
     <div class="modal__overlay" tabindex="-1" data-micromodal-close>
       <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
         <header class="modal__header">

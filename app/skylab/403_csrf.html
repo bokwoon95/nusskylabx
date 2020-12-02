@@ -10,10 +10,10 @@
     <h1 class="f-subheadline">CSRF Token Invalid</h1>
     <p class="f4">Request ID: {{$.RequestID}}</p>
     <p class="f4">URL: {{$.URL}}</p>
-    {{if SkylabIsProd}}
+    {{if $.skylab.IsProd}}
     <div>Please contact the admin if this page was unexpected</div>
     {{else}}
-    <div class="f4">Did you remember to add a <pre style="display: inline;">&#123;&#123;SkylabCsrfToken&#125;&#125;</pre> to the POST form request?</div>
+    <div class="f4">Did you remember to add a <pre style="display: inline;">&#123;&#123;$.skylab.CSRFToken&#125;&#125;</pre> to the POST form request?</div>
     <p></p>
     <pre>{{$.FormStr}}</pre>
     {{end}}

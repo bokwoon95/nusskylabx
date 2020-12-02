@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   {{template "app/skylab/head.html"}}
-  <title>{{SkylabMilestoneName $.Milestone}} Peer Evaluations</title>
+  <title>{{MilestoneName $.Milestone}} Peer Evaluations</title>
 </head>
 <body class="tripanel-l">
   {{template "app/skylab/navbar.html"}}
   {{template "app/skylab/sidebar.html"}}
   <div class="sans-serif pa2 pa4-l">
-    <h3 class="ma0 mb4">{{SkylabMilestoneName $.Milestone}}</h3>
+    <h3 class="ma0 mb4">{{MilestoneName $.Milestone}}</h3>
     <div class="grid-2-1-1 grid-gap-3">
       {{range $i, $evaluationGroup := $.EvaluationGroups}}
         {{if len $evaluationGroup}}

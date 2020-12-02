@@ -39,7 +39,6 @@ func AllRoutes(skylb skylab.Skylab) {
 	}
 	skylb.Mux.Use(skylb.AddProdContext)           // Add prod or dev context to request
 	skylb.Mux.Use(headers.SecurityHeadersHandler) // Add security related headers to every request
-	skylb.Mux.Use(skylab.SetVarsHandler("skylab"))
 
 	Routes(skylb)
 	SkylabRoutes(skylb)

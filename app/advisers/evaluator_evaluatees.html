@@ -12,7 +12,7 @@
       <p>You have no assigned teams.</p>
     {{else}}
     <form method="post" action="{{AdviserEvaluatorEvaluatees}}/update" class="">
-        {{SkylabCsrfToken}}
+        {{$.skylab.CSRFToken}}
         <button
           type="submit"
           class="button pa2 bg-light-green hover-bg-green"

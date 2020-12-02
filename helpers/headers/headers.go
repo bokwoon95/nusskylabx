@@ -18,6 +18,15 @@ func Funcs(funcs map[string]interface{}, r *http.Request) map[string]interface{}
 	return funcs
 }
 
+func GetData(r *http.Request) map[string]interface{} {
+	data := make(map[string]interface{})
+	data["HeadersCSPNonce"] = func() string {
+		nonce, _ := r.Context().Value(CspNonceCtxkey).(string)
+		return nonce
+	}
+	return data
+}
+
 // DoNotCache tells the browser to never cache the page being rendered.
 // Performance will take a hit because the server must serve more requests, but
 // sometimes it is vital that the data on a page stays fresh. Examples include

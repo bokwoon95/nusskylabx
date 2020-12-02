@@ -1,12 +1,12 @@
 <!-- Main Sidebar -->
 {{define "app/skylab/sidebar.html"}}
-{{if eq SkylabCurrentRole RoleStudent}}
+{{if eq $.skylab.CurrentRole RoleStudent}}
   {{template "app/skylab/sidebar.html:student"}}
-{{else if eq SkylabCurrentRole RoleAdviser}}
+{{else if eq $.skylab.CurrentRole RoleAdviser}}
   {{template "app/skylab/sidebar.html:adviser"}}
-{{else if eq SkylabCurrentRole RoleMentor}}
+{{else if eq $.skylab.CurrentRole RoleMentor}}
   {{template "app/skylab/sidebar.html:mentor"}}
-{{else if eq SkylabCurrentRole RoleAdmin}}
+{{else if eq $.skylab.CurrentRole RoleAdmin}}
   {{template "app/skylab/sidebar.html:admin"}}
 {{end}}
 <script src="/static/ensure_in_view.js"></script>
@@ -23,18 +23,18 @@
       <a href="/" class="sidebar-orbital-logo-l f1 decorative no-underline navy-inverse">Orbital</a>
     </div>
     <div class="">
-      {{template "app/skylab/sidebar.html:item" SkylabSidebarItem StudentDashboard "dashboard_svg" "Dashboard"}}
-      {{template "app/skylab/sidebar.html:item" SkylabSidebarItem StudentTeam "people_svg" "Your Team"}}
+      {{template "app/skylab/sidebar.html:item" Map "skylab" $.skylab "Section" StudentDashboard "Icon" "dashboard_svg" "Display" "Dashboard"}}
+      {{template "app/skylab/sidebar.html:item" Map "skylab" $.skylab "Section" StudentTeam "Icon" "people_svg" "Display" "Your Team"}}
       {{template "app/skylab/sidebar.html:category" "Milestone 1"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem StudentM1Submission "submission_svg" "Submission"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem StudentM1Evaluation "evaluation_svg" "Evaluation"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" StudentM1Submission "Icon" "submission_svg" "Display" "Submission"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" StudentM1Evaluation "Icon" "evaluation_svg" "Display" "Evaluation"}}
       {{template "app/skylab/sidebar.html:category" "Milestone 2"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem StudentM2Submission "submission_svg" "Submission"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem StudentM2Evaluation "evaluation_svg" "Evaluation"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" StudentM2Submission "Icon" "submission_svg" "Display" "Submission"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" StudentM2Evaluation "Icon" "evaluation_svg" "Display" "Evaluation"}}
       {{template "app/skylab/sidebar.html:category" "Milestone 3"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem StudentM3Submission "submission_svg" "Submission"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem StudentM3Evaluation "evaluation_svg" "Evaluation"}}
-      {{template "app/skylab/sidebar.html:item" SkylabSidebarItem StudentListFeedbacks "feedback_svg" "Feedback"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" StudentM3Submission "Icon" "submission_svg" "Display" "Submission"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" StudentM3Evaluation "Icon" "evaluation_svg" "Display" "Evaluation"}}
+      {{template "app/skylab/sidebar.html:item" Map "skylab" $.skylab "Section" StudentListFeedbacks "Icon" "feedback_svg" "Display" "Feedback"}}
     </div>
   </div>
 </nav>
@@ -50,20 +50,20 @@
       <a href="/" class="sidebar-orbital-logo-l f1 decorative no-underline navy-inverse">Orbital</a>
     </div>
     <div class="">
-      {{template "app/skylab/sidebar.html:item" SkylabSidebarItem AdviserDashboard "dashboard_svg" "Dashboard"}}
-      {{template "app/skylab/sidebar.html:item" SkylabSidebarItem AdviserTeams "people_svg" "Teams"}}
+      {{template "app/skylab/sidebar.html:item" Map "skylab" $.skylab "Section" AdviserDashboard "Icon" "dashboard_svg" "Display" "Dashboard"}}
+      {{template "app/skylab/sidebar.html:item" Map "skylab" $.skylab "Section" AdviserTeams "Icon" "people_svg" "Display" "Teams"}}
       {{template "app/skylab/sidebar.html:category" "Evaluationships"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdviserEvaluateeEvaluators "join_queue_svg" "Sort By Evaluatees"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdviserEvaluatorEvaluatees "leave_queue_svg" "Sort By Evaluators"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdviserEvaluateeEvaluators "Icon" "join_queue_svg" "Display" "Sort By Evaluatees"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdviserEvaluatorEvaluatees "Icon" "leave_queue_svg" "Display" "Sort By Evaluators"}}
       {{template "app/skylab/sidebar.html:category" "Milestone 1"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdviserM1ViewEvaluation "evaluation_svg" "View Evaluation"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdviserM1MakeEvaluation "submission_svg" "Make Evaluation"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdviserM1ViewEvaluation "Icon" "evaluation_svg" "Display" "View Evaluation"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdviserM1MakeEvaluation "Icon" "submission_svg" "Display" "Make Evaluation"}}
       {{template "app/skylab/sidebar.html:category" "Milestone 2"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdviserM2ViewEvaluation "evaluation_svg" "View Evaluations"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdviserM2MakeEvaluation "submission_svg" "Make Evaluations"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdviserM2ViewEvaluation "Icon" "evaluation_svg" "Display" "View Evaluations"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdviserM2MakeEvaluation "Icon" "submission_svg" "Display" "Make Evaluations"}}
       {{template "app/skylab/sidebar.html:category" "Milestone 3"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdviserM3ViewEvaluation "evaluation_svg" "View Evaluations"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdviserM3MakeEvaluation "submission_svg" "Make Evaluations"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdviserM3ViewEvaluation "Icon" "evaluation_svg" "Display" "View Evaluations"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdviserM3MakeEvaluation "Icon" "submission_svg" "Display" "Make Evaluations"}}
     </div>
   </div>
 </nav>
@@ -79,7 +79,7 @@
       <a href="/" class="sidebar-orbital-logo-l f1 decorative no-underline navy-inverse">Orbital</a>
     </div>
     <div class="">
-      {{template "app/skylab/sidebar.html:item" SkylabSidebarItem MentorDashboard "dashboard_svg" "Dashboard"}}
+      {{template "app/skylab/sidebar.html:item" Map "skylab" $.skylab "Section" MentorDashboard "Icon" "dashboard_svg" "Display" "Dashboard"}}
     </div>
   </div>
 </nav>
@@ -95,23 +95,23 @@
       <a href="/" class="sidebar-orbital-logo-l f1 decorative no-underline navy-inverse">Orbital</a>
     </div>
     <div class="">
-      {{template "app/skylab/sidebar.html:item" SkylabSidebarItem AdminDashboard "dashboard_svg" "Dashboard"}}
+      {{template "app/skylab/sidebar.html:item" Map "skylab" $.skylab "Section" AdminDashboard "Icon" "dashboard_svg" "Display" "Dashboard"}}
       {{template "app/skylab/sidebar.html:category" "Data Entry"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminCreateUser "person_svg" "User"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdminCreateUser "Icon" "person_svg" "Display" "User"}}
 
       {{template "app/skylab/sidebar.html:category" "Manage"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminListCohorts "calendar_svg" "Cohorts"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminListPeriods "hourglass_svg" "Periods"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminListForms "document_svg" "Forms"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminListUsers "person_svg" "Users"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminListTeams "people_svg" "Teams"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminListApplications "paperstack_svg" "Applications"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdminListCohorts "Icon" "calendar_svg" "Display" "Cohorts"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdminListPeriods "Icon" "hourglass_svg" "Display" "Periods"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdminListForms "Icon" "document_svg" "Display" "Forms"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdminListUsers "Icon" "person_svg" "Display" "Users"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdminListTeams "Icon" "people_svg" "Display" "Teams"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdminListApplications "Icon" "paperstack_svg" "Display" "Applications"}}
 
       {{template "app/skylab/sidebar.html:category" "View Form Response"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminListFeedbacks "feedback_svg" "Feedback"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdminListFeedbacks "Icon" "feedback_svg" "Display" "Feedback"}}
 
       {{template "app/skylab/sidebar.html:category" "Dev Utilities"}}
-      {{template "app/skylab/sidebar.html:item_indented" SkylabSidebarItem AdminDumpJson "code_svg" "Dump JSON"}}
+      {{template "app/skylab/sidebar.html:item_indented" Map "skylab" $.skylab "Section" AdminDumpJson "Icon" "code_svg" "Display" "Dump JSON"}}
     </div>
   </div>
 </nav>
@@ -128,16 +128,15 @@
 
 <!-- Item -->
 {{define "app/skylab/sidebar.html:item"}}
-{{$SidebarItem := .}}
-<div class="flex items-center pv1 ph3 {{if eq SkylabCurrentSection $SidebarItem.Section}}bg-dark-blue{{end}}">
-  {{template "app/skylab/sidebar.html:sidebar_icon" $SidebarItem.Icon}}
+<div class="flex items-center pv1 ph3 {{if eq $.skylab.CurrentSection $.Section}}bg-dark-blue{{end}}">
+  {{template "app/skylab/sidebar.html:sidebar_icon" $.Icon}}
   <span class="ph1"></span>
   <a
-    href="{{$SidebarItem.Section}}"
-    title="{{$SidebarItem.Section}}"
-    class="no-underline light-silver flex-item hover-text {{if eq SkylabCurrentSection $SidebarItem.Section}}white{{end}}"
+    href="{{$.Section}}"
+    title="{{$.Section}}"
+    class="no-underline light-silver flex-item hover-text {{if eq $.skylab.CurrentSection $.Section}}white{{end}}"
     >
-    {{$SidebarItem.Display}}
+    {{$.Display}}
   </a>
 </div>
 {{end}}
@@ -145,16 +144,15 @@
 
 <!-- Item Indented -->
 {{define "app/skylab/sidebar.html:item_indented"}}
-{{$SidebarItem := .}}
-<div class="flex items-center pv1 ph3 {{if eq SkylabCurrentSection $SidebarItem.Section}}bg-dark-blue current-item{{else}}bg-dark-gray{{end}}">
-  {{template "app/skylab/sidebar.html:sidebar_icon" $SidebarItem.Icon}}
+<div class="flex items-center pv1 ph3 {{if eq $.skylab.CurrentSection $.Section}}bg-dark-blue current-item{{else}}bg-dark-gray{{end}}">
+  {{template "app/skylab/sidebar.html:sidebar_icon" $.Icon}}
   <span class="ph1"></span>
   <a
-    href="{{$SidebarItem.Section}}"
-    title="{{$SidebarItem.Section}}"
-    class="pl2 no-underline light-silver flex-item hover-text {{if eq SkylabCurrentSection $SidebarItem.Section}}white{{end}}"
+    href="{{$.Section}}"
+    title="{{$.Section}}"
+    class="pl2 no-underline light-silver flex-item hover-text {{if eq $.skylab.CurrentSection $.Section}}white{{end}}"
     >
-    {{$SidebarItem.Display}}
+    {{$.Display}}
   </a>
 </div>
 {{end}}

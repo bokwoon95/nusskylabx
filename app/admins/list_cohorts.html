@@ -6,7 +6,7 @@
   <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
   <title></title>
 </head>
-<body class="{{if SkylabCurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
+<body class="{{if $.skylab.CurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
   {{template "app/skylab/navbar.html"}}
   {{template "app/skylab/sidebar.html"}}
   <div class="sans-serif pa2 pa4-l">
@@ -15,17 +15,17 @@
       <button type="button" id="select-all-btn" class="button ph2 bg-moon-gray hover-bg-light-silver">Select All</button>
       <button type="button" id="unselect-all-btn" class="button ph2 bg-light-gray hover-bg-light-silver">Unselect All</button>
       <form method="post" action="{{AdminListCohorts}}/refresh" class="dib">
-        {{SkylabCsrfToken}}
+        {{$.skylab.CSRFToken}}
         <button type="submit" id="refresh-btn" class="button ph2 bg-lightest-blue hover-bg-light-blue">Refresh List</button>
       </form>
     </div>
     <div class="pv1"></div>
     <form method="post" action="{{AdminListCohorts}}/{{$.NextCohort}}/create" class="dib">
-      {{SkylabCsrfToken}}
+      {{$.skylab.CSRFToken}}
       <button type="submit" id="create-btn" class="button ph2 bg-light-green hover-bg-green">Create Cohort {{$.NextCohort}}</button>
     </form>
     <form id="delete-btn-form" method="post" action="{{AdminListCohorts}}/delete" class="dib">
-      {{SkylabCsrfToken}}
+      {{$.skylab.CSRFToken}}
       <span id="delete-btn-list"></span>
       <button type="submit" id="delete-btn" class="button ph2 bg-light-red hover-bg-red dn">Delete</button>
     </form>

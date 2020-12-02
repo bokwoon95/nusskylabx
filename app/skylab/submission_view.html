@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   {{template "app/skylab/head.html"}}
-  <title>{{$.Submission.Team.TeamName}} | {{SkylabMilestoneNameAbbrev $.Submission.SubmissionForm.Period.Milestone}} Submission</title>
+  <title>{{$.Submission.Team.TeamName}} | {{MilestoneNameAbbrev $.Submission.SubmissionForm.Period.Milestone}} Submission</title>
 </head>
-<body class="{{if SkylabCurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
+<body class="{{if $.skylab.CurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
   {{template "app/skylab/navbar.html"}}
   {{template "app/skylab/sidebar.html"}}
   <div class="sans-serif pa2 pa4-l">
@@ -27,7 +27,7 @@
       {{end}}
       {{template "actions" .}}
       <p></p>
-      <h4 class="ma0">{{SkylabMilestoneName $.Submission.SubmissionForm.Period.Milestone}} Submission</h4>
+      <h4 class="ma0">{{MilestoneName $.Submission.SubmissionForm.Period.Milestone}} Submission</h4>
       <div class="">
         By: <span class="gray">[{{$.Submission.Team.TeamID}}] [{{$.Submission.Team.ProjectLevel}}]</span>
         {{$.Submission.Team.TeamName}}
@@ -41,7 +41,7 @@
       {{template "helpers/formx/render_form_results.html" FormxMergeQuestionsAnswers $.Submission.SubmissionForm.Questions $.Submission.SubmissionAnswers}}
       {{if and (not $.Submission.Submitted) $.SubmitURL}}
         <form id="submissionform" method="post" action="{{$.SubmitURL}}" class="dib">
-          {{SkylabCsrfToken}}
+          {{$.skylab.CSRFToken}}
           <input type="hidden" name="view" value="true">
         </form>
       {{end}}

@@ -8,10 +8,10 @@
   {{template "app/skylab/navbar.html"}}
   {{template "app/skylab/sidebar.html"}}
   <div class="sans-serif pa2 pa4-l">
-    <div class="f4">{{SkylabSanitizeHTML $.Title}}</div>
-    <div class="mid-gray">{{SkylabSanitizeHTML $.Description}}</div>
+    <div class="f4">{{SanitizeHTML $.Title}}</div>
+    <div class="mid-gray">{{SanitizeHTML $.Description}}</div>
     <div><a href="{{$.DemoLink}}">Demo Link.</a></div>
-    <div class="f6">{{SkylabSanitizeHTML $.PageData}}</div>
+    <div class="f6">{{SanitizeHTML $.PageData}}</div>
     <div class="pv1"></div>
     <b>Enter to submit, Shift + Enter for newline</b>
     <form id="url-form" method="get" action="{{AdminDumpJson}}/url">

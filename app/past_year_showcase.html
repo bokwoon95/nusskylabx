@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html"}}
+  {{template "app/skylab/head.html" .}}
   <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@15.1.1/dist/lazyload.min.js"></script>
-  <title></title>
+  <title>Past Year Showcase</title>
 </head>
-<body class="{{if eq SkylabCurrentRole RoleNull}}bipanel-l{{else}}tripanel-l{{end}}">
-  {{template "app/skylab/navbar.html"}}
-  {{template "app/skylab/sidebar.html"}}
+<body class="{{if eq $.skylab.CurrentRole RoleNull}}bipanel-l{{else}}tripanel-l{{end}}">
+  {{template "app/skylab/navbar.html" .}}
+  {{template "app/skylab/sidebar.html" .}}
   <div class="sans-serif pa2 pa4-l">
     <div class="f4">
       {{range $i, $cohort := SkylabCohorts}}
@@ -34,7 +34,7 @@
         <img
           style="height:100%;width:100%;object-fit:cover"
           src="/static/img/{{$.ProjectLevel}}.png"
-          data-src="https://source.unsplash.com/random/480x480?sig={{RandomInt}}"
+          data-src="https://source.unsplash.com/random/480x480?sig={{$.RandomInt}}"
           class="lazy"
           >
       </div>

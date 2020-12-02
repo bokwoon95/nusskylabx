@@ -17,20 +17,16 @@ func (ap App) User(w http.ResponseWriter, r *http.Request) {
 	}
 	user, _ := r.Context().Value(skylab.ContextUser).(skylab.User)
 	admin, _ := r.Context().Value(skylab.ContextAdmin).(skylab.User)
-	type Data struct {
-		User skylab.User
-		Role string
-	}
-	var data Data
+	data := make(map[string]interface{})
 	if asUser {
-		data.User = user
-		data.Role = "user"
+		data["User"] = user
+		data["Role"] = "user"
 	}
 	if asAdmin {
-		data.User = admin
-		data.Role = "admin"
+		data["User"] = admin
+		data["Role"] = "admin"
 	}
-	ap.skylb.Render(w, r, data, nil, "app/user.html")
+	ap.skylb.Wender(w, r, "app/user.html", data)
 }
 
 func (ap App) UserUpdate(w http.ResponseWriter, r *http.Request) {

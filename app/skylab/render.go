@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"net/http"
 	"path/filepath"
 	"runtime"
@@ -59,8 +60,8 @@ func (skylb Skylab) Render(w http.ResponseWriter, r *http.Request, data interfac
 	funcs = AddSections(funcs)
 	funcs = flash.Funcs(funcs, w, r, skylb.SecretKey)
 	funcs = headers.Funcs(funcs, r)
-	funcs["SkylabParentTemplateFilename"] = func() string { return filename } // needed for head.html, do not remove
-	funcs["SkylabSidebarItem"] = sidebarItem
+	// funcs["SkylabParentTemplateFilename"] = func() string { return filename } // needed for head.html, do not remove
+	// funcs["SkylabSidebarItem"] = sidebarItem
 	funcs["SkylabBaseURL"] = func() string { return skylb.BaseURLWithProtocol() }
 	funcs["SkylabMilestoneName"] = MilestoneName
 	funcs["SkylabMilestoneNameAbbrev"] = MilestoneNameAbbrev
@@ -100,47 +101,34 @@ func (skylb Skylab) Render(w http.ResponseWriter, r *http.Request, data interfac
 	_, _ = buf.WriteTo(w)
 }
 
-func (skylb Skylab) Render2(w http.ResponseWriter, r *http.Request, templateName string, data map[string]interface{}) {
-	mainData := make(map[string]interface{})
-	var dataList []map[string]interface{}
-	dataList = append(dataList,
-		GetVars(r.Context()),
-		data,
-	)
-	for _, DATA := range dataList {
-		for key, value := range DATA {
-			mainData[key] = value
-		}
-	}
-	skylabData := make(map[string]interface{})
-	if DATA, ok := mainData["skylab"]; ok {
-		if MAPDATA, ok := DATA.(map[string]interface{}); ok {
-			skylabData = MAPDATA
-		}
-	}
-	skylabData["ParentTemplateFilename"] = templateName
-	skylabData["CSRFToken"] = csrf.TemplateField(r)
-	skylabData["IsProd"] = skylb.IsProd
-
-	role, _ := r.Context().Value(ContextCurrentRole).(string)
-	skylabData["CurrentRole"] = role
-
-	section, _ := r.Context().Value(ContextCurrentSection).(string)
-	skylabData["CurrentSection"] = section
-
+func (skylb Skylab) Wender(w http.ResponseWriter, r *http.Request, templateName string, data map[string]interface{}) {
+	currentRole, _ := r.Context().Value(ContextCurrentRole).(string)
+	currentSection, _ := r.Context().Value(ContextCurrentSection).(string)
 	user, _ := r.Context().Value(ContextUser).(User)
-	skylabData["User"] = user
-
 	admin, _ := r.Context().Value(ContextAdmin).(User)
-	skylabData["Admin"] = admin
-
+	mainData := make(map[string]interface{})
+	mainData["skylab"] = map[string]interface{}{
+		"ParentTemplateFilename": templateName,
+		"CSRFToken":              csrf.TemplateField(r),
+		"IsProd":                 skylb.IsProd,
+		"CurrentRole":            currentRole,
+		"CurrentSection":         currentSection,
+		"User":                   user,
+		"Admin":                  admin,
+	}
+	mainData["flash"] = flash.GetData(w, r, skylb.SecretKey, SanitizeHTML(skylb.Policy))
+	mainData["headers"] = headers.GetData(r)
+	for k, v := range data {
+		mainData[k] = v
+	}
 	if shouldJSONify(w, r) {
 		skylb.renderJSON(w, r, mainData)
 		return
 	}
-	buf := skylb.Bufpool.Get()
-	defer skylb.Bufpool.Put(buf)
-	err := skylb.Templates.Execute(buf, mainData)
+	tempbuf := skylb.Bufpool.Get()
+	defer skylb.Bufpool.Put(tempbuf)
+	// Execute template into temporary buffer to catch any potential errors
+	err := skylb.Templates.ExecuteTemplate(tempbuf, templateName, mainData)
 	if err != nil {
 		_, sourcefile, linenr, _ := runtime.Caller(1)
 		skylb.InternalServerError(w, r,
@@ -148,40 +136,31 @@ func (skylb Skylab) Render2(w http.ResponseWriter, r *http.Request, templateName
 		)
 		return
 	}
-	// If no error, set headers and write temporary buffer into w http.ResponseWriter
+	// If no error, set headers and write temporary buffer into w http.ResponseWriter as usual
 	w.Header().Set("Content-Type", "text/html")
 	w.Header().Set("X-CSRF-Token", csrf.Token(r))
-	_, _ = buf.WriteTo(w)
+	_, _ = tempbuf.WriteTo(w)
 }
 
 func (skylb Skylab) getTemplates() (*template.Template, error) {
-	t := template.New("")
-	filenames := []string{
-		ProjectRootDir + "app/skylab/head.html",
-		ProjectRootDir + "app/skylab/navbar.html",
-		ProjectRootDir + "app/skylab/sidebar.html",
-		ProjectRootDir + "helpers/flash/flash.html",
+	funcs := map[string]interface{}{
+		"UserIsRole":          userIsRole,
+		"UserIsApplicantOnly": userIsApplicantOnly,
+		"SkylabBaseURL":       skylb.BaseURLWithProtocol(),
+		"MilestoneName":       MilestoneName,
+		"MilestoneNameAbbrev": MilestoneNameAbbrev,
+		"SanitizeHTML":        SanitizeHTML(skylb.Policy),
+		"SGTime":              SGTime,
+		"Map":                 Map,
 	}
-	funcs := map[string]interface{}{}
-	// funcs = skylb.addConsts(funcs)
+	funcs = skylb.addConsts(funcs)
 	funcs = skylb.AddInputSelects(funcs)
 	funcs = AddSections(funcs)
-	// funcs = flash.Funcs(funcs, w, r, skylb.SecretKey)
-	// funcs = headers.Funcs(funcs, r)
-	funcs["SkylabUserIsRole"] = userIsRole
-	funcs["SkylabUserIsApplicantOnly"] = userIsApplicantOnly
-	funcs["SkylabAdminCreateUser"] = AdminCreateUser
-	funcs["SkylabSidebarItem"] = sidebarItem
-	funcs["SkylabBaseURL"] = skylb.BaseURLWithProtocol()
-	funcs["SkylabMilestoneName"] = MilestoneName
-	funcs["SkylabMilestoneNameAbbrev"] = MilestoneNameAbbrev
-	funcs["SkylabSanitizeHTML"] = SanitizeHTML(skylb.Policy)
-	funcs["SkylabSGTime"] = SGTime
-	t, err := t.Funcs(funcs).Option("missingkey=zero").ParseFiles(filenames...)
-	if err != nil {
-		return t, erro.Wrap(err)
-	}
+	t := template.New("").Funcs(funcs).Option("missingkey=zero")
 	globs := []string{
+		"app/skylab/head.html",
+		"app/skylab/navbar.html",
+		"app/skylab/sidebar.html",
 		"app/*.html",
 		"app/admins/*.html",
 		"app/advisers/*.html",
@@ -196,13 +175,39 @@ func (skylb Skylab) getTemplates() (*template.Template, error) {
 		}
 		for _, file := range files {
 			name := strings.TrimPrefix(file, ProjectRootDir)
-			t, err = t.New(name).ParseFiles(file)
+			b, err := ioutil.ReadFile(file)
+			if err != nil {
+				return t, erro.Wrap(err)
+			}
+			t, err = t.New(name).Parse(string(b))
 			if err != nil {
 				return t, erro.Wrap(err)
 			}
 		}
 	}
+	// flash
+	flashTemplate, err := flash.GetTemplate()
+	if err != nil {
+		return t, erro.Wrap(err)
+	}
+	t, err = t.AddParseTree(flashTemplate.Name(), flashTemplate.Tree)
+	if err != nil {
+		return t, erro.Wrap(err)
+	}
 	return t, nil
+}
+
+func Map(args ...interface{}) map[string]interface{} {
+	data := make(map[string]interface{})
+	for i := 0; i < len(args); i += 2 {
+		if i+1 >= len(args) {
+			break
+		}
+		key := fmt.Sprint(args[i])
+		value := args[i+1]
+		data[key] = value
+	}
+	return data
 }
 
 func SanitizeHTML(policy *bluemonday.Policy) func(string) template.HTML {
@@ -344,29 +349,4 @@ func SGTime(t sql.NullTime) string {
 	}
 	t.Time = t.Time.In(singapore)
 	return t.Time.Format("2006-Jan-02 15:04")
-}
-
-type SidebarItem struct {
-	Section string
-	Display string
-	Link    string
-	Icon    string
-}
-
-func sidebarItem(section string, args ...string) SidebarItem {
-	item := SidebarItem{}
-	item.Section = section
-	for i, arg := range args {
-		switch i {
-		case 0:
-			item.Icon = arg
-		case 1:
-			item.Display = arg
-		case 2:
-			item.Link = arg
-		default:
-			break
-		}
-	}
-	return item
 }

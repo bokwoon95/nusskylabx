@@ -10,7 +10,7 @@
   <div class="pa2 pa4-l">
     <h1 class="sans-serif">Send a test email</h1>
     <form method="post" action="">
-      {{SkylabCsrfToken}}
+      {{$.skylab.CSRFToken}}
       <div>
         <div><b>Receipient(s):</b></div>
         <input type="text" name="to" autocomplete="off" class="form-input w-50">

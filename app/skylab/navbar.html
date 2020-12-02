@@ -18,39 +18,39 @@
   <!-- End DividerLeft -->
 
   <!-- DividerRight -->
-  {{$user := SkylabUser}}
-  {{$admin := SkylabAdmin}}
+  {{$user := $.skylab.User}}
+  {{$admin := $.skylab.Admin}}
   <div class="flex flex-wrap items-center f6 dark-gray">
     {{if and $user.Valid $admin.Valid}}
       {{if eq $user.UserID $admin.UserID}}
         <!-- User -->
-        {{template "app/skylab/navbar.html:display_roles" $user}}
+        {{template "app/skylab/navbar.html:display_roles" Map "skylab" $.skylab "user" $user}}
         <a href="/user" class="mr1">{{template "app/skylab/navbar.html:gear_small"}}</a>
         <div>Welcome, {{$user.Displayname}}</div>
         <form method="post" action="/logout">
-          {{SkylabCsrfToken}}
+          {{$.skylab.CSRFToken}}
           <button class="button pa2 bg-light-gray hover-bg-light-silver ma2">Logout</button>
         </form>
         <!-- End User -->
       {{else}}
         <!-- User -->
-        {{template "app/skylab/navbar.html:display_roles" $user}}
+        {{template "app/skylab/navbar.html:display_roles" Map "skylab" $.skylab "user" $user}}
         <a href="/user?user=true" class="mr1">{{template "app/skylab/navbar.html:gear_small"}}</a>
         <div>Welcome, {{$user.Displayname}}</div>
         <form method="post" action="/logout?user=true">
-          {{SkylabCsrfToken}}
+          {{$.skylab.CSRFToken}}
           <button class="button pa2 bg-light-gray hover-bg-light-silver ma2">Logout</button>
         </form>
         <!-- End User -->
         <!-- Admin -->
         <div>[</div>
-        <div class="mh2 flex items-center {{if eq SkylabCurrentRole RoleAdmin}}underline{{end}}">
+        <div class="mh2 flex items-center {{if eq $.skylab.CurrentRole RoleAdmin}}underline{{end}}">
           <a href="/admin" class="flex-item db no-underline">Admin</a>
         </div>
         <a href="/user?admin=true" class="mr1">{{template "app/skylab/navbar.html:gear_small"}}</a>
         <div>Welcome, {{$admin.Displayname}}</div>
         <form method="post" action="/logout?admin=true">
-          {{SkylabCsrfToken}}
+          {{$.skylab.CSRFToken}}
           <button class="button pa2 bg-light-gray hover-bg-light-silver ma2">Logout</button>
         </form>
         <div>]</div>
@@ -58,16 +58,16 @@
       {{end}}
     {{else if $user.Valid}}
       <!-- User -->
-      {{template "app/skylab/navbar.html:display_roles" $user}}
+      {{template "app/skylab/navbar.html:display_roles" Map "skylab" $.skylab "user" $user}}
       <a href="/user" class="mr1">{{template "app/skylab/navbar.html:gear_small"}}</a>
       <div>Welcome, {{$user.Displayname}}</div>
       <form method="post" action="/logout?user=true">
-        {{SkylabCsrfToken}}
+        {{$.skylab.CSRFToken}}
         <button class="button pa2 bg-light-gray hover-bg-light-silver ma2">Logout</button>
       </form>
       <!-- End User -->
     {{else}}
-      {{if not SkylabIsProd}}
+      {{if not $.skylab.IsProd}}
       <a href="{{AdminCreateUser}}" class="no-underline black">
           <button class="button pa2 bg-light-blue hover-bg-blue">
             Create User
@@ -87,46 +87,44 @@
 {{end}}
 
 {{define "app/skylab/navbar.html:display_roles"}}
-{{with $user := .}}
-{{if SkylabUserIsApplicantOnly $user}}
+{{if UserIsApplicantOnly $.user}}
   <!-- Applicant -->
-  <div class="mh2 ml-4 flex items-center {{if eq SkylabCurrentRole RoleApplicant}}underline{{end}}">
+  <div class="mh2 ml-4 flex items-center {{if eq $.skylab.CurrentRole RoleApplicant}}underline{{end}}">
     <a href="/applicant" class="flex-item db no-underline">Applicant</a>
   </div>
   <!-- End Applicant -->
 {{else}}
   <!-- Admin -->
-  {{if SkylabUserIsRole $user RoleAdmin}}
-  <div class="mh2 ml-4 flex items-center {{if eq SkylabCurrentRole RoleAdmin}}underline{{end}}">
+  {{if UserIsRole $.user RoleAdmin}}
+  <div class="mh2 ml-4 flex items-center {{if eq $.skylab.CurrentRole RoleAdmin}}underline{{end}}">
     <a href="/admin" class="flex-item db no-underline">Admin</a>
   </div>
   {{end}}
   <!-- End Admin -->
 
   <!-- Mentor -->
-  {{if SkylabUserIsRole $user RoleMentor}}
-  <div class="mh2 flex items-center {{if eq SkylabCurrentRole RoleMentor}}underline{{end}} ">
+  {{if UserIsRole $.user RoleMentor}}
+  <div class="mh2 flex items-center {{if eq $.skylab.CurrentRole RoleMentor}}underline{{end}} ">
     <a href="/mentor" class="flex-item db no-underline">Mentor</a>
   </div>
   {{end}}
   <!-- End Mentor -->
 
   <!-- Adviser -->
-  {{if SkylabUserIsRole $user RoleAdviser}}
-  <div class="mh2 flex items-center {{if eq SkylabCurrentRole RoleAdviser}}underline{{end}}">
+  {{if UserIsRole $.user RoleAdviser}}
+  <div class="mh2 flex items-center {{if eq $.skylab.CurrentRole RoleAdviser}}underline{{end}}">
     <a href="/adviser" class="flex-item db no-underline">Adviser</a>
   </div>
   {{end}}
   <!-- End Adviser -->
 
   <!-- Student -->
-  {{if SkylabUserIsRole $user RoleStudent}}
-  <div class="mh2 flex items-center {{if eq SkylabCurrentRole RoleStudent}}underline{{end}}">
+  {{if UserIsRole $.user RoleStudent}}
+  <div class="mh2 flex items-center {{if eq $.skylab.CurrentRole RoleStudent}}underline{{end}}">
     <a href="/student" class="flex-item db no-underline">Student</a>
   </div>
   {{end}}
   <!-- End Student -->
-{{end}}
 {{end}}
 {{end}}
 
@@ -166,168 +164,4 @@
 >
   <polygon points="35.7 58.7 153 176 270.3 58.7 306 94.4 153 247.4 0 94.4" />
 </svg>
-{{end}}
-
-{{define "app/skylab/navbar.html:sidebar_item"}}
-<div
-  class="
-  flex items-center justify-between pv1 ph3
-  {{if eq SkylabCurrentSection (index . 0)}}bg-dark-blue{{end}}
-  "
->
-  <a
-    href="{{index . 0}}"
-    class="
-    no-underline light-silver flex-item hover-text
-    {{if eq SkylabCurrentSection (index . 0)}}white{{end}}
-    "
-  >
-    {{index . 1}}
-  </a>
-  <div class="
-    {{if eq SkylabCurrentSection (index . 0)}}
-    flex items-center white hover-arrow-selected
-    {{else}}
-    hover-arrow
-    {{end}}
-    "
-  >
-    {{template "app/skylab/navbar.html:arrow_right_small"}}
-  </div>
-</div>
-{{end}}
-
-{{define "app/skylab/navbar.html:sidebar_item_link"}}
-<div
-  class="
-  flex items-center justify-between pv1 ph3
-  {{if eq SkylabCurrentSection (index . 0)}}bg-dark-blue{{end}}
-  "
->
-  <a
-    href="{{index . 2}}"
-    class="
-    no-underline light-silver flex-item hover-text
-    {{if eq SkylabCurrentSection (index . 0)}}white{{end}}
-    "
-  >
-    {{index . 1}}
-  </a>
-  <div class="
-    {{if eq SkylabCurrentSection (index . 0)}}
-    flex items-center white hover-arrow-selected
-    {{else}}
-    hover-arrow
-    {{end}}
-    "
-  >
-    {{template "app/skylab/navbar.html:arrow_right_small"}}
-  </div>
-</div>
-{{end}}
-
-{{define "app/skylab/navbar.html:sidebar_category"}}
-<div class="flex items-center justify-between pv1 ph3 light-silver">
-  <span class="">{{.}}</span>
-  {{template "app/skylab/navbar.html:arrow_down_small"}}
-</div>
-{{end}}
-
-{{define "app/skylab/navbar.html:sidebar_item_indented"}}
-<div
-  class="
-  flex items-center justify-between pv1 pl4 pr3
-  {{if eq SkylabCurrentSection (index . 0)}}
-  bg-dark-blue
-  {{else}}
-  bg-dark-gray
-  {{end}}
-  "
->
-  <a
-    href="{{index . 0}}"
-    class="
-    no-underline light-silver flex-item hover-text
-    {{if eq SkylabCurrentSection (index . 0)}}white{{end}}
-    "
-  >
-    {{index . 1}}
-  </a>
-  <div class="
-    {{if eq SkylabCurrentSection (index . 0)}}
-    flex items-center white hover-arrow-selected
-    {{else}}
-    hover-arrow
-    {{end}}
-    "
-  >
-    {{template "app/skylab/navbar.html:arrow_right_small"}}
-  </div>
-</div>
-{{end}}
-
-{{define "app/skylab/navbar.html:sidebar_item_indented_indented"}}
-<div
-  class="
-  flex items-center justify-between pv1 pl4 pr3
-  {{if eq SkylabCurrentSection (index . 0)}}
-  bg-dark-blue
-  {{else}}
-  bg-dark-gray
-  {{end}}
-  "
->
-  <a
-    href="{{index . 0}}"
-    class="
-    no-underline light-silver flex-item hover-text
-    {{if eq SkylabCurrentSection (index . 0)}}white{{end}}
-    "
-  >
-    {{index . 1}}
-  </a>
-  <div class="
-    {{if eq SkylabCurrentSection (index . 0)}}
-    flex items-center white hover-arrow-selected
-    {{else}}
-    hover-arrow
-    {{end}}
-    "
-  >
-    {{template "app/skylab/navbar.html:arrow_right_small"}}
-  </div>
-</div>
-{{end}}
-
-{{define "app/skylab/navbar.html:sidebar_item_indented_link"}}
-<div
-  class="
-  flex items-center justify-between pv1 pl4 pr3
-  {{if eq SkylabCurrentSection (index . 0)}}
-  bg-dark-blue
-  {{else}}
-  bg-dark-gray
-  {{end}}
-  "
->
-  <a
-    href="{{index . 2}}"
-    class="
-    no-underline light-silver flex-item hover-text
-    {{if eq SkylabCurrentSection (index . 0)}}white{{end}}
-    "
-  >
-    {{index . 1}}
-  </a>
-  <div class="
-    {{if eq SkylabCurrentSection (index . 0)}}
-    flex items-center light-silver hover-arrow-selected
-    {{else}}
-    hover-arrow
-    {{end}}
-    "
-  >
-    {{template "app/skylab/navbar.html:arrow_right_small"}}
-  </div>
-</div>
 {{end}}

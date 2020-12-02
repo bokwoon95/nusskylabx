@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   {{template "app/skylab/head.html"}}
-  <title>{{$.Submission.Team.TeamName}} | {{SkylabMilestoneNameAbbrev $.Submission.SubmissionForm.Period.Milestone}} Submission</title>
+  <title>{{$.Submission.Team.TeamName}} | {{MilestoneNameAbbrev $.Submission.SubmissionForm.Period.Milestone}} Submission</title>
 </head>
-<body class="{{if SkylabCurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
+<body class="{{if $.skylab.CurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
   {{template "app/skylab/navbar.html"}}
   {{template "app/skylab/sidebar.html"}}
   <div class="sans-serif pa2 pa4-l">
@@ -38,7 +38,7 @@
       {{end}}
       {{template "actions" .}}
       <p></p>
-      <h3 class="ma0">{{SkylabMilestoneName $.Submission.SubmissionForm.Period.Milestone}} Submission</h3>
+      <h3 class="ma0">{{MilestoneName $.Submission.SubmissionForm.Period.Milestone}} Submission</h3>
       {{if $.Submission.Submitted}}
         <div class="gray">Submitted</div>
       <div class="b">Evaluations</div>
@@ -85,7 +85,7 @@
       {{end}}
       <div class="pv3"></div>
       <form id="submissionform" enctype="multipart/form-data" method="post" action="{{.UpdateURL}}">
-        {{SkylabCsrfToken}}
+        {{$.skylab.CSRFToken}}
         {{template "helpers/formx/render_form.html" FormxMergeQuestionsAnswers $.Submission.SubmissionForm.Questions $.Submission.SubmissionAnswers}}
         {{template "actions" .}}
       </form>

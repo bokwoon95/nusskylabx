@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html"}}
+  {{template "app/skylab/head.html" .}}
   <title>User</title>
 </head>
-<body class="{{if eq SkylabCurrentRole RoleNull}}bipanel-l{{else}}tripanel-l{{end}}">
-  {{template "app/skylab/navbar.html"}}
-  {{template "app/skylab/sidebar.html"}}
+<body class="{{if eq $.skylab.CurrentRole RoleNull}}bipanel-l{{else}}tripanel-l{{end}}">
+  {{template "app/skylab/navbar.html" .}}
+  {{template "app/skylab/sidebar.html" .}}
   <div class="sans-serif pa2 pa4-l">
-    {{template "helpers/flash/flash.html"}}
+    {{template "helpers/flash/flash.html" $.flash}}
     {{if not $.User.Valid}}
       <p class="f4">Invalid User. <a href="/">Go to homepage.</a></p>
     {{else}}
@@ -18,7 +18,7 @@
       <input type="text" name="displayname" value="{{$.User.Displayname}}">
       <h3>Email</h3>
       <p>{{$.User.Email}}</p>
-      {{SkylabCsrfToken}}
+      {{$.skylab.CSRFToken}}
       <button type="submit">Update</button>
     </form>
     {{end}}

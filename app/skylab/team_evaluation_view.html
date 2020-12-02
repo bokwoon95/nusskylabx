@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   {{template "app/skylab/head.html"}}
-  <title>{{$.TeamEvaluation.Evaluatee.Team.TeamName}} | {{SkylabMilestoneNameAbbrev $.TeamEvaluation.EvaluationForm.Period.Milestone}} Evaluation</title>
+  <title>{{$.TeamEvaluation.Evaluatee.Team.TeamName}} | {{MilestoneNameAbbrev $.TeamEvaluation.EvaluationForm.Period.Milestone}} Evaluation</title>
 </head>
-<body class="{{if SkylabCurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
+<body class="{{if $.skylab.CurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
   {{template "app/skylab/navbar.html"}}
   {{template "app/skylab/sidebar.html"}}
   <div class="sans-serif pa2 pa4-l">
@@ -27,14 +27,14 @@
         {{else if and $.TeamEvaluation.Valid $.SubmitURL}}
           <span class="ml2"></span>
           <form method="post" action="{{$.SubmitURL}}" class="dib">
-            {{SkylabCsrfToken}}
+            {{$.skylab.CSRFToken}}
             <button type="submit" class="button pa2 bg-dark-green hover-bg-darker-green white">Submit</button>
           </form>
         {{end}}
       {{end}}
       {{template "actions" .}}
       <p></p>
-      <h4 class="ma0">{{SkylabMilestoneName $.TeamEvaluation.EvaluationForm.Period.Milestone}} Evaluation</h4>
+      <h4 class="ma0">{{MilestoneName $.TeamEvaluation.EvaluationForm.Period.Milestone}} Evaluation</h4>
       <div class="">
         <span class="gray">[{{$.TeamEvaluation.Evaluator.TeamID}}] [{{$.TeamEvaluation.Evaluator.ProjectLevel}}]</span> 
         &nbsp;{{$.TeamEvaluation.Evaluator.TeamName}} &rarr;

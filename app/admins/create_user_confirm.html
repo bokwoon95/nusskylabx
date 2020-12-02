@@ -6,13 +6,13 @@
   <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
   <title></title>
 </head>
-<body class="{{if SkylabCurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
+<body class="{{if $.skylab.CurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
   {{template "app/skylab/navbar.html"}}
   {{template "app/skylab/sidebar.html"}}
   <div class="pa2 pa4-l sans-serif">
     <h2>Action overview</h2>
     <form method="post" action="{{AdminCreateUserConfirm}}/post">
-      {{SkylabCsrfToken}}
+      {{$.skylab.CSRFToken}}
 
       {{$createUserRole := index $.SortedUsers (bitwiseOr actionCreateUser actionCreateRole)}}
       {{$createRole := index $.SortedUsers actionCreateRole}}
@@ -253,7 +253,7 @@
                   <div>{{$user.Role}}</div>
                 </td>
                 <td>
-                  <div>{{SkylabSanitizeHTML $user.BadEntryDetails}}</div>
+                  <div>{{SanitizeHTML $user.BadEntryDetails}}</div>
                 </td>
               </tr>
             {{end}}
@@ -291,7 +291,7 @@
                   <div>{{$user.Role}}</div>
                 </td>
                 <td>
-                  <div>{{SkylabSanitizeHTML $user.ErrStr}}</div>
+                  <div>{{SanitizeHTML $user.ErrStr}}</div>
                 </td>
               </tr>
             {{end}}

@@ -126,6 +126,11 @@ func NewWithoutDB(config Config) Skylab {
 
 	// templates
 	skylb.templates = make(map[string]*template.Template)
+	var err error
+	skylb.Templates, err = skylb.getTemplates()
+	if err != nil {
+		panic(err)
+	}
 
 	// BaseURL
 	skylb.BaseURL = "localhost" //

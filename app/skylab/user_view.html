@@ -4,7 +4,7 @@
   {{template "app/skylab/head.html"}}
   <title>User</title>
 </head>
-<body class="{{if SkylabCurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
+<body class="{{if $.skylab.CurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
   {{template "app/skylab/navbar.html"}}
   {{template "app/skylab/sidebar.html"}}
   <div class="sans-serif pa2 pa4-l">
@@ -19,11 +19,11 @@
         <h4 class="ma0">[User {{$.User.UserID}}] {{$.User.Displayname}}</h4>
       </div>
       <div class="pa3">
-        {{$usr := SkylabUser}}
-        {{$admin := SkylabAdmin}}
+        {{$usr := $.skylab.User}}
+        {{$admin := $.skylab.Admin}}
         {{if and $admin.Valid (ne $usr.UserID $.User.UserID) $.UserBaseURL}}
           <form method="post" action="{{$.UserBaseURL}}/{{$.User.UserID}}/preview" class="mb2">
-            {{SkylabCsrfToken}}
+            {{$.skylab.CSRFToken}}
             <button type="submit" class="button pa2 bg-light-red hover-bg-red">Preview As User</button>
           </form>
         {{end}}

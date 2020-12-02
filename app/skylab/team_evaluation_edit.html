@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
   {{template "app/skylab/head.html"}}
-  <title>{{$.TeamEvaluation.Evaluatee.Team.TeamName}} | {{SkylabMilestoneNameAbbrev $.TeamEvaluation.EvaluationForm.Period.Milestone}} Evaluation</title>
+  <title>{{$.TeamEvaluation.Evaluatee.Team.TeamName}} | {{MilestoneNameAbbrev $.TeamEvaluation.EvaluationForm.Period.Milestone}} Evaluation</title>
 </head>
-<body class="{{if SkylabCurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
+<body class="{{if $.skylab.CurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
   {{template "app/skylab/navbar.html"}}
   {{template "app/skylab/sidebar.html"}}
   <div class="sans-serif">
     <div class="flex vh-100">
       <div id="left" class="widget overflow-y-auto ma1 pa3">
         <div class="pv1"></div>
-        <h4 class="ma0">{{SkylabMilestoneName $.TeamEvaluation.EvaluationForm.Period.Milestone}} Submission</h4>
+        <h4 class="ma0">{{MilestoneName $.TeamEvaluation.EvaluationForm.Period.Milestone}} Submission</h4>
         <div class="">
           Submitted by: <span class="gray">[{{$.TeamEvaluation.Evaluatee.Team.TeamID}}] [{{$.TeamEvaluation.Evaluatee.Team.ProjectLevel}}]</span> 
           &nbsp;{{$.TeamEvaluation.Evaluatee.Team.TeamName}}
@@ -60,7 +60,7 @@
         <p></p>
         <h4 class="ma0">My Evaluation</h4>
         <form id="evaluationform" method="post" action="{{.UpdateURL}}">
-          {{SkylabCsrfToken}}
+          {{$.skylab.CSRFToken}}
           {{$evaluationData := FormxMergeQuestionsAnswers $.TeamEvaluation.EvaluationForm.Questions $.TeamEvaluation.EvaluationAnswers}}
           {{template "helpers/formx/render_form.html" $evaluationData}}
           {{template "actions" .}}
