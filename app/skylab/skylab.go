@@ -4,7 +4,6 @@ package skylab
 import (
 	"errors"
 	"fmt"
-	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -23,6 +22,8 @@ import (
 	"github.com/bokwoon95/nusskylabx/helpers/auth"
 	"github.com/bokwoon95/nusskylabx/helpers/cookies"
 	"github.com/bokwoon95/nusskylabx/helpers/flash"
+	"github.com/bokwoon95/nusskylabx/helpers/formx"
+	"github.com/bokwoon95/nusskylabx/helpers/templateloader"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
@@ -99,7 +100,7 @@ type Skylab struct {
 	Bufpool     *bpool.BufferPool
 	Log         *logutil.Logger
 	DisableCsrf bool
-	Templates   *template.Template
+	Templates   *templateloader.Templates
 
 	// Mailer
 	// NOTE: not used
@@ -111,9 +112,8 @@ type Skylab struct {
 
 	// These fields below are not safe for concurrent access and access must be
 	// synchronized with a mutex.
-	RW        *sync.RWMutex
-	cohorts   []string
-	templates map[string]*template.Template
+	RW      *sync.RWMutex
+	cohorts []string
 }
 
 // NewWithoutDB creates a new instance of Skylab that initializes everything
@@ -123,14 +123,6 @@ func NewWithoutDB(config Config) Skylab {
 
 	// RWMutex
 	skylb.RW = &sync.RWMutex{}
-
-	// templates
-	skylb.templates = make(map[string]*template.Template)
-	var err error
-	skylb.Templates, err = skylb.getTemplates()
-	if err != nil {
-		panic(err)
-	}
 
 	// BaseURL
 	skylb.BaseURL = "localhost" //
@@ -182,6 +174,48 @@ func NewWithoutDB(config Config) Skylab {
 	}
 	skylb.SmtpUsername = config.SmtpUsername
 	skylb.SmtpPassword = config.SmtpPassword
+
+	// templates
+	funcs := map[string]interface{}{
+		"UserIsRole":          userIsRole,
+		"UserIsApplicantOnly": userIsApplicantOnly,
+		"SkylabBaseURL":       skylb.BaseURLWithProtocol(),
+		"MilestoneName":       MilestoneName,
+		"MilestoneNameAbbrev": MilestoneNameAbbrev,
+		"SanitizeHTML":        SanitizeHTML(skylb.Policy),
+		"SGTime":              SGTime,
+		"Map":                 Map,
+	}
+	funcs = skylb.addConsts(funcs)
+	funcs = skylb.AddInputSelects(funcs)
+	funcs = AddSections(funcs)
+	funcs = formx.Funcs(funcs, skylb.Policy)
+	common := []string{
+		"app/skylab/head.html",
+		"app/skylab/navbar.html",
+		"app/skylab/sidebar.html",
+
+		// helpers
+		"helpers/flash/flash.html",
+		"helpers/formx/render_form.html",
+		"helpers/formx/render_form_results.html",
+	}
+	templates := []string{
+		"app/*.html",
+		"app/admins/*.html",
+		"app/advisers/*.html",
+		"app/applicants/*.html",
+		"app/mentors/*.html",
+		"app/students/*.html",
+	}
+	skylb.Templates, err = templateloader.Parse(
+		common, templates,
+		templateloader.Funcs(funcs),
+		templateloader.Option("missingkey=zero"),
+	)
+	if err != nil {
+		log.Fatalln(erro.Wrap(err))
+	}
 
 	return skylb
 }

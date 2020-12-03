@@ -1,9 +1,9 @@
 <!-- FlashMsgSuccess -->
-{{$flashMsgs := $.GetFlashMsgs $.Success}}
+{{$flashMsgs := $.flash.GetFlashMsgs $.flash.Success}}
 {{range $i, $flashMsg := $flashMsgs}}
   {{if $flashMsg.Valid}}
   <div class="alert alert-success fade show" role="alert">
-    {{$.SanitizeHTML $flashMsg.Value}}
+    {{$.flash.SanitizeHTML $flashMsg.Value}}
     <button type="button" class="close absolute top-5px right-5px" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -13,11 +13,11 @@
 <!-- End FlashMsgSuccess -->
 
 <!-- FlashMsgError -->
-{{$flashMsgs := $.GetFlashMsgs $.Error}}
+{{$flashMsgs := $.flash.GetFlashMsgs $.flash.Error}}
 {{range $i, $flashMsg := $flashMsgs}}
   {{if $flashMsg.Valid}}
   <div class="alert alert-danger fade show" role="alert">
-    {{$.SanitizeHTML $flashMsg.Value}}
+    {{$.flash.SanitizeHTML $flashMsg.Value}}
     <button type="button" class="close absolute top-5px right-5px" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -27,11 +27,11 @@
 <!-- End FlashMsgError -->
 
 <!-- FlashMsgWarning -->
-{{$flashMsgs := $.GetFlashMsgs $.Warning}}
+{{$flashMsgs := $.flash.GetFlashMsgs $.flash.Warning}}
 {{range $i, $flashMsg := $flashMsgs}}
   {{if $flashMsg.Valid}}
   <div class="alert alert-warning fade show" role="alert">
-    {{$.SanitizeHTML $flashMsg.Value}}
+    {{$.flash.SanitizeHTML $flashMsg.Value}}
     <button type="button" class="close absolute top-5px right-5px" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>

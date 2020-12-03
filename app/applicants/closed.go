@@ -6,5 +6,5 @@ import (
 
 func (apt Applicants) Closed(w http.ResponseWriter, r *http.Request) {
 	apt.skylb.Log.TraceRequest(r)
-	apt.skylb.Render(w, r, nil, nil, "app/applicants/Closed.html")
+	apt.skylb.Wender(w, r, nil, "app/applicants/closed.html")
 }

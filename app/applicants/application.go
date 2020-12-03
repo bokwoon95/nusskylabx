@@ -38,23 +38,23 @@ func (apt Applicants) Application(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/applicant", http.StatusMovedPermanently)
 		return
 	}
-	var data skylab.ApplicationEdit
-	data.ApplicantUserID = user.UserID
+	data := make(map[string]interface{})
+	data["ApplicantUserID"] = user.UserID
+	var application skylab.Application
 	err = sq.WithDefaultLog(sq.Lverbose).
 		From(a).
 		Where(
 			sq.String(user.Email).In(sq.Fields{a.APPLICANT1_EMAIL, a.APPLICANT2_EMAIL}),
 			a.COHORT.EqString(apt.skylb.CurrentCohort()),
 		).
-		SelectRowx((&data.Application).RowMapper(a)).
+		SelectRowx(application.RowMapper(a)).
 		Fetch(apt.skylb.DB)
 	if err != nil {
 		apt.skylb.InternalServerError(w, r, err)
 		return
 	}
-	funcs := map[string]interface{}{}
-	funcs = formx.Funcs(funcs, apt.skylb.Policy)
-	apt.skylb.Render(w, r, data, funcs, "app/applicants/application.html", "helpers/formx/render_form.html")
+	data["Application"] = application
+	apt.skylb.Wender(w, r, data, "app/applicants/application.html")
 }
 
 func (apt Applicants) MagicstringVerifier(next http.Handler) http.Handler {

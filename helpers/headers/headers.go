@@ -20,7 +20,7 @@ func Funcs(funcs map[string]interface{}, r *http.Request) map[string]interface{}
 
 func GetData(r *http.Request) map[string]interface{} {
 	data := make(map[string]interface{})
-	data["HeadersCSPNonce"] = func() string {
+	data["CSPNonce"] = func() string {
 		nonce, _ := r.Context().Value(CspNonceCtxkey).(string)
 		return nonce
 	}

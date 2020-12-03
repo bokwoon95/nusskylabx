@@ -36,7 +36,7 @@ func (apt Applicants) Applicant(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/applicant/application", http.StatusMovedPermanently)
 		return
 	}
-	apt.skylb.Render(w, r, nil, nil, "app/applicants/applicant.html")
+	apt.skylb.Wender(w, r, nil, "app/applicants/applicant.html")
 }
 
 func (apt Applicants) IdempotentCreateApplicant(next http.Handler) http.Handler {

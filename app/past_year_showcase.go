@@ -36,5 +36,5 @@ func (ap App) PastYearShowcase(w http.ResponseWriter, r *http.Request) {
 	data["Numbers"] = make([]int, 100)
 	rand.Seed(time.Now().UnixNano())
 	data["RandomInt"] = func() int { return rand.Intn(100000) }
-	ap.skylb.Wender(w, r, "app/past_year_showcase.html", data)
+	ap.skylb.Wender(w, r, data, "app/past_year_showcase.html")
 }

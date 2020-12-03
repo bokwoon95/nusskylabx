@@ -1,78 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html"}}
+  {{ template "app/skylab/head.html" . }}
   <title>Application</title>
 </head>
 <body class="bipanel-l">
-  {{template "app/skylab/navbar.html"}}
+  {{ template "app/skylab/navbar.html" . }}
   <div class="pa2 pa4-l sans-serif">
     <div class="">
-      {{template "helpers/flash/flash.html"}}
+      {{ template "helpers/flash/flash.html" $.flash }}
       <!-- Form -->
       <div class="ba br4 b--black-30 pa2 pa3-m pa4-l">
-        <h1 class="">NUS Orbital Application for cohort {{CohortCurrent}}</h1>
+        <h1 class="">NUS Orbital Application for cohort {{ CohortCurrent }}</h1>
 
         <!-- Team Member 1 -->
-        {{if $.Application.Applicant1.Valid}}
+        {{ if $.Application.Applicant1.Valid }}
           <div class="widget">
             <div class="widget-title pv1 ph2 bg-near-white">
               <h4 class="ma0">Team Member 1</h4>
             </div>
             <div class="pa2">
-              <div>Display Name: {{$.Application.Applicant1.Displayname}}</div>
-              <div>Email: {{$.Application.Applicant1.Email}}</div>
+              <div>Display Name: {{ $.Application.Applicant1.Displayname }}</div>
+              <div>Email: {{ $.Application.Applicant1.Email }}</div>
             </div>
           </div>
-        {{else}}
+        {{ else }}
           <div class="widget pa2 mt4">
-            {{if $.Application.Magicstring.Valid}}
+            {{ if $.Application.Magicstring.Valid }}
               <div><b>You don't have another team member yet, invite them now with this link:</b></div>
-              <pre class="ma0">{{SkylabBaseURL}}/applicant/application/join?magicstring={{$.Application.Magicstring.String}}</pre>
-            {{else}}
+              <pre class="ma0">{{ SkylabBaseURL }}/applicant/application/join?magicstring={{ $.Application.Magicstring.String }}</pre>
+            {{ else }}
               <div>[OGNIT] If you see this message, something is wrong</div>
-            {{end}}
+            {{ end }}
           </div>
-        {{end}}
+        {{ end }}
         <!-- End Team Member 1 -->
 
         <!-- Team Member 2 -->
-        {{if $.Application.Applicant2.Valid}}
+        {{ if $.Application.Applicant2.Valid }}
           <div class="widget mt4">
             <div class="widget-title pv1 ph2 bg-near-white">
               <h4 class="ma0">Team Member 2</h4>
             </div>
             <div class="pa2">
-              <div>Display Name: {{$.Application.Applicant2.Displayname}}</div>
-              <div>Email: {{$.Application.Applicant2.Email}}</div>
+              <div>Display Name: {{ $.Application.Applicant2.Displayname }}</div>
+              <div>Email: {{ $.Application.Applicant2.Email }}</div>
             </div>
           </div>
-        {{else}}
+        {{ else }}
           <div class="widget pa2 mt4">
-            {{if $.Application.Magicstring.Valid}}
+            {{ if $.Application.Magicstring.Valid }}
               <div><b>You don't have another team member yet, invite them now with this link:</b></div>
-              <pre class="ma0">{{SkylabBaseURL}}/applicant/application/join?magicstring={{$.Application.Magicstring.String}}</pre>
-            {{else}}
+              <pre class="ma0">{{ SkylabBaseURL }}/applicant/application/join?magicstring={{ $.Application.Magicstring.String }}</pre>
+            {{ else }}
               <div>[OMG6N] If you see this message, something is wrong</div>
-            {{end}}
+            {{ end }}
           </div>
-        {{end}}
+        {{ end }}
         <!-- End Team Member 2 -->
 
         <form method="post" action="/applicant/application/update" autocomplete="off" class="">
-          {{$.skylab.CSRFToken}}
-          {{$ApplicationData := FormxMergeQuestionsAnswers $.Application.ApplicationForm.Questions $.Application.ApplicationAnswers}}
-          {{$ApplicantData := FormxMergeQuestionsAnswers $.Application.ApplicantForm.Questions $.Application.Applicant1Answers}}
-          {{if eq $.ApplicantUserID $.Application.Applicant2.UserID}}
-            {{$ApplicantData = FormxMergeQuestionsAnswers $.Application.ApplicantForm.Questions $.Application.Applicant2Answers}}
-          {{end}}
-          {{template "helpers/formx/render_form.html" $ApplicationData}}
-          {{template "helpers/formx/render_form.html" $ApplicantData}}
+          {{ $.skylab.CSRFToken }}
+          {{ $ApplicationData := FormxMergeQuestionsAnswers $.Application.ApplicationForm.Questions $.Application.ApplicationAnswers }}
+          {{ $ApplicantData := FormxMergeQuestionsAnswers $.Application.ApplicantForm.Questions $.Application.Applicant1Answers }}
+          {{ if eq $.ApplicantUserID $.Application.Applicant2.UserID }}
+            {{ $ApplicantData = FormxMergeQuestionsAnswers $.Application.ApplicantForm.Questions $.Application.Applicant2Answers }}
+          {{ end }}
+          {{ template "helpers/formx/render_form.html" $ApplicationData }}
+          {{ template "helpers/formx/render_form.html" $ApplicantData }}
           <div class="flex flex-wrap justify-between">
             <div>
-              {{if $.Application.Submitted}}
+              {{ if $.Application.Submitted }}
                 <button type="submit" class="button pa2 bg-light-green hover-bg-green">Update</button>
-              {{else}}
+              {{ else }}
                 <button type="submit" class="button pa2 bg-light-green hover-bg-green">Save Draft</button>
                 <button
                   type="submit"
@@ -81,16 +81,16 @@
                   >
                   Submit
                 </button>
-              {{end}}
+              {{ end }}
             </div>
             <div>
               <button
                 type="submit"
                 formaction="/applicant/application/leave"
-                class='button pa2 bg-light-red hover-bg-red {{if eq $.Application.Status ApplicationStatusAccepted}}cursor-not-allowed{{end}}'
-                {{if eq $.Application.Status ApplicationStatusAccepted}}disabled{{end}}
+                class='button pa2 bg-light-red hover-bg-red {{ if eq $.Application.Status ApplicationStatusAccepted }}cursor-not-allowed{{ end }}'
+                {{ if eq $.Application.Status ApplicationStatusAccepted }}disabled{{ end }}
                 >
-                {{if eq $.Application.Status "accepted"}}Application accepted{{else}}Leave application{{end}}
+                {{ if eq $.Application.Status "accepted" }}Application accepted{{ else }}Leave application{{ end }}
               </button>
             </div>
           </div>
@@ -102,7 +102,7 @@
 
   <!-- Scripts -->
   <script src="/static/tinymce/tinymce.min.js"></script>
-  <script nonce="{{HeadersCSPNonce}}">
+  <script nonce="{{ $.headers.CSPNonce }}">
     tinymce.init({
       selector: "textarea",
       statusbar: false,

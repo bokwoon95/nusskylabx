@@ -26,7 +26,7 @@ func (ap App) User(w http.ResponseWriter, r *http.Request) {
 		data["User"] = admin
 		data["Role"] = "admin"
 	}
-	ap.skylb.Wender(w, r, "app/user.html", data)
+	ap.skylb.Wender(w, r, data, "app/user.html")
 }
 
 func (ap App) UserUpdate(w http.ResponseWriter, r *http.Request) {

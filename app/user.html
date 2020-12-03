@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html" .}}
+  {{ template "app/skylab/head.html" . }}
   <title>User</title>
 </head>
-<body class="{{if eq $.skylab.CurrentRole RoleNull}}bipanel-l{{else}}tripanel-l{{end}}">
-  {{template "app/skylab/navbar.html" .}}
-  {{template "app/skylab/sidebar.html" .}}
+<body class="{{ if eq $.skylab.CurrentRole RoleNull }}bipanel-l{{ else }}tripanel-l{{ end }}">
+  {{ template "app/skylab/navbar.html" . }}
+  {{ template "app/skylab/sidebar.html" . }}
   <div class="sans-serif pa2 pa4-l">
-    {{template "helpers/flash/flash.html" $.flash}}
-    {{if not $.User.Valid}}
+    {{ template "helpers/flash/flash.html" . }}
+    {{ if not $.User.Valid }}
       <p class="f4">Invalid User. <a href="/">Go to homepage.</a></p>
-    {{else}}
-    <form method="post" action="/user/update/{{$.User.UserID}}">
-      <input type="hidden" name="role" value="{{$.Role}}">
+    {{ else }}
+    <form method="post" action="/user/update/{{ $.User.UserID }}">
+      <input type="hidden" name="role" value="{{ $.Role }}">
       <h3>Display Name</h3>
-      <input type="text" name="displayname" value="{{$.User.Displayname}}">
+      <input type="text" name="displayname" value="{{ $.User.Displayname }}">
       <h3>Email</h3>
-      <p>{{$.User.Email}}</p>
-      {{$.skylab.CSRFToken}}
+      <p>{{ $.User.Email }}</p>
+      {{ $.skylab.CSRFToken }}
       <button type="submit">Update</button>
     </form>
-    {{end}}
+    {{ end }}
   </div>
 </body>
 </html>

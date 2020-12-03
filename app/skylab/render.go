@@ -101,14 +101,14 @@ func (skylb Skylab) Render(w http.ResponseWriter, r *http.Request, data interfac
 	_, _ = buf.WriteTo(w)
 }
 
-func (skylb Skylab) Wender(w http.ResponseWriter, r *http.Request, templateName string, data map[string]interface{}) {
+func (skylb Skylab) Wender(w http.ResponseWriter, r *http.Request, data map[string]interface{}, name string, names ...string) {
 	currentRole, _ := r.Context().Value(ContextCurrentRole).(string)
 	currentSection, _ := r.Context().Value(ContextCurrentSection).(string)
 	user, _ := r.Context().Value(ContextUser).(User)
 	admin, _ := r.Context().Value(ContextAdmin).(User)
 	mainData := make(map[string]interface{})
 	mainData["skylab"] = map[string]interface{}{
-		"ParentTemplateFilename": templateName,
+		"ParentTemplateFilename": name,
 		"CSRFToken":              csrf.TemplateField(r),
 		"IsProd":                 skylb.IsProd,
 		"CurrentRole":            currentRole,
@@ -125,21 +125,15 @@ func (skylb Skylab) Wender(w http.ResponseWriter, r *http.Request, templateName 
 		skylb.renderJSON(w, r, mainData)
 		return
 	}
-	tempbuf := skylb.Bufpool.Get()
-	defer skylb.Bufpool.Put(tempbuf)
-	// Execute template into temporary buffer to catch any potential errors
-	err := skylb.Templates.ExecuteTemplate(tempbuf, templateName, mainData)
+	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("X-CSRF-Token", csrf.Token(r))
+	err := skylb.Templates.Render(w, r, mainData, name, names...)
 	if err != nil {
 		_, sourcefile, linenr, _ := runtime.Caller(1)
 		skylb.InternalServerError(w, r,
-			fmt.Errorf("%s:%d tried to render %s and failed: %w", sourcefile, linenr, templateName, err),
+			fmt.Errorf("%s:%d tried to render %s, %+v and failed: %w", sourcefile, linenr, name, names, err),
 		)
-		return
 	}
-	// If no error, set headers and write temporary buffer into w http.ResponseWriter as usual
-	w.Header().Set("Content-Type", "text/html")
-	w.Header().Set("X-CSRF-Token", csrf.Token(r))
-	_, _ = tempbuf.WriteTo(w)
 }
 
 func (skylb Skylab) getTemplates() (*template.Template, error) {
