@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html"}}
+  {{ template "app/skylab/head.html" . }}
   <title>CSRF Token Invalid</title>
 </head>
 <body class="bipanel-l">
-  {{template "app/skylab/navbar.html"}}
+  {{ template "app/skylab/navbar.html" . }}
   <div class="sans-serif pa2 pa4-l">
     <h1 class="f-subheadline">CSRF Token Invalid</h1>
-    <p class="f4">Request ID: {{$.RequestID}}</p>
-    <p class="f4">URL: {{$.URL}}</p>
-    {{if $.skylab.IsProd}}
+    <p class="f4">Request ID: {{ $.RequestID }}</p>
+    <p class="f4">URL: {{ $.URL }}</p>
+    {{ if $.skylab.IsProd }}
     <div>Please contact the admin if this page was unexpected</div>
-    {{else}}
+    {{ else }}
     <div class="f4">Did you remember to add a <pre style="display: inline;">&#123;&#123;$.skylab.CSRFToken&#125;&#125;</pre> to the POST form request?</div>
     <p></p>
-    <pre>{{$.FormStr}}</pre>
-    {{end}}
+    <pre>{{ $.FormStr }}</pre>
+    {{ end }}
   </div>
 </body>
 </html>

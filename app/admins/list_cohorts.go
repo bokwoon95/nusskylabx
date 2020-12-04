@@ -17,28 +17,21 @@ import (
 func (adm Admins) ListCohorts(w http.ResponseWriter, r *http.Request) {
 	adm.skylb.Log.TraceRequest(r)
 	r = adm.skylb.SetRoleSection(w, r, skylab.RoleAdmin, skylab.AdminListCohorts)
-	type Data struct {
-		NextCohort string
-		Cohorts    []string
-	}
-	var data Data
 	var msgs = make(map[string][]string)
-	cohorts := adm.skylb.Cohorts()
-	for _, cohort := range cohorts {
-		if cohort != "" {
-			data.Cohorts = append(data.Cohorts, cohort)
-		}
-	}
+	var nextCohort string
 	latestCohort, _ := strconv.Atoi(adm.skylb.LatestCohort())
 	if latestCohort != 0 {
-		data.NextCohort = strconv.Itoa(latestCohort + 1)
+		nextCohort = strconv.Itoa(latestCohort + 1)
 	}
-	if data.NextCohort == "" {
+	if nextCohort == "" {
 		msgs[flash.Error] = []string{"Could not compute the next cohort after " + adm.skylb.LatestCohort()}
 	}
 	r, _ = adm.skylb.SetFlashMsgs(w, r, msgs)
-	funcs := map[string]interface{}{}
-	adm.skylb.Render(w, r, data, funcs, "app/admins/list_cohorts.html")
+	data := map[string]interface{}{
+		"NextCohort": nextCohort,
+		"Cohorts":    adm.skylb.Cohorts(),
+	}
+	adm.skylb.Wender(w, r, data, "app/admins/list_cohorts.html")
 }
 
 func (adm Admins) ListCohortsCreate(next http.Handler) http.Handler {

@@ -29,15 +29,10 @@ func (adm Admins) ListPeriods(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type Data struct {
-		Periods []skylab.Period
-		Cohort  string
-	}
-	var data Data
-	data.Cohort = cohort
 	p := tables.PERIODS()
 	me, se := tables.MILESTONE_ENUM(), tables.STAGE_ENUM()
 	var period skylab.Period
+	var periods []skylab.Period
 	err := sq.WithDefaultLog(sq.Lverbose).
 		From(p).
 		Where(p.COHORT.EqString(cohort)).
@@ -54,16 +49,18 @@ func (adm Admins) ListPeriods(w http.ResponseWriter, r *http.Request) {
 			period.StartAt = row.NullTime(p.START_AT)
 			period.EndAt = row.NullTime(p.END_AT)
 		}, func() {
-			data.Periods = append(data.Periods, period)
+			periods = append(periods, period)
 		}).
 		Fetch(adm.skylb.DB)
 	if err != nil {
 		adm.skylb.InternalServerError(w, r, err)
 		return
 	}
-	funcs := adm.skylb.AddInputSelects(nil)
-	funcs = timeutil.Funcs(funcs)
-	adm.skylb.Render(w, r, data, funcs, "app/admins/list_periods.html")
+	data := map[string]interface{}{
+		"Periods": periods,
+		"Cohort":  cohort,
+	}
+	adm.skylb.Wender(w, r, data, "app/admins/list_periods.html")
 }
 
 func (adm Admins) ListPeriodsDelete(next http.Handler) http.Handler {

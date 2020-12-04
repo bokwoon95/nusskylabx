@@ -1,50 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html"}}
-  <title>{{$.Evaluation.Evaluatee.Team.TeamName}} | {{MilestoneNameAbbrev $.Evaluation.EvaluationForm.Period.Milestone}} Evaluation</title>
+  {{ template "app/skylab/head.html" . }}
+  <title>{{ $.Evaluation.Evaluatee.Team.TeamName }} | {{ MilestoneNameAbbrev $.Evaluation.EvaluationForm.Period.Milestone }} Evaluation</title>
 </head>
-<body class="{{if $.skylab.CurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
-  {{template "app/skylab/navbar.html"}}
-  {{template "app/skylab/sidebar.html"}}
+<body class="{{ if $.skylab.CurrentRole }}tripanel-l{{ else }}bipanel-l{{ end }}">
+  {{ template "app/skylab/navbar.html" . }}
+  {{ template "app/skylab/sidebar.html" . }}
   <div class="sans-serif pa2 pa4-l">
     <p class="flex justify-between">
       <a href="#" class="goback">&lt; Back</a>
-      <script nonce="{{HeadersCSPNonce}}">
+      <script nonce="{{ HeadersCSPNonce }}">
         document.querySelector(".goback").addEventListener("click", () => window.history.back());
       </script>
-      {{if $.EditURL}}
-        <a href="{{$.EditURL}}">Edit</a>
-      {{end}}
+      {{ if $.EditURL }}
+        <a href="{{ $.EditURL }}">Edit</a>
+      {{ end }}
     </p>
-    {{template "helpers/flash/flash.html"}}
+    {{ template "helpers/flash/flash.html" . }}
     <div class="ba br4 b--black-30 pa4">
       <div class="mb3">
-        <a href="{{$.SubmissionURL}}">
+        <a href="{{ $.SubmissionURL }}">
           <button class="button pa2 bg-light-red hover-bg-red">View Submission</button>
         </a>
       </div>
-      <h4 class="ma0">{{MilestoneName $.Evaluation.EvaluationForm.Period.Milestone}} Evaluation</h4>
+      <h4 class="ma0">{{ MilestoneName $.Evaluation.EvaluationForm.Period.Milestone }} Evaluation</h4>
       <div class="">
-        <span class="gray">[{{$.Evaluation.Evaluator.UserID}}]</span> 
-        &nbsp;{{$.Evaluation.Evaluator.Displayname}} &rarr;
-        evaluating <span class="gray">[{{$.Evaluation.Evaluatee.Team.TeamID}}] [{{$.Evaluation.Evaluatee.Team.ProjectLevel}}]</span> 
-        &nbsp;{{$.Evaluation.Evaluatee.Team.TeamName}}
+        <span class="gray">[{{ $.Evaluation.Evaluator.UserID }}]</span> 
+        &nbsp;{{ $.Evaluation.Evaluator.Displayname }} &rarr;
+        evaluating <span class="gray">[{{ $.Evaluation.Evaluatee.Team.TeamID }}] [{{ $.Evaluation.Evaluatee.Team.ProjectLevel }}]</span> 
+        &nbsp;{{ $.Evaluation.Evaluatee.Team.TeamName }}
       </div>
-      {{if $.Evaluation.Submitted}}
+      {{ if $.Evaluation.Submitted }}
         <div class="gray">Submitted</div>
-      {{else}}
+      {{ else }}
         <div class="gray">Draft</div>
-      {{end}}
+      {{ end }}
       <div class="pv3"></div>
-      {{$evaluationData := FormxMergeQuestionsAnswers $.Evaluation.EvaluationForm.Questions $.Evaluation.EvaluationAnswers}}
-      {{template "helpers/formx/render_form_results.html" $evaluationData}}
+      {{ $evaluationData := FormxMergeQuestionsAnswers $.Evaluation.EvaluationForm.Questions $.Evaluation.EvaluationAnswers }}
+      {{ template "helpers/formx/render_form_results.html" $evaluationData }}
     </div>
   </div>
 
   <!-- Scripts -->
   <script src="/static/tinymce/tinymce.min.js"></script>
-  <script nonce="{{HeadersCSPNonce}}">
+  <script nonce="{{ HeadersCSPNonce }}">
     tinymce.init({
       selector: "textarea",
       statusbar: false,

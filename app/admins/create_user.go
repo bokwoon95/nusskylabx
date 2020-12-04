@@ -13,14 +13,14 @@ func (adm Admins) CreateUser(w http.ResponseWriter, r *http.Request) {
 	adm.skylb.Log.TraceRequest(r)
 	r = adm.skylb.SetRoleSection(w, r, skylab.RoleAdmin, skylab.AdminCreateUser)
 	headers.DoNotCache(w)
-	type Data struct {
-		Rows string
-	}
-	var data Data
 	var rows []string
 	err := adm.skylb.DecodeVariableFromCookie(r, createUserRowsCookie, &rows)
-	if err == nil {
-		data.Rows = strings.Join(rows, "\n")
+	if err != nil {
+		adm.skylb.InternalServerError(w, r, err)
+		return
 	}
-	adm.skylb.Render(w, r, data, nil, "app/admins/create_user.html")
+	data := map[string]interface{}{
+		"Rows": strings.Join(rows, "\n"),
+	}
+	adm.skylb.Wender(w, r, data, "app/admins/create_user.html")
 }

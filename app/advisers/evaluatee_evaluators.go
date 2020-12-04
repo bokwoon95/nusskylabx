@@ -13,19 +13,13 @@ import (
 	"github.com/bokwoon95/nusskylabx/helpers/flash"
 	"github.com/bokwoon95/nusskylabx/helpers/formutil"
 	"github.com/bokwoon95/nusskylabx/helpers/headers"
-	"github.com/bokwoon95/nusskylabx/helpers/templateutil"
 )
 
 func (adv Advisers) EvaluateeEvaluators(w http.ResponseWriter, r *http.Request) {
 	adv.skylb.Log.TraceRequest(r)
 	r = adv.skylb.SetRoleSection(w, r, skylab.RoleAdviser, skylab.AdviserEvaluateeEvaluators)
 	headers.DoNotCache(w)
-	type Data struct {
-		EvaluateeEvaluators map[int]map[int]bool
-		Teams               map[int]skylab.Team
-	}
-	var data Data
-	data.EvaluateeEvaluators = make(map[int]map[int]bool)
+	evaluateeEvaluators := make(map[int]map[int]bool)
 	user, _ := r.Context().Value(skylab.ContextUser).(skylab.User)
 
 	// get list of teamIDs under adviser
@@ -44,7 +38,7 @@ func (adv Advisers) EvaluateeEvaluators(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// fill in data.EvaluateeEvaluators accordingly
+	// fill in evaluateeEvaluators accordingly
 	tp := tables.TEAM_EVALUATION_PAIRS()
 	var evaluateeTeamID, evaluatorTeamID int
 	err = sq.WithDefaultLog(sq.Lverbose).
@@ -61,11 +55,11 @@ func (adv Advisers) EvaluateeEvaluators(w http.ResponseWriter, r *http.Request) 
 			evaluateeTeamID = row.Int(tp.EVALUATEE_TEAM_ID)
 			evaluatorTeamID = row.Int(tp.EVALUATOR_TEAM_ID)
 		}, func() {
-			if data.EvaluateeEvaluators[evaluateeTeamID] == nil {
-				data.EvaluateeEvaluators[evaluateeTeamID] = make(map[int]bool)
+			if evaluateeEvaluators[evaluateeTeamID] == nil {
+				evaluateeEvaluators[evaluateeTeamID] = make(map[int]bool)
 			}
 			// Check this pair of evaluatee and evaluator
-			data.EvaluateeEvaluators[evaluateeTeamID][evaluatorTeamID] = true
+			evaluateeEvaluators[evaluateeTeamID][evaluatorTeamID] = true
 		}).
 		Fetch(adv.skylb.DB)
 	if err != nil {
@@ -78,19 +72,19 @@ func (adv Advisers) EvaluateeEvaluators(w http.ResponseWriter, r *http.Request) 
 		evaluatorTeamIDs := append(append([]int64{}, adviserTeamIDs[:i]...), adviserTeamIDs[i+1:]...)
 		for j := range evaluatorTeamIDs {
 			evaluatorTeamID := int(evaluatorTeamIDs[j])
-			if data.EvaluateeEvaluators[evaluateeTeamID] == nil {
-				data.EvaluateeEvaluators[evaluateeTeamID] = make(map[int]bool)
+			if evaluateeEvaluators[evaluateeTeamID] == nil {
+				evaluateeEvaluators[evaluateeTeamID] = make(map[int]bool)
 			}
-			if !data.EvaluateeEvaluators[evaluateeTeamID][evaluatorTeamID] {
+			if !evaluateeEvaluators[evaluateeTeamID][evaluatorTeamID] {
 				// Uncheck this pair of evaluatee and evaluator
-				data.EvaluateeEvaluators[evaluateeTeamID][evaluatorTeamID] = false
+				evaluateeEvaluators[evaluateeTeamID][evaluatorTeamID] = false
 			}
 		}
 	}
 
 	vt := tables.V_TEAMS()
 	var team skylab.Team
-	data.Teams = make(map[int]skylab.Team)
+	teams := make(map[int]skylab.Team)
 	err = sq.WithDefaultLog(sq.Lverbose).
 		From(vt).
 		Where(vt.ADVISER_USER_ROLE_ID.EqInt(user.Roles[skylab.RoleAdviser])).
@@ -102,17 +96,18 @@ func (adv Advisers) EvaluateeEvaluators(w http.ResponseWriter, r *http.Request) 
 			team.Student1.Displayname = row.String(vt.STUDENT1_DISPLAYNAME)
 			team.Student2.Displayname = row.String(vt.STUDENT2_DISPLAYNAME)
 		}, func() {
-			data.Teams[team.TeamID] = team
+			teams[team.TeamID] = team
 		}).
 		Fetch(adv.skylb.DB)
 	if err != nil {
 		adv.skylb.InternalServerError(w, r, err)
 		return
 	}
-	funcs := map[string]interface{}{}
-	funcs = templateutil.Funcs(funcs)
-	funcs = templateutil.Sql(funcs)
-	adv.skylb.Render(w, r, data, funcs, "app/advisers/evaluatee_evaluators.html")
+	data := map[string]interface{}{
+		"EvaluateeEvaluators": evaluateeEvaluators,
+		"Teams":               teams,
+	}
+	adv.skylb.Wender(w, r, data, "app/advisers/evaluatee_evaluators.html")
 }
 
 func (adv Advisers) EvaluateeEvaluatorsUpdate(w http.ResponseWriter, r *http.Request) {

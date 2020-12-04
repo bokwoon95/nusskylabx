@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html"}}
+  {{ template "app/skylab/head.html" . }}
   <title>Evaluator To Evaluatees</title>
 </head>
 <body class="tripanel-l">
-  {{template "app/skylab/navbar.html"}}
-  {{template "app/skylab/sidebar.html"}}
+  {{ template "app/skylab/navbar.html" . }}
+  {{ template "app/skylab/sidebar.html" . }}
   <div class="sans-serif pa2 pa4-l">
-    {{if eq 0 (len $.EvaluatorEvaluatees)}}
+    {{ if eq 0 (len $.EvaluatorEvaluatees) }}
       <p>You have no assigned teams.</p>
-    {{else}}
-    <form method="post" action="{{AdviserEvaluatorEvaluatees}}/update" class="">
-        {{$.skylab.CSRFToken}}
+    {{ else }}
+    <form method="post" action="{{ AdviserEvaluatorEvaluatees }}/update" class="">
+        {{ $.skylab.CSRFToken }}
         <button
           type="submit"
           class="button pa2 bg-light-green hover-bg-green"
@@ -21,52 +21,52 @@
         </button>
         <div class="pv1"></div>
         <div class="grid-2-1-1 grid-gap-3">
-          {{range $evaluatorTeamID, $evaluateeTeamIDs := $.EvaluatorEvaluatees}}
-          {{with $evaluator := index $.Teams $evaluatorTeamID}}
+          {{ range $evaluatorTeamID, $evaluateeTeamIDs := $.EvaluatorEvaluatees }}
+          {{ with $evaluator := index $.Teams $evaluatorTeamID }}
               <div class="widget">
                 <div class="widget-title pv2 ph3 bg-near-white">
                   <div class="f6 b">Evaluator</div>
                   <div class="">
-                  <span class="gray">[{{$evaluatorTeamID}}] [{{$evaluator.ProjectLevel}}]</span>
-                    {{Sql_NullValue $evaluator.TeamName}}
+                  <span class="gray">[{{ $evaluatorTeamID }}] [{{ $evaluator.ProjectLevel }}]</span>
+                    {{ Sql_NullValue $evaluator.TeamName }}
                   </div>
                 </div>
                 <div class="pa3">
                   <div class="f6 b">Evaluatees</div>
-                  {{range $evaluateeTeamID, $checked := $evaluateeTeamIDs}}
-                  {{with $evaluatee := index $.Teams $evaluateeTeamID}}
+                  {{ range $evaluateeTeamID, $checked := $evaluateeTeamIDs }}
+                  {{ with $evaluatee := index $.Teams $evaluateeTeamID }}
                     <div class="">
                       <input
-                        id="{{_Sha1Hash $evaluatorTeamID $evaluateeTeamID}}"
+                        id="{{ _Sha1Hash $evaluatorTeamID $evaluateeTeamID }}"
                         type="checkbox"
-                        name="{{$evaluatorTeamID}}"
-                        value="{{$evaluateeTeamID}}"
+                        name="{{ $evaluatorTeamID }}"
+                        value="{{ $evaluateeTeamID }}"
                         class="pointer"
-                        {{if $checked}}checked{{end}}
+                        {{ if $checked }}checked{{ end }}
                         >
-                      <label for="{{_Sha1Hash $evaluatorTeamID $evaluateeTeamID}}" class="pointer">
-                        <span class="gray">[{{$evaluateeTeamID}}] [{{$evaluatee.ProjectLevel}}]</span>
-                        {{Sql_NullValue $evaluatee.TeamName}}
+                      <label for="{{ _Sha1Hash $evaluatorTeamID $evaluateeTeamID }}" class="pointer">
+                        <span class="gray">[{{ $evaluateeTeamID }}] [{{ $evaluatee.ProjectLevel }}]</span>
+                        {{ Sql_NullValue $evaluatee.TeamName }}
                       </label>
                     </div>
-                  {{end}}
-                  {{end}}
+                  {{ end }}
+                  {{ end }}
                 </div>
               </div>
-          {{end}}
-          {{end}}
+          {{ end }}
+          {{ end }}
         </div>
       </form>
-    {{end}}
+    {{ end }}
   </div>
   <!-- Flash Msg -->
-  {{with $flashMsg := FlashutilGetFlashMsg "success"}}
-    {{if $flashMsg.Valid}}
+  {{ with $flashMsg := FlashutilGetFlashMsg "success" }}
+    {{ if $flashMsg.Valid }}
       <p class="flashmsg fixed bottom-0 right-2 br1 mv1 ph2 bg-light-blue pointer sans-serif">
-        {{$flashMsg.Value}}
+        {{ $flashMsg.Value }}
       </p>
-    {{end}}
-  {{end}}
+    {{ end }}
+  {{ end }}
   <!-- End Flash Msg -->
   <script src="/static/flashmsg.js"></script>
 </body>

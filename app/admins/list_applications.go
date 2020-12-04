@@ -23,14 +23,9 @@ func (adm Admins) ListApplications(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type Data struct {
-		Applications []skylab.Application
-		Cohort       string
-	}
-	var data Data
 	var msgs = make(map[string][]string)
 	var application skylab.Application
-	data.Cohort = cohort
+	var applications []skylab.Application
 	a := tables.V_APPLICATIONS()
 	err := sq.WithDefaultLog(sq.Lverbose).
 		From(a).
@@ -60,7 +55,7 @@ func (adm Admins) ListApplications(w http.ResponseWriter, r *http.Request) {
 				},
 			}
 		}, func() {
-			data.Applications = append(data.Applications, application)
+			applications = append(applications, application)
 		}).
 		Fetch(adm.skylb.DB)
 	if err != nil {
@@ -68,5 +63,9 @@ func (adm Admins) ListApplications(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	r, _ = adm.skylb.SetFlashMsgs(w, r, msgs)
-	adm.skylb.Render(w, r, data, nil, "app/admins/list_applications.html")
+	data := map[string]interface{}{
+		"Applications": applications,
+		"Cohort":       cohort,
+	}
+	adm.skylb.Wender(w, r, data, "app/admins/list_applications.html")
 }

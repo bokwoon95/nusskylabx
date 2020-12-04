@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{ template "app/skylab/head.html" }}
+  {{ template "app/skylab/head.html" . }}
   <title>Application period closed</title>
 </head>
 <body class="{{ if $.skylab.CurrentRole }}tripanel-l{{ else }}bipanel-l{{ end }}">
-  {{ template "app/skylab/navbar.html" .}}
+  {{ template "app/skylab/navbar.html" . }}
   <div class="sans-serif pa2 pa4-l">
     Sorry, the application period is closed.
     <a href="/" class="underline text-blue-700">Go home.</a>

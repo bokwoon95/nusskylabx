@@ -31,42 +31,45 @@ func (adm Admins) ListUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type Data struct {
-		Users             []skylab.User
-		Teams             []skylab.Team
-		UserIDToTeamIndex map[int]int // maps user.UserID to []skylab.Teams index
-		Cohort            string
-		Role              string
-	}
-	var data Data
-	data.Cohort = cohort
-	data.Role = role
-	data.UserIDToTeamIndex = make(map[int]int)
 	var user skylab.User
+	var users []skylab.User
 	u, ur := tables.USERS(), tables.USER_ROLES()
-	err := sq.WithDefaultLog(sq.Lverbose).From(u).Join(ur, ur.USER_ID.Eq(u.USER_ID)).Where(
-		ur.COHORT.EqString(cohort),
-		ur.ROLE.EqString(role),
-	).OrderBy(u.USER_ID).Selectx(func(row *sq.Row) {
-		user.Valid = row.IntValid(u.USER_ID)
-		user.UserID = row.Int(u.USER_ID)
-		user.Displayname = row.String(u.DISPLAYNAME)
-		user.Email = row.String(u.EMAIL)
-		user.Roles = map[string]int{
-			row.String(ur.ROLE): row.Int(ur.USER_ROLE_ID),
-		}
-	}, func() {
-		data.Users = append(data.Users, user)
-	}).Fetch(adm.skylb.DB)
+	err := sq.WithDefaultLog(sq.Lverbose).
+		From(u).
+		Join(ur, ur.USER_ID.Eq(u.USER_ID)).
+		Where(
+			ur.COHORT.EqString(cohort),
+			ur.ROLE.EqString(role),
+		).
+		OrderBy(u.USER_ID).
+		Selectx(func(row *sq.Row) {
+			user.Valid = row.IntValid(u.USER_ID)
+			user.UserID = row.Int(u.USER_ID)
+			user.Displayname = row.String(u.DISPLAYNAME)
+			user.Email = row.String(u.EMAIL)
+			user.Roles = map[string]int{
+				row.String(ur.ROLE): row.Int(ur.USER_ROLE_ID),
+			}
+		}, func() {
+			users = append(users, user)
+		}).
+		Fetch(adm.skylb.DB)
 	if err != nil {
 		adm.skylb.InternalServerError(w, r, err)
 		return
+	}
+	data := map[string]interface{}{
+		"Users":  users,
+		"Cohort": cohort,
+		"Role":   role,
 	}
 	switch role {
 	case skylab.RoleStudent:
 		t := tables.V_TEAMS()
 		var team skylab.Team
+		var teams []skylab.Team
 		var student1UserID, student2UserID int
+		var userIDToTeamIndex = make(map[int]int)
 		err = sq.WithDefaultLog(sq.Lverbose).
 			From(t).
 			Where(t.COHORT.EqString(cohort)).
@@ -98,17 +101,19 @@ func (adm Admins) ListUsers(w http.ResponseWriter, r *http.Request) {
 				student1UserID = row.Int(t.STUDENT1_USER_ID)
 				student2UserID = row.Int(t.STUDENT2_USER_ID)
 			}, func() {
-				data.Teams = append(data.Teams, team)
-				data.UserIDToTeamIndex[student1UserID] = len(data.Teams) - 1
-				data.UserIDToTeamIndex[student2UserID] = len(data.Teams) - 1
+				teams = append(teams, team)
+				userIDToTeamIndex[student1UserID] = len(teams) - 1
+				userIDToTeamIndex[student2UserID] = len(teams) - 1
 			}).
 			Fetch(adm.skylb.DB)
 		if err != nil {
 			adm.skylb.InternalServerError(w, r, err)
 			return
 		}
-		adm.skylb.Render(w, r, data, nil, "app/admins/list_students.html")
+		data["Teams"] = teams
+		data["UserIDToTeamIndex"] = userIDToTeamIndex
+		adm.skylb.Wender(w, r, data, "app/admins/list_students.html")
 	default:
-		adm.skylb.Render(w, r, data, nil, "app/admins/list_users.html")
+		adm.skylb.Wender(w, r, data, "app/admins/list_users.html")
 	}
 }

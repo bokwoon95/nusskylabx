@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	sq "github.com/bokwoon95/go-structured-query/postgres"
-	"github.com/bokwoon95/nusskylabx/helpers/timeutil"
 	"github.com/bokwoon95/nusskylabx/tables"
 
 	"github.com/bokwoon95/nusskylabx/app/skylab"
@@ -19,13 +18,7 @@ func (adv Advisers) MilestoneUserEvaluation(section string) http.HandlerFunc {
 		user, _ := r.Context().Value(skylab.ContextUser).(skylab.User)
 		r = adv.skylb.SetRoleSection(w, r, skylab.RoleAdviser, section)
 		headers.DoNotCache(w)
-		type Data struct {
-			Milestone   string
-			Evaluations []skylab.UserEvaluation
-			Period      skylab.Period
-		}
-		var data Data
-		data.Milestone = milestone
+		var evaluations []skylab.UserEvaluation
 		ue := tables.V_USER_EVALUATIONS()
 		userEvaluation := &skylab.UserEvaluation{}
 		err := sq.WithDefaultLog(sq.Lstats).
@@ -37,7 +30,7 @@ func (adv Advisers) MilestoneUserEvaluation(section string) http.HandlerFunc {
 			).
 			Selectx(
 				userEvaluation.RowMapper(ue),
-				func() { data.Evaluations = append(data.Evaluations, *userEvaluation) },
+				func() { evaluations = append(evaluations, *userEvaluation) },
 			).
 			Fetch(adv.skylb.DB)
 
@@ -45,10 +38,14 @@ func (adv Advisers) MilestoneUserEvaluation(section string) http.HandlerFunc {
 			adv.skylb.InternalServerError(w, r, err)
 			return
 		}
-		if len(data.Evaluations) > 0 {
-			data.Period = data.Evaluations[0].EvaluationForm.Period
+		data := map[string]interface{}{
+			"Milestone":   milestone,
+			"Evaluations": evaluations,
+			"Period":      skylab.Period{},
 		}
-		funcs := timeutil.Funcs(nil)
-		adv.skylb.Render(w, r, data, funcs, "app/advisers/milestone_user_evaluation.html")
+		if len(evaluations) > 0 {
+			data["Period"] = evaluations[0].EvaluationForm.Period
+		}
+		adv.skylb.Wender(w, r, data, "app/advisers/milestone_user_evaluation.html")
 	}
 }

@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html"}}
-  <title>{{MilestoneName $.Milestone}} Peer Evaluations</title>
+  {{ template "app/skylab/head.html" . }}
+  <title>{{ MilestoneName $.Milestone }} Peer Evaluations</title>
 </head>
 <body class="tripanel-l">
-  {{template "app/skylab/navbar.html"}}
-  {{template "app/skylab/sidebar.html"}}
+  {{ template "app/skylab/navbar.html" . }}
+  {{ template "app/skylab/sidebar.html" . }}
   <div class="sans-serif pa2 pa4-l">
-    <h3 class="ma0 mb4">{{MilestoneName $.Milestone}}</h3>
+    <h3 class="ma0 mb4">{{ MilestoneName $.Milestone }}</h3>
     <div class="grid-2-1-1 grid-gap-3">
-      {{range $i, $evaluationGroup := $.EvaluationGroups}}
-        {{if len $evaluationGroup}}
-        {{$submission := (index $evaluationGroup 0).Evaluatee}}
+      {{ range $i, $evaluationGroup := $.EvaluationGroups }}
+        {{ if len $evaluationGroup }}
+        {{ $submission := (index $evaluationGroup 0).Evaluatee }}
         <div class="widget">
           <!-- WidgetTitle -->
           <div class="widget-title pv2 ph3 bg-near-white justify-between items-center">
             <div class="f6 b">Submission</div>
             <div class="flex">
               <div class="order-1">
-                <span class="gray">[{{$submission.Team.TeamID}}] [{{$submission.Team.ProjectLevel}}]</span>
-                &nbsp;{{$submission.Team.TeamName}}
+                <span class="gray">[{{ $submission.Team.TeamID }}] [{{ $submission.Team.ProjectLevel }}]</span>
+                &nbsp;{{ $submission.Team.TeamName }}
               </div>
               <div class="order-2 dotted-spacer"></div>
               <div class="order-3">
-                {{if and $submission.Valid $submission.Submitted}}
-                <a href="{{AdviserSubmission}}/{{$submission.SubmissionID}}">view submission</a>
-                {{else if and $submission.Valid (not $submission.Submitted)}}
-                <a href="{{AdviserSubmission}}/{{$submission.SubmissionID}}">view draft</a>
-                {{else}}
+                {{ if and $submission.Valid $submission.Submitted }}
+                <a href="{{ AdviserSubmission }}/{{ $submission.SubmissionID }}">view submission</a>
+                {{ else if and $submission.Valid (not $submission.Submitted) }}
+                <a href="{{ AdviserSubmission }}/{{ $submission.SubmissionID }}">view draft</a>
+                {{ else }}
                   <span class="gray">not submitted</span>
-                {{end}}
+                {{ end }}
               </div>
             </div>
           </div>
@@ -38,29 +38,29 @@
           <!-- WidgetBody -->
           <div class="pa3">
             <div class="f6 b">Evaluations</div>
-            {{range $j, $evaluation := $evaluationGroup}}
+            {{ range $j, $evaluation := $evaluationGroup }}
               <div class="flex">
                 <div class="order-1">
-                  <span class="gray">[{{$evaluation.Evaluator.TeamID}}] [{{$evaluation.Evaluator.ProjectLevel}}]</span>
-                  &nbsp;{{$evaluation.Evaluator.TeamName}}
+                  <span class="gray">[{{ $evaluation.Evaluator.TeamID }}] [{{ $evaluation.Evaluator.ProjectLevel }}]</span>
+                  &nbsp;{{ $evaluation.Evaluator.TeamName }}
                 </div>
                 <div class="order-2 dotted-spacer"></div>
                 <div class="order-3">
-                  {{if and $evaluation.Valid $evaluation.Submitted}}
-                  <a href="{{AdviserTeamEvaluation}}/{{$evaluation.TeamEvaluationID}}">view evaluation</a>
-                  {{else if and $evaluation.Valid (not $evaluation.Submitted)}}
-                  <a href="{{AdviserTeamEvaluation}}/{{$evaluation.TeamEvaluationID}}">view draft</a>
-                  {{else}}
+                  {{ if and $evaluation.Valid $evaluation.Submitted }}
+                  <a href="{{ AdviserTeamEvaluation }}/{{ $evaluation.TeamEvaluationID }}">view evaluation</a>
+                  {{ else if and $evaluation.Valid (not $evaluation.Submitted) }}
+                  <a href="{{ AdviserTeamEvaluation }}/{{ $evaluation.TeamEvaluationID }}">view draft</a>
+                  {{ else }}
                     <span class="gray">not submitted</span>
-                  {{end}}
+                  {{ end }}
                 </div>
               </div>
-            {{end}}
+            {{ end }}
           </div>
           <!-- End WidgetBody -->
         </div>
-        {{end}}
-      {{end}}
+        {{ end }}
+      {{ end }}
     </div>
   </div>
 </body>

@@ -1,61 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html"}}
-  <title>{{$.TeamEvaluation.Evaluatee.Team.TeamName}} | {{MilestoneNameAbbrev $.TeamEvaluation.EvaluationForm.Period.Milestone}} Evaluation</title>
+  {{ template "app/skylab/head.html" . }}
+  <title>{{ $.TeamEvaluation.Evaluatee.Team.TeamName }} | {{ MilestoneNameAbbrev $.TeamEvaluation.EvaluationForm.Period.Milestone }} Evaluation</title>
 </head>
-<body class="{{if $.skylab.CurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
-  {{template "app/skylab/navbar.html"}}
-  {{template "app/skylab/sidebar.html"}}
+<body class="{{ if $.skylab.CurrentRole }}tripanel-l{{ else }}bipanel-l{{ end }}">
+  {{ template "app/skylab/navbar.html" . }}
+  {{ template "app/skylab/sidebar.html" . }}
   <div class="sans-serif pa2 pa4-l">
-    {{template "helpers/flash/flash.html"}}
+    {{ template "helpers/flash/flash.html" . }}
     <div class="ba br4 b--black-30 pa4">
       <!-- <div class="mb3"> -->
-      <!--   <a href="{{$.SubmissionURL}}"> -->
+      <!--   <a href="{{ $.SubmissionURL }}"> -->
       <!--     <button class="button f6 pv1 ph2 bg&#45;light&#45;red hover&#45;bg&#45;red">View Submission</button> -->
       <!--   </a> -->
       <!-- </div> -->
-      {{define "actions"}}
-        {{if $.EditURL}}
-        <a href="{{$.EditURL}}">
-          <button type="submit" formaction="{{$.EditURL}}" class="button pa2 ph3 bg-light-blue hover-bg-blue">
+      {{ define "actions" }}
+        {{ if $.EditURL }}
+        <a href="{{ $.EditURL }}">
+          <button type="submit" formaction="{{ $.EditURL }}" class="button pa2 ph3 bg-light-blue hover-bg-blue">
             Edit
           </button>
         </a>
-        {{end}}
-        {{if $.TeamEvaluation.Submitted}}
-        {{else if and $.TeamEvaluation.Valid $.SubmitURL}}
+        {{ end }}
+        {{ if $.TeamEvaluation.Submitted }}
+        {{ else if and $.TeamEvaluation.Valid $.SubmitURL }}
           <span class="ml2"></span>
-          <form method="post" action="{{$.SubmitURL}}" class="dib">
-            {{$.skylab.CSRFToken}}
+          <form method="post" action="{{ $.SubmitURL }}" class="dib">
+            {{ $.skylab.CSRFToken }}
             <button type="submit" class="button pa2 bg-dark-green hover-bg-darker-green white">Submit</button>
           </form>
-        {{end}}
-      {{end}}
-      {{template "actions" .}}
+        {{ end }}
+      {{ end }}
+      {{ template "actions" . }}
       <p></p>
-      <h4 class="ma0">{{MilestoneName $.TeamEvaluation.EvaluationForm.Period.Milestone}} Evaluation</h4>
+      <h4 class="ma0">{{ MilestoneName $.TeamEvaluation.EvaluationForm.Period.Milestone }} Evaluation</h4>
       <div class="">
-        <span class="gray">[{{$.TeamEvaluation.Evaluator.TeamID}}] [{{$.TeamEvaluation.Evaluator.ProjectLevel}}]</span> 
-        &nbsp;{{$.TeamEvaluation.Evaluator.TeamName}} &rarr;
-        evaluating <span class="gray">[{{$.TeamEvaluation.Evaluatee.Team.TeamID}}] [{{$.TeamEvaluation.Evaluatee.Team.ProjectLevel}}]</span> 
-        &nbsp;{{$.TeamEvaluation.Evaluatee.Team.TeamName}}
+        <span class="gray">[{{ $.TeamEvaluation.Evaluator.TeamID }}] [{{ $.TeamEvaluation.Evaluator.ProjectLevel }}]</span> 
+        &nbsp;{{ $.TeamEvaluation.Evaluator.TeamName }} &rarr;
+        evaluating <span class="gray">[{{ $.TeamEvaluation.Evaluatee.Team.TeamID }}] [{{ $.TeamEvaluation.Evaluatee.Team.ProjectLevel }}]</span> 
+        &nbsp;{{ $.TeamEvaluation.Evaluatee.Team.TeamName }}
       </div>
-      {{if $.TeamEvaluation.Submitted}}
+      {{ if $.TeamEvaluation.Submitted }}
         <div class="gray">Submitted</div>
-      {{else}}
+      {{ else }}
         <div class="gray">Draft</div>
-      {{end}}
+      {{ end }}
       <div class="pv3"></div>
-      {{$evaluationData := FormxMergeQuestionsAnswers $.TeamEvaluation.EvaluationForm.Questions $.TeamEvaluation.EvaluationAnswers}}
-      {{template "helpers/formx/render_form_results.html" $evaluationData}}
-      {{template "actions" .}}
+      {{ $evaluationData := FormxMergeQuestionsAnswers $.TeamEvaluation.EvaluationForm.Questions $.TeamEvaluation.EvaluationAnswers }}
+      {{ template "helpers/formx/render_form_results.html" $evaluationData }}
+      {{ template "actions" . }}
     </div>
   </div>
 
   <!-- Scripts -->
   <script src="/static/tinymce/tinymce.min.js"></script>
-  <script nonce="{{HeadersCSPNonce}}">
+  <script nonce="{{ HeadersCSPNonce }}">
     tinymce.init({
       selector: "textarea",
       statusbar: false,

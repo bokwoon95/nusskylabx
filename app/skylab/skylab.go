@@ -24,6 +24,8 @@ import (
 	"github.com/bokwoon95/nusskylabx/helpers/flash"
 	"github.com/bokwoon95/nusskylabx/helpers/formx"
 	"github.com/bokwoon95/nusskylabx/helpers/templateloader"
+	"github.com/bokwoon95/nusskylabx/helpers/templateutil"
+	"github.com/bokwoon95/nusskylabx/helpers/timeutil"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
@@ -189,6 +191,9 @@ func NewWithoutDB(config Config) Skylab {
 	funcs = skylb.addConsts(funcs)
 	funcs = skylb.AddInputSelects(funcs)
 	funcs = AddSections(funcs)
+	funcs = templateutil.Funcs(funcs)
+	funcs = templateutil.Sql(funcs)
+	funcs = timeutil.Funcs(funcs)
 	funcs = formx.Funcs(funcs, skylb.Policy)
 	common := []string{
 		"app/skylab/head.html",

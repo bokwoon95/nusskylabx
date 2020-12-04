@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html"}}
+  {{ template "app/skylab/head.html" . }}
   <title>Your Team</title>
 </head>
 <body class="tripanel-l">
-  {{template "app/skylab/navbar.html"}}
-  {{template "app/skylab/sidebar.html"}}
+  {{ template "app/skylab/navbar.html" . }}
+  {{ template "app/skylab/sidebar.html" . }}
   <div class="sans-serif pa2 pa4-l">
     <div class="widget mb4">
       <div class="widget-title pv2 ph3 bg-near-white">
@@ -14,27 +14,27 @@
       </div>
       <div class="flex-l">
         <div class="w-50-l pa3-l ph3-m">
-          <p>Cohort: {{$.Team.Cohort}}</p>
-          <p>Student 1: {{$.Team.Student1.Displayname}}</p>
-          <p>Student 2: {{$.Team.Student2.Displayname}}</p>
-          <p>Adviser: {{$.Team.Adviser.Displayname}}</p>
-          <p>Mentor: {{$.Team.Mentor.Displayname}}</p>
+          <p>Cohort: {{ $.Team.Cohort }}</p>
+          <p>Student 1: {{ $.Team.Student1.Displayname }}</p>
+          <p>Student 2: {{ $.Team.Student2.Displayname }}</p>
+          <p>Adviser: {{ $.Team.Adviser.Displayname }}</p>
+          <p>Mentor: {{ $.Team.Mentor.Displayname }}</p>
         </div>
         <form method="get" action="" class="w-50-l pa3-l ph3-m">
-          {{$.skylab.CSRFToken}}
+          {{ $.skylab.CSRFToken }}
           <p>
             <div><b>Team Name:</b></div>
             <div>
-              <input type="text" name="team_name" value="{{$.Team.TeamName}}" class="form-input w-75-l w-50-m" autocomplete="off">
+              <input type="text" name="team_name" value="{{ $.Team.TeamName }}" class="form-input w-75-l w-50-m" autocomplete="off">
             </div>
           </p>
           <p>
             <div><b>Project Level:</b></div>
             <div>
               <select name="project_level" class="form-input bg-white">
-                <option value="{{ProjectLevelVostok}}" {{if eq $.Team.ProjectLevel ProjectLevelVostok}}selected{{end}}>Vostok</option>
-                <option value="{{ProjectLevelGemini}}" {{if eq $.Team.ProjectLevel ProjectLevelGemini}}selected{{end}}>Gemini</option>
-                <option value="{{ProjectLevelApollo}}" {{if eq $.Team.ProjectLevel ProjectLevelApollo}}selected{{end}}>Apollo</option>
+                <option value="{{ ProjectLevelVostok }}" {{ if eq $.Team.ProjectLevel ProjectLevelVostok }}selected{{ end }}>Vostok</option>
+                <option value="{{ ProjectLevelGemini }}" {{ if eq $.Team.ProjectLevel ProjectLevelGemini }}selected{{ end }}>Gemini</option>
+                <option value="{{ ProjectLevelApollo }}" {{ if eq $.Team.ProjectLevel ProjectLevelApollo }}selected{{ end }}>Apollo</option>
               </select>
             </div>
           </p>

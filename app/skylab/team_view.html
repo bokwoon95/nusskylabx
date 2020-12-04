@@ -1,46 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html"}}
+  {{ template "app/skylab/head.html" . }}
   <title></title>
 </head>
-<body class="{{if $.skylab.CurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
-  {{template "app/skylab/navbar.html"}}
-  {{template "app/skylab/sidebar.html"}}
+<body class="{{ if $.skylab.CurrentRole }}tripanel-l{{ else }}bipanel-l{{ end }}">
+  {{ template "app/skylab/navbar.html" . }}
+  {{ template "app/skylab/sidebar.html" . }}
   <div class="sans-serif pa2 pa4-l">
     <a href="#" class="goback">&lt; Back</a>
-    <script nonce="{{HeadersCSPNonce}}">
+    <script nonce="{{ HeadersCSPNonce }}">
       document.querySelector(".goback").addEventListener("click", () => window.history.back());
     </script>
     <div class="pv1"></div>
     <div class="widget">
       <div class="widget-title pv1 ph2 bg-near-white">
-        <h4 class="ma0">[Team {{$.Team.TeamID}}] {{$.Team.TeamName}}</h4>
+        <h4 class="ma0">[Team {{ $.Team.TeamID }}] {{ $.Team.TeamName }}</h4>
       </div>
       <div class="pa3">
-        <div>Cohort: {{$.Team.Cohort}}</div>
-        <div>Project Level: {{$.Team.ProjectLevel}}</div>
-        <div>Status: {{$.Team.Status}}</div>
+        <div>Cohort: {{ $.Team.Cohort }}</div>
+        <div>Project Level: {{ $.Team.ProjectLevel }}</div>
+        <div>Status: {{ $.Team.Status }}</div>
         <div>
           Team Members:
           <ul class="ma0">
-            {{if $.Team.Student1.Valid}}
-              <li><a href="{{$.UserBaseURL}}/{{$.Team.Student1.UserID}}">{{$.Team.Student1.Displayname}}</a></li>
-            {{end}}
-            {{if $.Team.Student2.Valid}}
-              <li><a href="{{$.UserBaseURL}}/{{$.Team.Student2.UserID}}">{{$.Team.Student2.Displayname}}</a></li>
-            {{end}}
+            {{ if $.Team.Student1.Valid }}
+              <li><a href="{{ $.UserBaseURL }}/{{ $.Team.Student1.UserID }}">{{ $.Team.Student1.Displayname }}</a></li>
+            {{ end }}
+            {{ if $.Team.Student2.Valid }}
+              <li><a href="{{ $.UserBaseURL }}/{{ $.Team.Student2.UserID }}">{{ $.Team.Student2.Displayname }}</a></li>
+            {{ end }}
           </ul>
         </div>
         <div>
-          {{if $.Team.Adviser.Valid}}
-            Adviser: <a href="{{$.UserBaseURL}}/{{$.Team.Adviser.UserID}}">{{$.Team.Adviser.Displayname}}</a>
-          {{end}}
+          {{ if $.Team.Adviser.Valid }}
+            Adviser: <a href="{{ $.UserBaseURL }}/{{ $.Team.Adviser.UserID }}">{{ $.Team.Adviser.Displayname }}</a>
+          {{ end }}
         </div>
         <div>
-          {{if $.Team.Mentor.Valid}}
-            Mentor: <a href="{{$.UserBaseURL}}/{{$.Team.Mentor.UserID}}">{{$.Team.Mentor.Displayname}}</a>
-          {{end}}
+          {{ if $.Team.Mentor.Valid }}
+            Mentor: <a href="{{ $.UserBaseURL }}/{{ $.Team.Mentor.UserID }}">{{ $.Team.Mentor.Displayname }}</a>
+          {{ end }}
         </div>
       </div>
     </div>

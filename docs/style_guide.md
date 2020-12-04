@@ -13,7 +13,7 @@
 
 ## HTML
 - Manually format it yourself.
-- Don't use prettier even though prettier does support HTML. This is because prettier will mangle Go's `{{}}` templating syntax ([or any other templating syntax](https://github.com/prettier/prettier/issues/5581#issuecomment-459417515)).
+- Don't use prettier even though prettier does support HTML. This is because prettier will mangle Go's `{{ }}` templating syntax ([or any other templating syntax](https://github.com/prettier/prettier/issues/5581#issuecomment-459417515)).
 
 ## CSS
 - Use [prettier](https://prettier.io/docs/en/cli.html) to format your CSS scripts.

@@ -10,17 +10,17 @@
   <title>500 Internal Server Error</title>
 </head>
 <body class="bipanel-l">
-  {{template "app/skylab/navbar.html"}}
+  {{ template "app/skylab/navbar.html" . }}
   <div class="sans-serif">
     <div class="pa4">
       <h1 class="f-subheadline">500 Internal Server Error</h1>
       <p class="f4">Something went wrong, here is the error trace (read top down)</p>
-      <p class="f5">Request ID: {{$.RequestID}}</p>
-      <p class="f5">URL: {{$.URL}}</p>
-      <pre style="white-space: pre-wrap;">{{$.Error}}</pre>
-      {{if $.Diagnosis.Valid}}
-        <p class="f5">{{$.Diagnosis.HTML}}</p>
-      {{end}}
+      <p class="f5">Request ID: {{ $.RequestID }}</p>
+      <p class="f5">URL: {{ $.URL }}</p>
+      <pre style="white-space: pre-wrap;">{{ $.Error }}</pre>
+      {{ if $.Diagnosis.Valid }}
+        <p class="f5">{{ $.Diagnosis.HTML }}</p>
+      {{ end }}
     </div>
   </div>
 </body>

@@ -24,22 +24,21 @@ func (adm Admins) ListTeams(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type Data struct {
-		Teams  []skylab.Team
-		Cohort string
-	}
-	var data Data
-	data.Cohort = cohort
 	t := tables.V_TEAMS()
-	team := &skylab.Team{}
+	var team skylab.Team
+	var teams []skylab.Team
 	err := sq.WithDefaultLog(sq.Lverbose).
 		From(t).
 		Where(t.COHORT.EqString(cohort)).
-		Selectx(team.RowMapper(t), func() { data.Teams = append(data.Teams, *team) }).
+		Selectx(team.RowMapper(t), func() { teams = append(teams, team) }).
 		Fetch(adm.skylb.DB)
 	if err != nil {
 		adm.skylb.InternalServerError(w, r, err)
 		return
 	}
-	adm.skylb.Render(w, r, data, nil, "app/admins/list_teams.html")
+	data := map[string]interface{}{
+		"Teams":  teams,
+		"Cohort": cohort,
+	}
+	adm.skylb.Wender(w, r, data, "app/admins/list_teams.html")
 }

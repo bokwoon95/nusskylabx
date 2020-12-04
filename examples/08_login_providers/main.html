@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{if $.IsLoggedIn}}
-  <title>Welcome, {{$.User.Displayname}}</title>
-  {{else}}
+  {{ if $.IsLoggedIn }}
+  <title>Welcome, {{ $.User.Displayname }}</title>
+  {{ else }}
   <title>Login</title>
-  {{end}}
+  {{ end }}
 </head>
 <body>
-  {{if $.IsLoggedIn}}
+  {{ if $.IsLoggedIn }}
     <h1>You are logged in</h1>
-    <div><b>Username:</b> {{$.User.Username}}</div>
-    <div><b>Display Name:</b> {{$.User.Displayname}}</div>
-    <div><b>Email:</b> {{$.User.Email}}</div>
+    <div><b>Username:</b> {{ $.User.Username }}</div>
+    <div><b>Display Name:</b> {{ $.User.Displayname }}</div>
+    <div><b>Email:</b> {{ $.User.Email }}</div>
     <form method="post" action="/logout"><button type="submit">Logout</button></form>
-  {{else}}
+  {{ else }}
     <h1>Login with a provider</h1>
     <div><a href="/login?provider=nus">NUS</a></div>
     <div><a href="/login?provider=google">Google</a></div>
-  {{end}}
+  {{ end }}
 </body>
 </html>

@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html"}}
+  {{ template "app/skylab/head.html" . }}
   <title>405 Method Not Allowed</title>
 </head>
 <body class="bipanel-l">
-  {{template "app/skylab/navbar.html"}}
+  {{ template "app/skylab/navbar.html" . }}
   <div class="sans-serif">
     <div class="pa4">
       <img src="/static/img/ssl_error.png" class="">
       <h1 class="f-subheadline">405 Method Not Allowed</h1>
       <p class="f4">
-        Method '{{$.Method}}' not allowed for URL: {{$.URL}}.
+        Method '{{ $.Method }}' not allowed for URL: {{ $.URL }}.
         &nbsp;<a href="/" class="">Go to homepage.</a>
       </p>
     </div>

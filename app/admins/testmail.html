@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html"}}
+  {{ template "app/skylab/head.html" . }}
   <title>Test Mail</title>
 </head>
 <body class="tripanel-l">
-  {{template "app/skylab/navbar.html"}}
-  {{template "app/skylab/sidebar.html"}}
+  {{ template "app/skylab/navbar.html" . }}
+  {{ template "app/skylab/sidebar.html" . }}
   <div class="pa2 pa4-l">
     <h1 class="sans-serif">Send a test email</h1>
     <form method="post" action="">
-      {{$.skylab.CSRFToken}}
+      {{ $.skylab.CSRFToken }}
       <div>
         <div><b>Receipient(s):</b></div>
         <input type="text" name="to" autocomplete="off" class="form-input w-50">
@@ -30,17 +30,17 @@
     </form>
   </div>
   <!-- Flash Msg -->
-  {{with $flashMsg := FlashutilGetFlashMsg "sent"}}
-    {{if $flashMsg.Valid}}
+  {{ with $flashMsg := FlashutilGetFlashMsg "sent" }}
+    {{ if $flashMsg.Valid }}
       <p class="flashmsg fixed bottom-0 right-2 br1 mv1 ph2 bg-light-blue pointer sans-serif">
-        {{$flashMsg.Value}}
+        {{ $flashMsg.Value }}
       </p>
-    {{end}}
-  {{end}}
+    {{ end }}
+  {{ end }}
   <!-- End Flash Msg -->
   <script src="/static/flashmsg.js"></script>
   <script src="/static/tinymce/tinymce.min.js"></script>
-  <script nonce="{{HeadersCSPNonce}}">
+  <script nonce="{{ HeadersCSPNonce }}">
     tinymce.init({
       selector: "textarea",
       statusbar: false,

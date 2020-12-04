@@ -25,17 +25,17 @@ func (adm Admins) UserView(w http.ResponseWriter, r *http.Request) {
 		adm.skylb.BadRequest(w, r, err.Error())
 		return
 	}
-	var data skylab.UserView
-	u := tables.USERS()
 	// Get User
+	u := tables.USERS()
+	var user skylab.User
 	err = sq.WithDefaultLog(sq.Lverbose).
 		From(u).
 		Where(u.USER_ID.EqInt(userID)).
 		SelectRowx(func(row *sq.Row) {
-			data.User.Valid = row.IntValid(u.USER_ID)
-			data.User.UserID = row.Int(u.USER_ID)
-			data.User.Displayname = row.String(u.DISPLAYNAME)
-			data.User.Email = row.String(u.EMAIL)
+			user.Valid = row.IntValid(u.USER_ID)
+			user.UserID = row.Int(u.USER_ID)
+			user.Displayname = row.String(u.DISPLAYNAME)
+			user.Email = row.String(u.EMAIL)
 		}).
 		Fetch(adm.skylb.DB)
 	if err != nil {
@@ -47,11 +47,11 @@ func (adm Admins) UserView(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	// Get Roles
+	ur := tables.USER_ROLES()
 	var userRoleID int
 	var role string
-	ur := tables.USER_ROLES()
-	// Get Roles
-	data.User.Roles = make(map[string]int)
+	user.Roles = make(map[string]int)
 	err = sq.WithDefaultLog(sq.Lverbose).
 		From(ur).
 		Where(ur.USER_ID.EqInt(userID)).
@@ -59,26 +59,27 @@ func (adm Admins) UserView(w http.ResponseWriter, r *http.Request) {
 			userRoleID = row.Int(ur.USER_ROLE_ID)
 			role = row.String(ur.ROLE)
 		}, func() {
-			data.User.Roles[role] = userRoleID
+			user.Roles[role] = userRoleID
 		}).
 		Fetch(adm.skylb.DB)
 	if err != nil {
 		adm.skylb.InternalServerError(w, r, err)
 		return
 	}
-	t, urs := tables.TEAMS(), tables.USER_ROLES_STUDENTS()
 	// Get Team
+	t, urs := tables.TEAMS(), tables.USER_ROLES_STUDENTS()
+	var userTeam skylab.Team
 	err = sq.WithDefaultLog(sq.Lverbose).
 		From(t).
 		Join(urs, urs.TEAM_ID.Eq(t.TEAM_ID)).
-		Where(urs.USER_ROLE_ID.EqInt(data.User.Roles[skylab.RoleStudent])).
+		Where(urs.USER_ROLE_ID.EqInt(user.Roles[skylab.RoleStudent])).
 		SelectRowx(func(row *sq.Row) {
-			data.Team.Valid = row.IntValid(t.TEAM_ID)
-			data.Team.TeamID = row.Int(t.TEAM_ID)
-			data.Team.Cohort = row.String(t.COHORT)
-			data.Team.TeamName = row.String(t.TEAM_NAME)
-			data.Team.ProjectLevel = row.String(t.PROJECT_LEVEL)
-			data.Team.Status = row.String(t.STATUS)
+			userTeam.Valid = row.IntValid(t.TEAM_ID)
+			userTeam.TeamID = row.Int(t.TEAM_ID)
+			userTeam.Cohort = row.String(t.COHORT)
+			userTeam.TeamName = row.String(t.TEAM_NAME)
+			userTeam.ProjectLevel = row.String(t.PROJECT_LEVEL)
+			userTeam.Status = row.String(t.STATUS)
 		}).
 		Fetch(adm.skylb.DB)
 	if err != nil {
@@ -90,45 +91,56 @@ func (adm Admins) UserView(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	var team skylab.Team
 	// Get AdvisingTeams
-	err = sq.WithDefaultLog(sq.Lverbose).From(t).Where(
-		t.ADVISER_USER_ROLE_ID.EqInt(data.User.Roles[skylab.RoleAdviser]),
-	).Selectx(func(row *sq.Row) {
-		team.Valid = row.IntValid(t.TEAM_ID)
-		team.TeamID = row.Int(t.TEAM_ID)
-		team.Cohort = row.String(t.COHORT)
-		team.TeamName = row.String(t.TEAM_NAME)
-		team.ProjectLevel = row.String(t.PROJECT_LEVEL)
-		team.Status = row.String(t.STATUS)
-	}, func() {
-		data.AdvisingTeams = append(data.AdvisingTeams, team)
-	}).Fetch(adm.skylb.DB)
+	var team skylab.Team
+	var advisingTeams []skylab.Team
+	err = sq.WithDefaultLog(sq.Lverbose).
+		From(t).
+		Where(t.ADVISER_USER_ROLE_ID.EqInt(user.Roles[skylab.RoleAdviser])).
+		Selectx(func(row *sq.Row) {
+			team.Valid = row.IntValid(t.TEAM_ID)
+			team.TeamID = row.Int(t.TEAM_ID)
+			team.Cohort = row.String(t.COHORT)
+			team.TeamName = row.String(t.TEAM_NAME)
+			team.ProjectLevel = row.String(t.PROJECT_LEVEL)
+			team.Status = row.String(t.STATUS)
+		}, func() {
+			advisingTeams = append(advisingTeams, team)
+		}).
+		Fetch(adm.skylb.DB)
 	if err != nil {
 		adm.skylb.InternalServerError(w, r, err)
 		return
 	}
 	// Get MentoringTeams
-	err = sq.WithDefaultLog(sq.Lverbose).From(t).Where(
-		t.MENTOR_USER_ROLE_ID.EqInt(data.User.Roles[skylab.RoleMentor]),
-	).Selectx(func(row *sq.Row) {
-		team.Valid = row.IntValid(t.TEAM_ID)
-		team.TeamID = row.Int(t.TEAM_ID)
-		team.Cohort = row.String(t.COHORT)
-		team.TeamName = row.String(t.TEAM_NAME)
-		team.ProjectLevel = row.String(t.PROJECT_LEVEL)
-		team.Status = row.String(t.STATUS)
-	}, func() {
-		data.MentoringTeams = append(data.MentoringTeams, team)
-	}).Fetch(adm.skylb.DB)
+	var mentoringTeams []skylab.Team
+	err = sq.WithDefaultLog(sq.Lverbose).
+		From(t).
+		Where(t.MENTOR_USER_ROLE_ID.EqInt(user.Roles[skylab.RoleMentor])).
+		Selectx(func(row *sq.Row) {
+			team.Valid = row.IntValid(t.TEAM_ID)
+			team.TeamID = row.Int(t.TEAM_ID)
+			team.Cohort = row.String(t.COHORT)
+			team.TeamName = row.String(t.TEAM_NAME)
+			team.ProjectLevel = row.String(t.PROJECT_LEVEL)
+			team.Status = row.String(t.STATUS)
+		}, func() {
+			mentoringTeams = append(mentoringTeams, team)
+		}).
+		Fetch(adm.skylb.DB)
 	if err != nil {
 		adm.skylb.InternalServerError(w, r, err)
 		return
 	}
-	data.TeamBaseURL = skylab.AdminTeam
-	data.UserBaseURL = skylab.AdminUser
-	funcs := skylab.UserViewFuncs(nil, data)
-	adm.skylb.Render(w, r, data, funcs, "app/skylab/user_view.html")
+	data := map[string]interface{}{
+		"User":           user,
+		"Team":           userTeam,
+		"AdvisingTeams":  advisingTeams,
+		"MentoringTeams": mentoringTeams,
+		"TeamBaseURL":    skylab.AdminTeam,
+		"UserBaseURL":    skylab.AdminUser,
+	}
+	adm.skylb.Wender(w, r, data, "app/skylab/user_view.html")
 }
 
 func (adm Admins) UserPreviewAs(next http.Handler) http.Handler {

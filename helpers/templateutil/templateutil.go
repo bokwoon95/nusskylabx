@@ -16,18 +16,18 @@ func Funcs(funcs map[string]interface{}) map[string]interface{} {
 	if funcs == nil {
 		funcs = map[string]interface{}{}
 	}
-	funcs["_Stringify"] = Stringify
+	funcs["_JSONify"] = JSONify
 	funcs["_Sha1Hash"] = Sha1Hash
 	funcs["_InputDate"] = InputDate
 	funcs["_InputTime"] = InputTime
 	return funcs
 }
 
-// Stringify is a Template Function that converts a generic object into a JSON
+// JSONify is a Template Function that converts a generic object into a JSON
 // string.  If the object cannot be marshalled into a json string, it returns
 // "null" instead. To ensure that your object can be converted into json, make
 // sure it has json struct tags on its fields
-func Stringify(input interface{}) string {
+func JSONify(input interface{}) string {
 	output, err := json.Marshal(input)
 	if err != nil {
 		return "null"

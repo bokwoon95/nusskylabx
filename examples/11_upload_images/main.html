@@ -12,12 +12,12 @@
   </form>
   <h2>Images</h2>
   <div class="grid-3-2-1 grid-gap-3">
-    {{range $i, $img := $.Images}}
+    {{ range $i, $img := $.Images }}
     <div class="ba pointer">
-      <img style="height:auto;width:100%;object-fit:cover" src="/img/{{$img.UUID}}">
-      <div><a href="/img/{{$img.UUID}}">[{{$img.UUID}}] {{$img.Filename}}</a></div>
+      <img style="height:auto;width:100%;object-fit:cover" src="/img/{{ $img.UUID }}">
+      <div><a href="/img/{{ $img.UUID }}">[{{ $img.UUID }}] {{ $img.Filename }}</a></div>
     </div>
-    {{end}}
+    {{ end }}
   </div>
 </body>
 </html>

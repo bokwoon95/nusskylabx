@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html"}}
+  {{ template "app/skylab/head.html" . }}
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
   <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
   <title></title>
 </head>
-<body class="{{if $.skylab.CurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
-  {{template "app/skylab/navbar.html"}}
-  {{template "app/skylab/sidebar.html"}}
+<body class="{{ if $.skylab.CurrentRole }}tripanel-l{{ else }}bipanel-l{{ end }}">
+  {{ template "app/skylab/navbar.html" . }}
+  {{ template "app/skylab/sidebar.html" . }}
   <div class="sans-serif pa2 pa4-l">
-    {{template "helpers/flash/flash.html"}}
+    {{ template "helpers/flash/flash.html" . }}
     <div>
       Cohorts:
-      {{range $i, $cohort := SkylabCohorts}}
-        {{if eq $.Cohort $cohort}}
-          <span class="ml1 underline">{{$cohort}}</span>
-        {{else}}
-        <a href="{{AdminListApplications}}/{{$cohort}}" class="ml1">{{$cohort}}</a>
-        {{end}}
-      {{end}}
+      {{ range $i, $cohort := SkylabCohorts }}
+        {{ if eq $.Cohort $cohort }}
+          <span class="ml1 underline">{{ $cohort }}</span>
+        {{ else }}
+        <a href="{{ AdminListApplications }}/{{ $cohort }}" class="ml1">{{ $cohort }}</a>
+        {{ end }}
+      {{ end }}
     </div>
     <div class="pv2"></div>
     <div>
@@ -40,29 +40,29 @@
         </tr>
       </thead>
       <tbody>
-        {{range $i, $application := $.Applications}}
+        {{ range $i, $application := $.Applications }}
         <tr>
-          <td><a href="{{AdminApplication}}/{{$application.ApplicationID}}">{{$application.ApplicationID}}</a></td>
-          <td>{{$application.ProjectLevel}}</td>
+          <td><a href="{{ AdminApplication }}/{{ $application.ApplicationID }}">{{ $application.ApplicationID }}</a></td>
+          <td>{{ $application.ProjectLevel }}</td>
           <td></td>
           <td>
-            {{if $application.Applicant1.Valid}}
-            <a href="{{AdminUser}}/{{$application.Applicant1.UserID}}">{{$application.Applicant1.Displayname}}</a>
-            {{end}}
+            {{ if $application.Applicant1.Valid }}
+            <a href="{{ AdminUser }}/{{ $application.Applicant1.UserID }}">{{ $application.Applicant1.Displayname }}</a>
+            {{ end }}
           </td>
           <td>
-            {{if $application.Applicant2.Valid}}
-            <a href="{{AdminUser}}/{{$application.Applicant2.UserID}}">{{$application.Applicant2.Displayname}}</a>
-            {{end}}
+            {{ if $application.Applicant2.Valid }}
+            <a href="{{ AdminUser }}/{{ $application.Applicant2.UserID }}">{{ $application.Applicant2.Displayname }}</a>
+            {{ end }}
           </td>
-          <td>{{$application.Submitted}}</td>
-          <td>{{$application.Status}}</td>
+          <td>{{ $application.Submitted }}</td>
+          <td>{{ $application.Status }}</td>
         </tr>
-        {{end}}
+        {{ end }}
       </tbody>
     </table>
   </div>
-  <script nonce="{{HeadersCSPNonce}}">
+  <script nonce="{{ HeadersCSPNonce }}">
     $(document).ready(function () {
       $('#table_id').DataTable({
         "scrollX": true,

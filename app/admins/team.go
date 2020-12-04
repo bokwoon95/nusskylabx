@@ -17,17 +17,20 @@ func (adm Admins) TeamView(w http.ResponseWriter, r *http.Request) {
 		adm.skylb.BadRequest(w, r, err.Error())
 		return
 	}
-	var data skylab.TeamView
 	t := tables.V_TEAMS()
+	var team skylab.Team
 	err = sq.WithDefaultLog(sq.Lverbose).
 		From(t).
 		Where(t.TEAM_ID.EqInt(teamID)).
-		SelectRowx((&data.Team).RowMapper(t)).
+		SelectRowx(team.RowMapper(t)).
 		Fetch(adm.skylb.DB)
 	if err != nil {
 		adm.skylb.InternalServerError(w, r, err)
 		return
 	}
-	data.UserBaseURL = skylab.AdminUser
-	adm.skylb.Render(w, r, data, nil, "app/skylab/team_view.html")
+	data := map[string]interface{}{
+		"Team":        team,
+		"UserBaseURL": skylab.AdminUser,
+	}
+	adm.skylb.Wender(w, r, data, "app/skylab/team_view.html")
 }

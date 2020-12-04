@@ -12,7 +12,7 @@ import (
 func (adm Admins) Testmail(w http.ResponseWriter, r *http.Request) {
 	adm.skylb.Log.TraceRequest(r)
 	r = adm.skylb.SetRoleSection(w, r, skylab.RoleAdmin, skylab.AdminTestmail)
-	adm.skylb.Render(w, r, nil, nil, "app/admins/testmail.html")
+	adm.skylb.Wender(w, r, nil, "app/admins/testmail.html")
 }
 
 func (adm Admins) TestmailPost(w http.ResponseWriter, r *http.Request) {

@@ -31,15 +31,10 @@ func (adm Admins) ListForms(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type Data struct {
-		Forms  []skylab.Form
-		Cohort string
-	}
-	var data Data
-	data.Cohort = cohort
 	f, p := tables.FORMS(), tables.PERIODS()
 	me, se := tables.MILESTONE_ENUM(), tables.STAGE_ENUM()
 	var form skylab.Form
+	var forms []skylab.Form
 	err := sq.WithDefaultLog(sq.Lstats).
 		From(f).
 		Join(p, p.PERIOD_ID.Eq(f.PERIOD_ID)).
@@ -62,14 +57,18 @@ func (adm Admins) ListForms(w http.ResponseWriter, r *http.Request) {
 			form.Period.EndAt = row.NullTime(p.END_AT)
 			row.ScanInto(&form.Questions, f.QUESTIONS)
 		}, func() {
-			data.Forms = append(data.Forms, form)
+			forms = append(forms, form)
 		}).
 		Fetch(adm.skylb.DB)
 	if err != nil {
 		adm.skylb.InternalServerError(w, r, err)
 		return
 	}
-	adm.skylb.Render(w, r, data, nil, "app/admins/list_forms.html")
+	data := map[string]interface{}{
+		"Forms":  forms,
+		"Cohort": cohort,
+	}
+	adm.skylb.Wender(w, r, data, "app/admins/list_forms.html")
 }
 
 func (adm Admins) ListFormsCreate(next http.Handler) http.Handler {

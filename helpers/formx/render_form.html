@@ -1,143 +1,143 @@
-{{define "helpers/formx/render_form.html"}}
-  {{range $i, $qna := .}}
-    {{if eq $qna.Type QuestionTypeParagraph}}
+{{ define "helpers/formx/render_form.html" }}
+  {{ range $i, $qna := . }}
+    {{ if eq $qna.Type QuestionTypeParagraph }}
     <p>
-     {{FormxSanitizeHTML $qna.Text}} 
+     {{ FormxSanitizeHTML $qna.Text }} 
     </p>
-    {{else if eq $qna.Type QuestionTypeShorttext}}
+    {{ else if eq $qna.Type QuestionTypeShorttext }}
     <p>
-      <div>{{FormxSanitizeHTML $qna.Text}}</div>
+      <div>{{ FormxSanitizeHTML $qna.Text }}</div>
       <input
         type="text"
-        name="{{$qna.Name}}"
+        name="{{ $qna.Name }}"
         class="form-input w-75"
-        value="{{FormxAnswerValue $qna.Answer}}"
+        value="{{ FormxAnswerValue $qna.Answer }}"
         autocomplete="off"
         >
     </p>
-    {{else if eq $qna.Type QuestionTypeLongtext}}
+    {{ else if eq $qna.Type QuestionTypeLongtext }}
     <p>
-      <div>{{FormxSanitizeHTML $qna.Text}}</div>
+      <div>{{ FormxSanitizeHTML $qna.Text }}</div>
       <textarea
-        name="{{$qna.Name}}"
+        name="{{ $qna.Name }}"
         class="border"
-        >{{FormxAnswerValue $qna.Answer}}</textarea>
+        >{{ FormxAnswerValue $qna.Answer }}</textarea>
     </p>
-    {{else if eq $qna.Type QuestionTypeCheckbox}}
+    {{ else if eq $qna.Type QuestionTypeCheckbox }}
     <p>
-      <div>{{FormxSanitizeHTML $qna.Text}}</div>
-      {{range $_, $option := $qna.Options}}
+      <div>{{ FormxSanitizeHTML $qna.Text }}</div>
+      {{ range $_, $option := $qna.Options }}
       <div>
-        <label for="{{idfy $qna.Name $option.Value}}" class="pointer">
+        <label for="{{ idfy $qna.Name $option.Value }}" class="pointer">
           <input
             type="checkbox"
-            name="{{$qna.Name}}"
-            value="{{$option.Value}}"
-            id="{{idfy $qna.Name $option.Value}}"
+            name="{{ $qna.Name }}"
+            value="{{ $option.Value }}"
+            id="{{ idfy $qna.Name $option.Value }}"
             class="pointer mr2"
-            {{if FormxAnswersContainValue $qna.Answer $option.Value}}checked{{end}}
+            {{ if FormxAnswersContainValue $qna.Answer $option.Value }}checked{{ end }}
             >
-            {{$option.Display}}
+            {{ $option.Display }}
         </label>
       </div>
-      {{end}}
+      {{ end }}
     </p>
-    {{else if eq $qna.Type QuestionTypeSelect}}
+    {{ else if eq $qna.Type QuestionTypeSelect }}
     <p>
-      <div>{{FormxSanitizeHTML $qna.Text}}</div>
-      <select name="{{$qna.Name}}" class="form-input">
-        {{range $i, $option := $qna.Options}}
+      <div>{{ FormxSanitizeHTML $qna.Text }}</div>
+      <select name="{{ $qna.Name }}" class="form-input">
+        {{ range $i, $option := $qna.Options }}
         <option
-          value="{{$option.Value}}"
-          {{if FormxAnswersContainValue $qna.Answer $option.Value}}selected{{end}}
+          value="{{ $option.Value }}"
+          {{ if FormxAnswersContainValue $qna.Answer $option.Value }}selected{{ end }}
           >
-          {{$option.Display}}
+          {{ $option.Display }}
         </option>
-        {{end}}
+        {{ end }}
       </select>
     </p>
-    {{else if eq $qna.Type QuestionTypeRadio}}
+    {{ else if eq $qna.Type QuestionTypeRadio }}
     <p>
-      <div>{{FormxSanitizeHTML $qna.Text}}</div>
-      {{range $i, $option := $qna.Options}}
+      <div>{{ FormxSanitizeHTML $qna.Text }}</div>
+      {{ range $i, $option := $qna.Options }}
       <div>
-        <label for="{{idfy $qna.Name $option.Value}}" class="pointer">
+        <label for="{{ idfy $qna.Name $option.Value }}" class="pointer">
           <input
             type="radio"
-            name="{{$qna.Name}}"
-            value="{{$option.Value}}"
-            id="{{idfy $qna.Name $option.Value}}"
+            name="{{ $qna.Name }}"
+            value="{{ $option.Value }}"
+            id="{{ idfy $qna.Name $option.Value }}"
             class="pointer mr2"
-            {{if FormxAnswersContainValue $qna.Answer $option.Value}}checked{{end}}
+            {{ if FormxAnswersContainValue $qna.Answer $option.Value }}checked{{ end }}
             >
-            {{$option.Display}}
+            {{ $option.Display }}
         </label>
       </div>
-      {{end}}
+      {{ end }}
     </p>
-    {{else if eq $qna.Type QuestionTypeMultiradio}}
+    {{ else if eq $qna.Type QuestionTypeMultiradio }}
     <p class="">
-      <div>{{FormxSanitizeHTML $qna.Text}}</div>
+      <div>{{ FormxSanitizeHTML $qna.Text }}</div>
       <table class="multiradio">
         <tbody>
           <tr>
             <td class=""></td>
-            {{range $i, $option := $qna.Options}}
-            <td class="">{{$option.Display}}</td>
-            {{end}}
+            {{ range $i, $option := $qna.Options }}
+            <td class="">{{ $option.Display }}</td>
+            {{ end }}
           </tr>
-          {{range $subqa := $qna.SubquestionAnswers}}
+          {{ range $subqa := $qna.SubquestionAnswers }}
           <tr>
-            <td class="">{{$subqa.Text}}</td>
-            {{range $i, $option := $qna.Options}}
+            <td class="">{{ $subqa.Text }}</td>
+            {{ range $i, $option := $qna.Options }}
             <td class="">
-              <label for="{{idfy $subqa.Name $option.Value}}" class="pointer">
+              <label for="{{ idfy $subqa.Name $option.Value }}" class="pointer">
                 <input
                   type="radio"
-                  name="{{$subqa.Name}}"
-                  value="{{$option.Value}}"
-                  id="{{idfy $subqa.Name $option.Value}}"
+                  name="{{ $subqa.Name }}"
+                  value="{{ $option.Value }}"
+                  id="{{ idfy $subqa.Name $option.Value }}"
                   class="pointer"
-                  {{if eq $subqa.Answer $option.Value}}checked{{end}}
+                  {{ if eq $subqa.Answer $option.Value }}checked{{ end }}
                   >
               </label>
             </td>
-            {{end}}
+            {{ end }}
           </tr>
-          {{end}}
+          {{ end }}
         </tbody>
       </table>
     </p>
-    {{else if eq $qna.Type QuestionTypeDate}}
+    {{ else if eq $qna.Type QuestionTypeDate }}
     <p>
-      <div>{{FormxSanitizeHTML $qna.Text}}</div>
+      <div>{{ FormxSanitizeHTML $qna.Text }}</div>
       <input
         type="date"
-        name="{{$qna.Name}}"
+        name="{{ $qna.Name }}"
         class="border"
-        value="{{FormxAnswerValue $qna.Answer}}"
+        value="{{ FormxAnswerValue $qna.Answer }}"
         />
     </p>
-    {{else if eq $qna.Type QuestionTypeTime}}
+    {{ else if eq $qna.Type QuestionTypeTime }}
     <p>
-      <div>{{FormxSanitizeHTML $qna.Text}}</div>
+      <div>{{ FormxSanitizeHTML $qna.Text }}</div>
       <input
         type="time"
-        name="{{$qna.Name}}"
+        name="{{ $qna.Name }}"
         class="border"
-        value="{{FormxAnswerValue $qna.Answer}}"
+        value="{{ FormxAnswerValue $qna.Answer }}"
         />
     </p>
-    {{else if eq $qna.Type QuestionTypeImage}}
+    {{ else if eq $qna.Type QuestionTypeImage }}
     <p>
-      <div>{{FormxSanitizeHTML $qna.Text}}</div>
+      <div>{{ FormxSanitizeHTML $qna.Text }}</div>
       <input
         type="file"
         accept="image/*"
-        name="{{$qna.Name}}"
+        name="{{ $qna.Name }}"
         class="border"
         />
     </p>
-    {{end}}
-  {{end}}
-{{end}}
+    {{ end }}
+  {{ end }}
+{{ end }}

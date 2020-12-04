@@ -1,57 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html"}}
-  <title>{{$.Submission.Team.TeamName}} | {{MilestoneNameAbbrev $.Submission.SubmissionForm.Period.Milestone}} Submission</title>
+  {{ template "app/skylab/head.html" . }}
+  <title>{{ $.Submission.Team.TeamName }} | {{ MilestoneNameAbbrev $.Submission.SubmissionForm.Period.Milestone }} Submission</title>
 </head>
-<body class="{{if $.skylab.CurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
-  {{template "app/skylab/navbar.html"}}
-  {{template "app/skylab/sidebar.html"}}
+<body class="{{ if $.skylab.CurrentRole }}tripanel-l{{ else }}bipanel-l{{ end }}">
+  {{ template "app/skylab/navbar.html" . }}
+  {{ template "app/skylab/sidebar.html" . }}
   <div class="sans-serif pa2 pa4-l">
-    {{template "helpers/flash/flash.html"}}
+    {{ template "helpers/flash/flash.html" . }}
     <div class="ba br4 b--black-30 pa4">
-      {{define "actions"}}
-        {{if $.EditURL}}
-          <a href="{{$.EditURL}}" class="no-underline">
+      {{ define "actions" }}
+        {{ if $.EditURL }}
+          <a href="{{ $.EditURL }}" class="no-underline">
             <button class="button pa2 ph3 bg-light-blue hover-bg-blue">
               Edit
             </button>
           </a>
-        {{end}}
-        {{if and (not $.Submission.Submitted) $.SubmitURL}}
+        {{ end }}
+        {{ if and (not $.Submission.Submitted) $.SubmitURL }}
           <span class="ml2"></span>
           <button type="submit" form="submissionform" class="button pa2 bg-dark-green hover-bg-darker-green white">
             Submit
           </button>
-        {{end}}
-      {{end}}
-      {{template "actions" .}}
+        {{ end }}
+      {{ end }}
+      {{ template "actions" . }}
       <p></p>
-      <h4 class="ma0">{{MilestoneName $.Submission.SubmissionForm.Period.Milestone}} Submission</h4>
+      <h4 class="ma0">{{ MilestoneName $.Submission.SubmissionForm.Period.Milestone }} Submission</h4>
       <div class="">
-        By: <span class="gray">[{{$.Submission.Team.TeamID}}] [{{$.Submission.Team.ProjectLevel}}]</span>
-        {{$.Submission.Team.TeamName}}
+        By: <span class="gray">[{{ $.Submission.Team.TeamID }}] [{{ $.Submission.Team.ProjectLevel }}]</span>
+        {{ $.Submission.Team.TeamName }}
       </div>
-      {{if $.Submission.Submitted}}
+      {{ if $.Submission.Submitted }}
         <div class="gray">Submitted</div>
-      {{else}}
+      {{ else }}
         <div class="gray">Draft</div>
-      {{end}}
+      {{ end }}
       <div class="pv3"></div>
-      {{template "helpers/formx/render_form_results.html" FormxMergeQuestionsAnswers $.Submission.SubmissionForm.Questions $.Submission.SubmissionAnswers}}
-      {{if and (not $.Submission.Submitted) $.SubmitURL}}
-        <form id="submissionform" method="post" action="{{$.SubmitURL}}" class="dib">
-          {{$.skylab.CSRFToken}}
+      {{ template "helpers/formx/render_form_results.html" FormxMergeQuestionsAnswers $.Submission.SubmissionForm.Questions $.Submission.SubmissionAnswers }}
+      {{ if and (not $.Submission.Submitted) $.SubmitURL }}
+        <form id="submissionform" method="post" action="{{ $.SubmitURL }}" class="dib">
+          {{ $.skylab.CSRFToken }}
           <input type="hidden" name="view" value="true">
         </form>
-      {{end}}
-      {{template "actions" .}}
+      {{ end }}
+      {{ template "actions" . }}
     </div>
   </div>
 
   <!-- Scripts -->
   <script src="/static/tinymce/tinymce.min.js"></script>
-  <script nonce="{{HeadersCSPNonce}}">
+  <script nonce="{{ HeadersCSPNonce }}">
     tinymce.init({
       selector: "textarea",
       statusbar: false,

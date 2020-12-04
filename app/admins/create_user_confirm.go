@@ -15,7 +15,6 @@ import (
 	"github.com/bokwoon95/nusskylabx/helpers/flash"
 	"github.com/bokwoon95/nusskylabx/helpers/formutil"
 	"github.com/bokwoon95/nusskylabx/helpers/headers"
-	"github.com/bokwoon95/nusskylabx/helpers/templateutil"
 )
 
 // Represents all the available actions one can take in the
@@ -31,17 +30,17 @@ const (
 	actionError    // Used if an unknown error occurs i.e. server side error
 )
 
-func addCreateUserActions(funcs map[string]interface{}) map[string]interface{} {
-	if funcs == nil {
-		funcs = map[string]interface{}{}
+func addCreateUserActions(data map[string]interface{}) map[string]interface{} {
+	if data == nil {
+		return nil
 	}
-	funcs["actionCreateUser"] = func() createUserAction { return actionCreateUser }
-	funcs["actionCreateRole"] = func() createUserAction { return actionCreateRole }
-	funcs["actionUpdateDisplayname"] = func() createUserAction { return actionUpdateDisplayname }
-	funcs["actionDoNothing"] = func() createUserAction { return actionDoNothing }
-	funcs["actionBadEntry"] = func() createUserAction { return actionBadEntry }
-	funcs["actionError"] = func() createUserAction { return actionError }
-	return funcs
+	data["actionCreateUser"] = actionCreateUser
+	data["actionCreateRole"] = actionCreateRole
+	data["actionUpdateDisplayname"] = actionUpdateDisplayname
+	data["actionDoNothing"] = actionDoNothing
+	data["actionBadEntry"] = actionBadEntry
+	data["actionError"] = actionError
+	return data
 }
 
 // UserPendingCreation is a struct that contains the details of a user pending
@@ -67,16 +66,9 @@ func (adm Admins) CreateUserConfirm(w http.ResponseWriter, r *http.Request) {
 	adm.skylb.Log.TraceRequest(r)
 	r = adm.skylb.SetRoleSection(w, r, skylab.RoleAdmin, skylab.AdminCreateUser)
 	headers.DoNotCache(w)
-	type Data struct {
-		Users []UserPendingCreation
-
-		// Group the UsersPendingCreation by the action(s) that should be taken
-		SortedUsers map[createUserAction][]UserPendingCreation
-	}
-	data := Data{
-		SortedUsers: make(map[createUserAction][]UserPendingCreation),
-	}
-	csv := r.FormValue("csv") // Get the csv string from the front end
+	var users []UserPendingCreation
+	sortedUsers := make(map[createUserAction][]UserPendingCreation) // Group the UsersPendingCreation by the action(s) that should be taken
+	csv := r.FormValue("csv")                                       // Get the csv string from the front end
 	rows := strings.Split(strings.Replace(csv, "\r\n", "\n", -1), "\n")
 	rows = removeEmptyStrings(rows)
 	for _, row := range rows {
@@ -116,7 +108,7 @@ func (adm Admins) CreateUserConfirm(w http.ResponseWriter, r *http.Request) {
 				"Invalid cohort: %s<br>Available cohorts: %s",
 				user.Cohort, strings.Join(adm.skylb.Cohorts(), ", "),
 			)
-			data.Users = append(data.Users, user)
+			users = append(users, user)
 			continue
 		}
 		if user.Role == "" {
@@ -125,7 +117,7 @@ func (adm Admins) CreateUserConfirm(w http.ResponseWriter, r *http.Request) {
 				"Role cannot be blank<br>Available roles: %s",
 				strings.Join(skylab.Roles(), ", "),
 			)
-			data.Users = append(data.Users, user)
+			users = append(users, user)
 			continue
 		}
 		if !skylab.Contains(skylab.Roles(), user.Role) {
@@ -134,13 +126,13 @@ func (adm Admins) CreateUserConfirm(w http.ResponseWriter, r *http.Request) {
 				"Invalid role: %s<br>Available roles: %s",
 				user.Role, strings.Join(skylab.Roles(), ", "),
 			)
-			data.Users = append(data.Users, user)
+			users = append(users, user)
 			continue
 		}
 		if user.Email == "" {
 			user.Action = actionBadEntry
 			user.BadEntryDetails = "Email cannot be blank"
-			data.Users = append(data.Users, user)
+			users = append(users, user)
 			continue
 		}
 		var userID int
@@ -157,7 +149,7 @@ func (adm Admins) CreateUserConfirm(w http.ResponseWriter, r *http.Request) {
 				user.Action = actionError
 				user.ErrStr = err.Error()
 			}
-			data.Users = append(data.Users, user)
+			users = append(users, user)
 			continue
 		}
 		if user.Displayname == "" && displayname != "" {
@@ -172,12 +164,12 @@ func (adm Admins) CreateUserConfirm(w http.ResponseWriter, r *http.Request) {
 			log.Println(err.Error())
 			user.Action = actionError
 			user.ErrStr = err.Error()
-			data.Users = append(data.Users, user)
+			users = append(users, user)
 			continue
 		}
 		if displayname == user.Displayname && exists {
 			user.Action = actionDoNothing
-			data.Users = append(data.Users, user)
+			users = append(users, user)
 			continue
 		}
 		if displayname != user.Displayname {
@@ -187,28 +179,30 @@ func (adm Admins) CreateUserConfirm(w http.ResponseWriter, r *http.Request) {
 		if !exists {
 			user.Action = user.Action | actionCreateRole
 		}
-		data.Users = append(data.Users, user)
+		users = append(users, user)
 	}
 	upcExists := make(map[UserPendingCreation]bool)
-	for _, user := range data.Users {
+	for _, user := range users {
 		if !upcExists[user] {
 			upcExists[user] = true
-			data.SortedUsers[user.Action] = append(data.SortedUsers[user.Action], user)
+			sortedUsers[user.Action] = append(sortedUsers[user.Action], user)
 		}
 	}
-	funcs := map[string]interface{}{}
-	funcs = addCreateUserActions(funcs)
-	funcs = templateutil.Funcs(funcs)
-	funcs["bitwiseOr"] = bitwiseOr
-	funcs["hasBits"] = hasBits
-	funcs["serialize"] = func(user UserPendingCreation) (output string, err error) {
-		return auth.Serialize(adm.skylb.SecretKey, user)
+	data := map[string]interface{}{
+		"Users":       users,
+		"SortedUsers": sortedUsers,
+		"bitwiseOr":   bitwiseOr,
+		"hasBits":     hasBits,
+		"serialize": func(user UserPendingCreation) (output string, err error) {
+			return auth.Serialize(adm.skylb.SecretKey, user)
+		},
+		"deserialize": func(input string) (user UserPendingCreation, err error) {
+			err = auth.Deserialize(adm.skylb.SecretKey, input, &user)
+			return user, err
+		},
 	}
-	funcs["deserialize"] = func(input string) (user UserPendingCreation, err error) {
-		err = auth.Deserialize(adm.skylb.SecretKey, input, &user)
-		return user, err
-	}
-	adm.skylb.Render(w, r, data, funcs, "app/admins/create_user_confirm.html")
+	data = addCreateUserActions(data)
+	adm.skylb.Wender(w, r, data, "app/admins/create_user_confirm.html")
 }
 
 func bitwiseOr(actions ...createUserAction) createUserAction {

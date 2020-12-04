@@ -9,5 +9,5 @@ import (
 func (adm Admins) Dashboard(w http.ResponseWriter, r *http.Request) {
 	adm.skylb.Log.TraceRequest(r)
 	r = adm.skylb.SetRoleSection(w, r, skylab.RoleAdmin, skylab.AdminDashboard)
-	adm.skylb.Render(w, r, nil, nil, "app/admins/dashboard.html")
+	adm.skylb.Wender(w, r, nil, "app/admins/dashboard.html")
 }

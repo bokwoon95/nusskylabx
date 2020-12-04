@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html"}}
+  {{ template "app/skylab/head.html" . }}
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
   <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
   <title></title>
 </head>
-<body class="{{if $.skylab.CurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
-  {{template "app/skylab/navbar.html"}}
-  {{template "app/skylab/sidebar.html"}}
+<body class="{{ if $.skylab.CurrentRole }}tripanel-l{{ else }}bipanel-l{{ end }}">
+  {{ template "app/skylab/navbar.html" . }}
+  {{ template "app/skylab/sidebar.html" . }}
   <div class="sans-serif pa2 pa4-l">
     <div>
       Cohorts:
-      {{range $i, $cohort := SkylabCohorts}}
-        {{if eq $.Cohort $cohort}}
-          <span class="ml1 underline">{{$cohort}}</span>
-        {{else}}
-        <a href="{{AdminListTeams}}/{{$cohort}}" class="ml1">{{$cohort}}</a>
-        {{end}}
-      {{end}}
+      {{ range $i, $cohort := SkylabCohorts }}
+        {{ if eq $.Cohort $cohort }}
+          <span class="ml1 underline">{{ $cohort }}</span>
+        {{ else }}
+        <a href="{{ AdminListTeams }}/{{ $cohort }}" class="ml1">{{ $cohort }}</a>
+        {{ end }}
+      {{ end }}
     </div>
     <div class="pv3"></div>
     <table id="table_id" class="compact stripe display" style="width:100%">
@@ -35,38 +35,38 @@
         </tr>
       </thead>
       <tbody>
-        {{range $i, $team := $.Teams}}
+        {{ range $i, $team := $.Teams }}
         <tr>
-          <td><a href="{{AdminTeam}}/{{$team.TeamID}}">{{$team.TeamID}}</a></td>
-          <td>{{$team.TeamName}}</td>
-          <td>{{$team.ProjectLevel}}</td>
-          <td>{{$team.Status}}</td>
+          <td><a href="{{ AdminTeam }}/{{ $team.TeamID }}">{{ $team.TeamID }}</a></td>
+          <td>{{ $team.TeamName }}</td>
+          <td>{{ $team.ProjectLevel }}</td>
+          <td>{{ $team.Status }}</td>
           <td>
-            {{if $team.Student1.Valid}}
-            <a href="{{AdminUser}}/{{$team.Student1.UserID}}">{{$team.Student1.Displayname}}</a>
-            {{end}}
+            {{ if $team.Student1.Valid }}
+            <a href="{{ AdminUser }}/{{ $team.Student1.UserID }}">{{ $team.Student1.Displayname }}</a>
+            {{ end }}
           </td>
           <td>
-            {{if $team.Student2.Valid}}
-            <a href="{{AdminUser}}/{{$team.Student2.UserID}}">{{$team.Student2.Displayname}}</a>
-            {{end}}
+            {{ if $team.Student2.Valid }}
+            <a href="{{ AdminUser }}/{{ $team.Student2.UserID }}">{{ $team.Student2.Displayname }}</a>
+            {{ end }}
           </td>
           <td>
-            {{if $team.Adviser.Valid}}
-            <a href="{{AdminUser}}/{{$team.Adviser.UserID}}">{{$team.Adviser.Displayname}}</a>
-            {{end}}
+            {{ if $team.Adviser.Valid }}
+            <a href="{{ AdminUser }}/{{ $team.Adviser.UserID }}">{{ $team.Adviser.Displayname }}</a>
+            {{ end }}
           </td>
           <td>
-            {{if $team.Mentor.Valid}}
-            <a href="{{AdminUser}}/{{$team.Mentor.UserID}}">{{$team.Mentor.Displayname}}</a>
-            {{end}}
+            {{ if $team.Mentor.Valid }}
+            <a href="{{ AdminUser }}/{{ $team.Mentor.UserID }}">{{ $team.Mentor.Displayname }}</a>
+            {{ end }}
           </td>
         </tr>
-        {{end}}
+        {{ end }}
       </tbody>
     </table>
   </div>
-  <script nonce="{{HeadersCSPNonce}}">
+  <script nonce="{{ HeadersCSPNonce }}">
     $(document).ready(function () {
       $('#table_id').DataTable({
         "scrollX": true,

@@ -16,7 +16,7 @@ export function getCsrfToken(): string {
   if (tokens.length <= 0) {
     console.log(
       `Unable to find gorilla csrf DOM element on page. ` +
-        `To fix this, please include the text '{{SkylabCsrfToken}}' anywhere within the <head> or the <body> tags of ` +
+        `To fix this, please include the text '{{ SkylabCsrfToken }}' anywhere within the <head> or the <body> tags of ` +
         `the HTML page on the server side.`,
     );
     return "";

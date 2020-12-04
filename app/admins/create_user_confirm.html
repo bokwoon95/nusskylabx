@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {{template "app/skylab/head.html"}}
+  {{ template "app/skylab/head.html" . }}
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
   <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
   <title></title>
 </head>
-<body class="{{if $.skylab.CurrentRole}}tripanel-l{{else}}bipanel-l{{end}}">
-  {{template "app/skylab/navbar.html"}}
-  {{template "app/skylab/sidebar.html"}}
+<body class="{{ if $.skylab.CurrentRole }}tripanel-l{{ else }}bipanel-l{{ end }}">
+  {{ template "app/skylab/navbar.html" . }}
+  {{ template "app/skylab/sidebar.html" . }}
   <div class="pa2 pa4-l sans-serif">
     <h2>Action overview</h2>
-    <form method="post" action="{{AdminCreateUserConfirm}}/post">
-      {{$.skylab.CSRFToken}}
+    <form method="post" action="{{ AdminCreateUserConfirm }}/post">
+      {{ $.skylab.CSRFToken }}
 
-      {{$createUserRole := index $.SortedUsers (bitwiseOr actionCreateUser actionCreateRole)}}
-      {{$createRole := index $.SortedUsers actionCreateRole}}
-      {{$updateDisplayname := index $.SortedUsers actionUpdateDisplayname}}
-      {{$createRoleUpdateDisplayname := index $.SortedUsers (bitwiseOr actionCreateRole actionUpdateDisplayname)}}
-      {{$doNothing := index $.SortedUsers actionDoNothing}}
-      {{$badEntry := index $.SortedUsers actionBadEntry}}
-      {{$error := index $.SortedUsers actionError}}
+      {{ $createUserRole := index $.SortedUsers ($.bitwiseOr actionCreateUser actionCreateRole) }}
+      {{ $createRole := index $.SortedUsers actionCreateRole }}
+      {{ $updateDisplayname := index $.SortedUsers actionUpdateDisplayname }}
+      {{ $createRoleUpdateDisplayname := index $.SortedUsers ($.bitwiseOr actionCreateRole actionUpdateDisplayname) }}
+      {{ $doNothing := index $.SortedUsers actionDoNothing }}
+      {{ $badEntry := index $.SortedUsers actionBadEntry }}
+      {{ $error := index $.SortedUsers actionError }}
 
-      {{if $createUserRole}}
+      {{ if $createUserRole }}
       <div class="b">These new users will be created, and new roles created for them</div>
         <table id="create-user-role" class="compact stripe display" style="width:100%">
           <thead>
@@ -35,33 +35,33 @@
             </tr>
           </thead>
           <tbody>
-            {{range $i, $user := $createUserRole}}
+            {{ range $i, $user := $createUserRole }}
               <tr>
                 <td>
                   <div class="flex items-center justify-center">
-                    <input id="{{_Sha1Hash $user}}" type="checkbox" name="{{_Sha1Hash $user}}" value="checked" class="pointer" checked>
-                    <input type="hidden" name="{{_Sha1Hash $user}}" value="{{serialize $user}}" hidden>
+                    <input id="{{ _Sha1Hash $user }}" type="checkbox" name="{{ _Sha1Hash $user }}" value="checked" class="pointer" checked>
+                    <input type="hidden" name="{{ _Sha1Hash $user }}" value="{{ $.serialize $user }}" hidden>
                   </div>
                 </td>
                 <td>
-                  <div>{{$user.Cohort}}</div>
+                  <div>{{ $user.Cohort }}</div>
                 </td>
                 <td class="i">
-                  <div>{{$user.Email}}</div>
+                  <div>{{ $user.Email }}</div>
                 </td>
                 <td class="i">
-                  <div>{{$user.Displayname}}</div>
+                  <div>{{ $user.Displayname }}</div>
                 </td>
                 <td class="i">
-                  <div>{{$user.Role}}</div>
+                  <div>{{ $user.Role }}</div>
                 </td>
               </tr>
-            {{end}}
+            {{ end }}
           </tbody>
         </table>
-      {{end}}
+      {{ end }}
 
-      {{if $createRole}}
+      {{ if $createRole }}
       <p class="pv2"></p>
       <div class="b">These existing users will have new roles created for them</div>
         <table id="create-role" class="compact stripe display" style="width:100%">
@@ -75,33 +75,33 @@
             </tr>
           </thead>
           <tbody>
-            {{range $i, $user := $createRole}}
+            {{ range $i, $user := $createRole }}
               <tr>
                 <td>
                   <div class="flex items-center justify-center">
-                    <input id="{{_Sha1Hash $user}}" type="checkbox" name="{{_Sha1Hash $user}}" value="checked" class="pointer" checked>
-                    <input type="hidden" name="{{_Sha1Hash $user}}" value="{{serialize $user}}" hidden>
+                    <input id="{{ _Sha1Hash $user }}" type="checkbox" name="{{ _Sha1Hash $user }}" value="checked" class="pointer" checked>
+                    <input type="hidden" name="{{ _Sha1Hash $user }}" value="{{ $.serialize $user }}" hidden>
                   </div>
                 </td>
                 <td>
-                  <div>{{$user.Cohort}}</div>
+                  <div>{{ $user.Cohort }}</div>
                 </td>
                 <td>
-                  <div>{{$user.Email}}</div>
+                  <div>{{ $user.Email }}</div>
                 </td>
                 <td>
-                  <div>{{$user.Displayname}}</div>
+                  <div>{{ $user.Displayname }}</div>
                 </td>
                 <td class="i">
-                  <div>{{$user.Role}}</div>
+                  <div>{{ $user.Role }}</div>
                 </td>
               </tr>
-            {{end}}
+            {{ end }}
           </tbody>
         </table>
-      {{end}}
+      {{ end }}
 
-      {{if $updateDisplayname}}
+      {{ if $updateDisplayname }}
       <p class="pv2"></p>
       <div class="b">These existing users will have their display name updated</div>
         <table id="update-displayname" class="compact stripe display" style="width:100%">
@@ -116,36 +116,36 @@
             </tr>
           </thead>
           <tbody>
-            {{range $i, $user := $updateDisplayname}}
+            {{ range $i, $user := $updateDisplayname }}
               <tr>
                 <td>
                   <div class="flex items-center justify-center">
-                    <input id="{{_Sha1Hash $user}}" type="checkbox" name="{{_Sha1Hash $user}}" value="checked" class="pointer" checked>
-                    <input type="hidden" name="{{_Sha1Hash $user}}" value="{{serialize $user}}" hidden>
+                    <input id="{{ _Sha1Hash $user }}" type="checkbox" name="{{ _Sha1Hash $user }}" value="checked" class="pointer" checked>
+                    <input type="hidden" name="{{ _Sha1Hash $user }}" value="{{ $.serialize $user }}" hidden>
                   </div>
                 </td>
                 <td>
-                  <div>{{$user.Cohort}}</div>
+                  <div>{{ $user.Cohort }}</div>
                 </td>
                 <td>
-                  <div>{{$user.Email}}</div>
+                  <div>{{ $user.Email }}</div>
                 </td>
                 <td>
-                  <div>{{$user.OldDisplayname}}</div>
+                  <div>{{ $user.OldDisplayname }}</div>
                 </td>
                 <td>
-                  <div class="i">{{$user.Displayname}}</div>
+                  <div class="i">{{ $user.Displayname }}</div>
                 </td>
                 <td>
-                  <div>{{$user.Role}}</div>
+                  <div>{{ $user.Role }}</div>
                 </td>
               </tr>
-            {{end}}
+            {{ end }}
           </tbody>
         </table>
-      {{end}}
+      {{ end }}
 
-      {{if $createRoleUpdateDisplayname}}
+      {{ if $createRoleUpdateDisplayname }}
         <p class="pv2"></p>
         <div class="b">These existing users will get a new role created for them, and also have their display name updated</div>
         <table id="create-role-update-displayname" class="compact stripe display" style="width:100%">
@@ -160,36 +160,36 @@
             </tr>
           </thead>
           <tbody>
-            {{range $i, $user := $createRoleUpdateDisplayname}}
+            {{ range $i, $user := $createRoleUpdateDisplayname }}
               <tr>
                 <td>
                   <div class="flex items-center justify-center">
-                    <input id="{{_Sha1Hash $user}}" type="checkbox" name="{{_Sha1Hash $user}}" value="checked" class="pointer" checked>
-                    <input type="hidden" name="{{_Sha1Hash $user}}" value="{{serialize $user}}" hidden>
+                    <input id="{{ _Sha1Hash $user }}" type="checkbox" name="{{ _Sha1Hash $user }}" value="checked" class="pointer" checked>
+                    <input type="hidden" name="{{ _Sha1Hash $user }}" value="{{ $.serialize $user }}" hidden>
                   </div>
                 </td>
                 <td>
-                  <div>{{$user.Cohort}}</div>
+                  <div>{{ $user.Cohort }}</div>
                 </td>
                 <td>
-                  <div>{{$user.Email}}</div>
+                  <div>{{ $user.Email }}</div>
                 </td>
                 <td>
-                  <div>{{$user.OldDisplayname}}</div>
+                  <div>{{ $user.OldDisplayname }}</div>
                 </td>
                 <td class="i">
-                  <div>{{$user.Displayname}}</div>
+                  <div>{{ $user.Displayname }}</div>
                 </td>
                 <td class="i">
-                  <div>{{$user.Role}}</div>
+                  <div>{{ $user.Role }}</div>
                 </td>
               </tr>
-            {{end}}
+            {{ end }}
           </tbody>
         </table>
-      {{end}}
+      {{ end }}
 
-      {{if $doNothing}}
+      {{ if $doNothing }}
         <p class="pv2"></p>
         <div class="b">No changes for these users</div>
         <table id="do-nothing" class="compact stripe display" style="width:100%">
@@ -202,28 +202,28 @@
             </tr>
           </thead>
           <tbody>
-            {{range $i, $user := $doNothing}}
+            {{ range $i, $user := $doNothing }}
               <tr>
                 <td>
-                  <input type="hidden" name="{{_Sha1Hash $user}}" value="{{serialize $user}}" hidden>
-                  <div>{{$user.Cohort}}</div>
+                  <input type="hidden" name="{{ _Sha1Hash $user }}" value="{{ $.serialize $user }}" hidden>
+                  <div>{{ $user.Cohort }}</div>
                 </td>
                 <td>
-                  <div>{{$user.Role}}</div>
+                  <div>{{ $user.Role }}</div>
                 </td>
                 <td>
-                  <div>{{$user.Email}}</div>
+                  <div>{{ $user.Email }}</div>
                 </td>
                 <td>
-                  <div>{{$user.Displayname}}</div>
+                  <div>{{ $user.Displayname }}</div>
                 </td>
               </tr>
-            {{end}}
+            {{ end }}
           </tbody>
         </table>
-      {{end}}
+      {{ end }}
 
-      {{if $badEntry}}
+      {{ if $badEntry }}
         <p class="pv2"></p>
         <div class="b">These entries have invalid fields</div>
         <table id="bad-entry" class="compact stripe display" style="width:100%">
@@ -237,31 +237,31 @@
             </tr>
           </thead>
           <tbody>
-            {{range $i, $user := $badEntry}}
+            {{ range $i, $user := $badEntry }}
               <tr>
                 <td>
-                  <input type="hidden" name="{{_Sha1Hash $user}}" value="{{serialize $user}}" hidden>
-                  <div>{{$user.Cohort}}</div>
+                  <input type="hidden" name="{{ _Sha1Hash $user }}" value="{{ $.serialize $user }}" hidden>
+                  <div>{{ $user.Cohort }}</div>
                 </td>
                 <td>
-                  <div>{{$user.Email}}</div>
+                  <div>{{ $user.Email }}</div>
                 </td>
                 <td>
-                  <div>{{$user.Displayname}}</div>
+                  <div>{{ $user.Displayname }}</div>
                 </td>
                 <td>
-                  <div>{{$user.Role}}</div>
+                  <div>{{ $user.Role }}</div>
                 </td>
                 <td>
-                  <div>{{SanitizeHTML $user.BadEntryDetails}}</div>
+                  <div>{{ SanitizeHTML $user.BadEntryDetails }}</div>
                 </td>
               </tr>
-            {{end}}
+            {{ end }}
           </tbody>
         </table>
-      {{end}}
+      {{ end }}
 
-      {{if $error}}
+      {{ if $error }}
         <p class="pv2"></p>
         <div class="b">These entries encountered a server side error, please check the logs</div>
         <table id="server-error" class="compact stripe display" style="width:100%">
@@ -275,42 +275,42 @@
             </tr>
           </thead>
           <tbody>
-            {{range $i, $user := $error}}
+            {{ range $i, $user := $error }}
               <tr>
                 <td>
-                  <input type="hidden" name="{{_Sha1Hash $user}}" value="{{serialize $user}}" hidden>
-                  <div>{{$user.Cohort}}</div>
+                  <input type="hidden" name="{{ _Sha1Hash $user }}" value="{{ $.serialize $user }}" hidden>
+                  <div>{{ $user.Cohort }}</div>
                 </td>
                 <td>
-                  <div>{{$user.Email}}</div>
+                  <div>{{ $user.Email }}</div>
                 </td>
                 <td>
-                  <div>{{$user.Displayname}}</div>
+                  <div>{{ $user.Displayname }}</div>
                 </td>
                 <td>
-                  <div>{{$user.Role}}</div>
+                  <div>{{ $user.Role }}</div>
                 </td>
                 <td>
-                  <div>{{SanitizeHTML $user.ErrStr}}</div>
+                  <div>{{ SanitizeHTML $user.ErrStr }}</div>
                 </td>
               </tr>
-            {{end}}
+            {{ end }}
           </tbody>
         </table>
-      {{end}}
+      {{ end }}
 
       <p class="pv2"></p>
-      {{if and (not $createUserRole) (not $createRole) (not $updateDisplayname) (not $createRoleUpdateDisplayname)}}
+      {{ if and (not $createUserRole) (not $createRole) (not $updateDisplayname) (not $createRoleUpdateDisplayname) }}
         <p></p>
         <button type="submit" class="button pa2 ph3 bg-light-green hover-bg-green">Edit</button>
-      {{else}}
+      {{ else }}
         <div class="b">Carry on with confirmed actions. Unconfirmed actions and rows with errors/invalid fields will be returned to the data entry page for editing.</div>
         <p></p>
         <button type="submit" class="button pa2 bg-light-green hover-bg-green">Proceed</button>
-      {{end}}
+      {{ end }}
     </form>
   </div>
-  <script nonce="{{HeadersCSPNonce}}">
+  <script nonce="{{ HeadersCSPNonce }}">
     $(document).ready(function () {
       $('#create-user-role').DataTable({
         searching: false,

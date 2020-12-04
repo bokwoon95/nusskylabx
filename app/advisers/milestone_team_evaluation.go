@@ -17,17 +17,12 @@ func (adv Advisers) MilestoneTeamEvaluation(section string) http.HandlerFunc {
 		user, _ := r.Context().Value(skylab.ContextUser).(skylab.User)
 		r = adv.skylb.SetRoleSection(w, r, skylab.RoleAdviser, section)
 		headers.DoNotCache(w)
-		type Data struct {
-			Milestone        string
-			EvaluationGroups [][]skylab.TeamEvaluation
-		}
-		var data Data
-		data.Milestone = milestone
+		var evaluationGroups [][]skylab.TeamEvaluation
 		t, te := tables.TEAMS(), tables.V_TEAM_EVALUATIONS()
 		evaluation := &skylab.TeamEvaluation{}
 		// teamGroups maps a team to the list of evaluations evaluating
 		// it. The key is the teamID, the value is the index of the slice of
-		// team evaluations in data.EvaluationGroups.
+		// team evaluations in evaluationGroups.
 		teamGroups := make(map[int]int)
 		advisers_teams := sq.
 			Select(t.TEAM_ID).
@@ -51,11 +46,11 @@ func (adv Advisers) MilestoneTeamEvaluation(section string) http.HandlerFunc {
 				func() {
 					if i, ok := teamGroups[evaluation.Evaluatee.Team.TeamID]; ok {
 						// append to an existing evaluation group
-						data.EvaluationGroups[i] = append(data.EvaluationGroups[i], *evaluation)
+						evaluationGroups[i] = append(evaluationGroups[i], *evaluation)
 					} else {
 						// create a new evaluation group and append it in
-						data.EvaluationGroups = append(data.EvaluationGroups, []skylab.TeamEvaluation{*evaluation})
-						teamGroups[evaluation.Evaluatee.Team.TeamID] = len(data.EvaluationGroups) - 1
+						evaluationGroups = append(evaluationGroups, []skylab.TeamEvaluation{*evaluation})
+						teamGroups[evaluation.Evaluatee.Team.TeamID] = len(evaluationGroups) - 1
 					}
 				},
 			).
@@ -64,6 +59,9 @@ func (adv Advisers) MilestoneTeamEvaluation(section string) http.HandlerFunc {
 			adv.skylb.InternalServerError(w, r, err)
 			return
 		}
-		adv.skylb.Render(w, r, data, nil, "app/advisers/milestone_team_evaluation.html")
+		data := make(map[string]interface{})
+		data["Milestone"] = milestone
+		data["EvaluationGroups"] = evaluationGroups
+		adv.skylb.Wender(w, r, data, "app/advisers/milestone_team_evaluation.html")
 	}
 }
