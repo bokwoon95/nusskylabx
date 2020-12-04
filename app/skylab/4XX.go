@@ -7,7 +7,6 @@ import (
 
 	"github.com/bokwoon95/nusskylabx/helpers/formutil"
 	"github.com/bokwoon95/nusskylabx/helpers/logutil"
-	"github.com/bokwoon95/nusskylabx/helpers/templateutil"
 )
 
 func (skylb Skylab) BadRequest(w http.ResponseWriter, r *http.Request, msg string) {

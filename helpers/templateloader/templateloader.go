@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/bokwoon95/nusskylabx/helpers/erro"
@@ -67,6 +68,10 @@ func Option(opts ...string) func(*Templates) {
 	}
 }
 
+func stripSpaces(s string) string {
+	return s
+}
+
 func Parse(common []string, templates []string, opts ...Opt) (*Templates, error) {
 	main := &Templates{
 		bufpool: bpool.NewBufferPool(64),
@@ -93,7 +98,17 @@ func Parse(common []string, templates []string, opts ...Opt) (*Templates, error)
 			if err != nil {
 				return main, erro.Wrap(err)
 			}
-			t, err := template.New(file).Parse(string(b))
+			var t *template.Template
+			re, err := regexp.Compile(`{{\s*define\s+["` + "`" + `]` + file + `["` + "`" + `]\s*}}`)
+			if err != nil {
+				return main, erro.Wrap(err)
+			}
+			if re.MatchString(string(b)) {
+				t = template.New("")
+			} else {
+				t = template.New(file)
+			}
+			t, err = t.Funcs(main.funcs).Option(main.opts...).Parse(string(b))
 			if err != nil {
 				return main, erro.Wrap(err)
 			}
@@ -115,7 +130,17 @@ func Parse(common []string, templates []string, opts ...Opt) (*Templates, error)
 			if err != nil {
 				return main, erro.Wrap(err)
 			}
-			t, err := template.New(file).Parse(string(b))
+			var t *template.Template
+			re, err := regexp.Compile(`{{\s*define\s+["` + "`" + `]` + file + `["` + "`" + `]\s*}}`)
+			if err != nil {
+				return main, erro.Wrap(err)
+			}
+			if re.MatchString(string(b)) {
+				t = template.New("")
+			} else {
+				t = template.New(file)
+			}
+			t, err = t.Funcs(main.funcs).Option(main.opts...).Parse(string(b))
 			if err != nil {
 				return main, erro.Wrap(err)
 			}

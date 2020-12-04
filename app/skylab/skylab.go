@@ -181,7 +181,7 @@ func NewWithoutDB(config Config) Skylab {
 	funcs := map[string]interface{}{
 		"UserIsRole":          userIsRole,
 		"UserIsApplicantOnly": userIsApplicantOnly,
-		"SkylabBaseURL":       skylb.BaseURLWithProtocol(),
+		"SkylabBaseURL":       func() string { return skylb.BaseURLWithProtocol() },
 		"MilestoneName":       MilestoneName,
 		"MilestoneNameAbbrev": MilestoneNameAbbrev,
 		"SanitizeHTML":        SanitizeHTML(skylb.Policy),
