@@ -10,7 +10,7 @@
   <div class="sans-serif pa2 pa4-l">
     {{ template "helpers/flash/flash.html" . }}
     <a href="#" class="goback">&lt; Back</a>
-    <script nonce="{{ HeadersCSPNonce }}">
+    <script nonce="{{ $.headers.CSPNonce }}">
       document.querySelector(".goback").addEventListener("click", () => window.history.back());
     </script>
     <div class="pv1"></div>

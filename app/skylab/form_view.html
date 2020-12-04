@@ -19,7 +19,7 @@
     </div>
   </div>
   <script src="/static/tinymce/tinymce.min.js"></script>
-  <script nonce="{{ HeadersCSPNonce }}">
+  <script nonce="{{ $.headers.CSPNonce }}">
     tinymce.init({
       selector: "textarea",
       statusbar: false,

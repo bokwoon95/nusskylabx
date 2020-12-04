@@ -56,7 +56,7 @@ func Funcs(funcs map[string]interface{}, w http.ResponseWriter, r *http.Request,
 	funcs["FlashMsgWarning"] = func() string { return Warning }
 	fe := NewEncoder(key)
 	flashmsgsMap, err := fe.GetFlashMsgs(w, r)
-	funcs["FlashutilGetFlashMsg"] = func(name string) (FlashMsg, error) {
+	funcs["$.flash.GetFlashMsg"] = func(name string) (FlashMsg, error) {
 		err := err
 		flashmsgs := flashmsgsMap[name]
 		if len(flashmsgs) > 0 {
@@ -64,7 +64,7 @@ func Funcs(funcs map[string]interface{}, w http.ResponseWriter, r *http.Request,
 		}
 		return FlashMsg{}, err
 	}
-	funcs["FlashutilGetFlashMsgs"] = func(name string) ([]FlashMsg, error) { err := err; return flashmsgsMap[name], err }
+	funcs["$.flash.GetFlashMsgs"] = func(name string) ([]FlashMsg, error) { err := err; return flashmsgsMap[name], err }
 	return funcs
 }
 

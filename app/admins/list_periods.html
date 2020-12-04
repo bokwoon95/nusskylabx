@@ -142,7 +142,7 @@
   </form>
   <!-- End CohortDuplicate -->
 
-  <script nonce="{{ HeadersCSPNonce }}">
+  <script nonce="{{ $.headers.CSPNonce }}">
     $(document).ready(function() {
       $("#table_id").DataTable({
         order: [],

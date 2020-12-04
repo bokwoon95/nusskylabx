@@ -60,7 +60,7 @@
     {{ end }}
   </div>
   <!-- Flash Msg -->
-  {{ with $flashMsg := FlashutilGetFlashMsg "success" }}
+  {{ with $flashMsg := $.flash.GetFlashMsg "success" }}
     {{ if $flashMsg.Valid }}
       <p class="flashmsg fixed bottom-0 right-2 br1 mv1 ph2 bg-light-blue pointer sans-serif">
         {{ $flashMsg.Value }}

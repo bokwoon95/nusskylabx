@@ -13,7 +13,7 @@
       <p class="f4">{{ SanitizeHTML $.Msg }}</p>
       <pre>{{ $.Location }}</pre>
       <a href="#" class="goback">&lt; Back</a>
-      <script nonce="{{ HeadersCSPNonce }}">
+      <script nonce="{{ $.headers.CSPNonce }}">
         document.querySelector(".goback").addEventListener("click", () => window.history.back());
       </script>
     </div>

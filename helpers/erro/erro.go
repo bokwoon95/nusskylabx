@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+const null = string(rune(0))
+
 // Wrap will wrap an error and return a new error that is annotated with the
 // function/file/linenumber of where Wrap() was called
 func Wrap(err error) error {
@@ -16,15 +18,21 @@ func Wrap(err error) error {
 		return nil
 	}
 	pc, filename, linenr, _ := runtime.Caller(1)
-	return fmt.Errorf("• Error in function[%s] file:line[%s:%d] %w", runtime.FuncForPC(pc).Name(), filename, linenr, err)
+	strs := strings.Split(runtime.FuncForPC(pc).Name(), "/")
+	function := strs[len(strs)-1]
+	return fmt.Errorf("->"+null+" Error in %s:%d (%s) %w", filename, linenr, function, err)
+	// return fmt.Errorf("• Error in function[%s] file:line[%s:%d] %w", runtime.FuncForPC(pc).Name(), filename, linenr, err)
 }
 
 // Dump will dump the formatted error string (with each error in its own line)
 // into w io.Writer
 func Dump(w io.Writer, err error) {
 	pc, filename, linenr, _ := runtime.Caller(1)
-	err = fmt.Errorf("Error in function[%s] file:line[%s:%d] %w", runtime.FuncForPC(pc).Name(), filename, linenr, err)
-	fmtedErr := strings.Replace(err.Error(), " • ", "\n\n", -1)
+	strs := strings.Split(runtime.FuncForPC(pc).Name(), "/")
+	function := strs[len(strs)-1]
+	err = fmt.Errorf("->"+null+" Error in %s:%d (%s) %w", filename, linenr, function, err)
+	// err = fmt.Errorf("Error in function[%s] file:line[%s:%d] %w", runtime.FuncForPC(pc).Name(), filename, linenr, err)
+	fmtedErr := strings.Replace(err.Error(), " ->"+null+" ", "\n\n", -1)
 	fmt.Fprintln(w, fmtedErr)
 }
 
@@ -32,8 +40,11 @@ func Dump(w io.Writer, err error) {
 // line)
 func Sdump(err error) string {
 	pc, filename, linenr, _ := runtime.Caller(2)
-	err = fmt.Errorf("Error in function[%s] file:line[%s:%d] %w", runtime.FuncForPC(pc).Name(), filename, linenr, err)
-	fmtedErr := strings.Replace(err.Error(), " • ", "\n\n", -1)
+	strs := strings.Split(runtime.FuncForPC(pc).Name(), "/")
+	function := strs[len(strs)-1]
+	err = fmt.Errorf("->"+null+" Error in %s:%d (%s) %w", filename, linenr, function, err)
+	// err = fmt.Errorf("Error in function[%s] file:line[%s:%d] %w", runtime.FuncForPC(pc).Name(), filename, linenr, err)
+	fmtedErr := strings.Replace(err.Error(), " ->"+null+" ", "\n\n", -1)
 	return fmtedErr
 }
 
@@ -41,7 +52,10 @@ func Sdump(err error) string {
 // line)
 func S1dump(err error) string {
 	pc, filename, linenr, _ := runtime.Caller(2)
-	err = fmt.Errorf("Error in function[%s] file:line[%s:%d] %w", runtime.FuncForPC(pc).Name(), filename, linenr, err)
+	strs := strings.Split(runtime.FuncForPC(pc).Name(), "/")
+	function := strs[len(strs)-1]
+	err = fmt.Errorf("->"+null+" Error in %s:%d (%s) %w", filename, linenr, function, err)
+	// err = fmt.Errorf("Error in function[%s] file:line[%s:%d] %w", runtime.FuncForPC(pc).Name(), filename, linenr, err)
 	return err.Error()
 }
 

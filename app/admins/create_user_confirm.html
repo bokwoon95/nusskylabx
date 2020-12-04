@@ -14,13 +14,13 @@
     <form method="post" action="{{ AdminCreateUserConfirm }}/post">
       {{ $.skylab.CSRFToken }}
 
-      {{ $createUserRole := index $.SortedUsers ($.bitwiseOr actionCreateUser actionCreateRole) }}
-      {{ $createRole := index $.SortedUsers actionCreateRole }}
-      {{ $updateDisplayname := index $.SortedUsers actionUpdateDisplayname }}
-      {{ $createRoleUpdateDisplayname := index $.SortedUsers ($.bitwiseOr actionCreateRole actionUpdateDisplayname) }}
-      {{ $doNothing := index $.SortedUsers actionDoNothing }}
-      {{ $badEntry := index $.SortedUsers actionBadEntry }}
-      {{ $error := index $.SortedUsers actionError }}
+      {{ $createUserRole := index $.SortedUsers ($.bitwiseOr $.actionCreateUser $.actionCreateRole) }}
+      {{ $createRole := index $.SortedUsers $.actionCreateRole }}
+      {{ $updateDisplayname := index $.SortedUsers $.actionUpdateDisplayname }}
+      {{ $createRoleUpdateDisplayname := index $.SortedUsers ($.bitwiseOr $.actionCreateRole $.actionUpdateDisplayname) }}
+      {{ $doNothing := index $.SortedUsers $.actionDoNothing }}
+      {{ $badEntry := index $.SortedUsers $.actionBadEntry }}
+      {{ $error := index $.SortedUsers $.actionError }}
 
       {{ if $createUserRole }}
       <div class="b">These new users will be created, and new roles created for them</div>
@@ -310,7 +310,7 @@
       {{ end }}
     </form>
   </div>
-  <script nonce="{{ HeadersCSPNonce }}">
+  <script nonce="{{ $.headers.CSPNonce }}">
     $(document).ready(function () {
       $('#create-user-role').DataTable({
         searching: false,

@@ -69,7 +69,7 @@
       </div>
   </div>
   <script src="https://unpkg.com/split.js/dist/split.min.js"></script>
-  <script nonce="{{ HeadersCSPNonce }}">
+  <script nonce="{{ $.headers.CSPNonce }}">
     // https://github.com/nathancahill/split/tree/master/packages/splitjs#flex-layout
     const key = "split-sizes";
     const value = localStorage.getItem(key)
@@ -94,7 +94,7 @@
 
   <!-- Scripts -->
   <script src="/static/tinymce/tinymce.min.js"></script>
-  <script nonce="{{ HeadersCSPNonce }}">
+  <script nonce="{{ $.headers.CSPNonce }}">
     tinymce.init({
       selector: "textarea",
       statusbar: false,

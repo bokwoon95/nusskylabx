@@ -130,8 +130,9 @@ func (skylb Skylab) Wender(w http.ResponseWriter, r *http.Request, data map[stri
 	err := skylb.Templates.Render(w, r, mainData, name, names...)
 	if err != nil {
 		_, sourcefile, linenr, _ := runtime.Caller(1)
+		name := name + strings.Join(names, "+")
 		skylb.InternalServerError(w, r,
-			fmt.Errorf("%s:%d tried to render %s, %+v and failed: %w", sourcefile, linenr, name, names, err),
+			fmt.Errorf("%s:%d tried to render %s and failed: %w", sourcefile, linenr, name, err),
 		)
 	}
 }

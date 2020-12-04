@@ -166,7 +166,7 @@
   </form>
   <!-- End DuplicateForms -->
 
-  <script nonce="{{ HeadersCSPNonce }}">
+  <script nonce="{{ $.headers.CSPNonce }}">
     $(document).ready(function() {
       $("#table_id").DataTable({
         order: [],

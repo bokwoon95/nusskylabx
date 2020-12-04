@@ -9,7 +9,7 @@
   {{ template "app/skylab/sidebar.html" . }}
   <div class="sans-serif pa2 pa4-l">
     <a href="#" class="goback">&lt; Back</a>
-    <script nonce="{{ HeadersCSPNonce }}">
+    <script nonce="{{ $.headers.CSPNonce }}">
       document.querySelector(".goback").addEventListener("click", () => window.history.back());
     </script>
     <div class="pv1"></div>

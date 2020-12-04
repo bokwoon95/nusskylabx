@@ -30,7 +30,7 @@
     </form>
   </div>
   <!-- Flash Msg -->
-  {{ with $flashMsg := FlashutilGetFlashMsg "sent" }}
+  {{ with $flashMsg := $.flash.GetFlashMsgs "sent" }}
     {{ if $flashMsg.Valid }}
       <p class="flashmsg fixed bottom-0 right-2 br1 mv1 ph2 bg-light-blue pointer sans-serif">
         {{ $flashMsg.Value }}
@@ -40,7 +40,7 @@
   <!-- End Flash Msg -->
   <script src="/static/flashmsg.js"></script>
   <script src="/static/tinymce/tinymce.min.js"></script>
-  <script nonce="{{ HeadersCSPNonce }}">
+  <script nonce="{{ $.headers.CSPNonce }}">
     tinymce.init({
       selector: "textarea",
       statusbar: false,

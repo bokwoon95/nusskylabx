@@ -28,7 +28,7 @@
       </div>
     </form>
   </div>
-  <script nonce="{{ HeadersCSPNonce }}">
+  <script nonce="{{ $.headers.CSPNonce }}">
     const form = document.querySelector("#csv-form");
     if (form) {
       form.addEventListener("keypress", function submitOnEnter(event) {

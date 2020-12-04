@@ -120,7 +120,7 @@ Let's say the route "/home" will call up functions A(), B() and C() in order. If
         - There are more advanced usages of ripgrep which you can find online.
 - "My javascript doesn't work and the console shows: `Refused to run the JavaScript URL because it violates the following Content Security Policy directive:` (or similar)"
     - Plain inline scripts `<script></script>` are disabled due to CSP. To allow inline scripts, use a nonce. [https://content-security-policy.com/examples/allow-inline-script/](https://content-security-policy.com/examples/allow-inline-script/)
-    - The nonce is available in all templates via the template function 'HeadersCSPNonce'. Add it to your inline scripts like so `<script nonce="{{ HeadersCSPNonce }}"></script>`.
+    - The nonce is available in all templates via the template function '$.headers.CSPNonce'. Add it to your inline scripts like so `<script nonce="{{ $.headers.CSPNonce }}"></script>`.
 
 document:
 where templates are defined

@@ -11,7 +11,7 @@ import (
 )
 
 func Funcs(funcs map[string]interface{}, r *http.Request) map[string]interface{} {
-	funcs["HeadersCSPNonce"] = func() string {
+	funcs["$.headers.CSPNonce"] = func() string {
 		nonce, _ := r.Context().Value(CspNonceCtxkey).(string)
 		return nonce
 	}

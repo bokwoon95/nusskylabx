@@ -10,7 +10,7 @@
   <div class="sans-serif pa2 pa4-l">
     <p class="flex justify-between">
       <a href="#" class="goback">&lt; Back</a>
-      <script nonce="{{ HeadersCSPNonce }}">
+      <script nonce="{{ $.headers.CSPNonce }}">
         document.querySelector(".goback").addEventListener("click", () => window.history.back());
       </script>
       {{ if $.EditURL }}
@@ -44,7 +44,7 @@
 
   <!-- Scripts -->
   <script src="/static/tinymce/tinymce.min.js"></script>
-  <script nonce="{{ HeadersCSPNonce }}">
+  <script nonce="{{ $.headers.CSPNonce }}">
     tinymce.init({
       selector: "textarea",
       statusbar: false,
