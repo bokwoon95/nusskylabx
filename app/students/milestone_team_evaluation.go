@@ -17,32 +17,32 @@ func (stu Students) MilestoneTeamEvaluation(section string) http.HandlerFunc {
 		r = stu.skylb.SetRoleSection(w, r, skylab.RoleStudent, section)
 		user, _ := r.Context().Value(skylab.ContextUser).(skylab.User)
 		headers.DoNotCache(w)
-		type Data struct {
-			Milestone   string
-			Evaluations []skylab.TeamEvaluation
-		}
-		var data Data
-		evaluation := &skylab.TeamEvaluation{}
-		data.Milestone = milestone
-		te, urs := tables.V_TEAM_EVALUATIONS(), tables.USER_ROLES_STUDENTS()
+		team_evaluations, user_roles_students := tables.V_TEAM_EVALUATIONS(), tables.USER_ROLES_STUDENTS()
+		var evaluation skylab.TeamEvaluation
+		var evaluations []skylab.TeamEvaluation
 		err := sq.WithDefaultLog(sq.Lstats).
-			From(te).
+			From(team_evaluations).
 			Where(
-				te.COHORT.EqString(stu.skylb.CurrentCohort()),
-				te.STAGE.EqString(skylab.StageEvaluation),
-				te.MILESTONE.EqString(milestone),
-				te.EVALUATOR_TEAM_ID.In(
-					sq.Select(urs.TEAM_ID).From(urs).Where(urs.USER_ROLE_ID.EqInt(user.Roles[skylab.RoleStudent])),
+				team_evaluations.COHORT.EqString(stu.skylb.CurrentCohort()),
+				team_evaluations.STAGE.EqString(skylab.StageEvaluation),
+				team_evaluations.MILESTONE.EqString(milestone),
+				team_evaluations.EVALUATOR_TEAM_ID.In(sq.
+					Select(user_roles_students.TEAM_ID).
+					From(user_roles_students).
+					Where(user_roles_students.USER_ROLE_ID.EqInt(user.Roles[skylab.RoleStudent])),
 				)).
-			Selectx(
-				evaluation.RowMapper(te),
-				func() { data.Evaluations = append(data.Evaluations, *evaluation) },
-			).
+			Selectx(evaluation.RowMapper(team_evaluations), func() {
+				evaluations = append(evaluations, evaluation)
+			}).
 			Fetch(stu.skylb.DB)
 		if err != nil {
 			stu.skylb.InternalServerError(w, r, err)
 			return
 		}
-		stu.skylb.Render(w, r, data, nil, "app/students/milestone_team_evaluation.html")
+		data := map[string]interface{}{
+			"Milestone":   milestone,
+			"Evaluations": evaluations,
+		}
+		stu.skylb.Wender(w, r, data, "app/students/milestone_team_evaluation.html")
 	}
 }

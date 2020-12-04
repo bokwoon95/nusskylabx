@@ -12,7 +12,6 @@ import (
 	"github.com/bokwoon95/nusskylabx/app/skylab"
 
 	"github.com/bokwoon95/nusskylabx/helpers/flash"
-	"github.com/bokwoon95/nusskylabx/helpers/formx"
 	"github.com/bokwoon95/nusskylabx/helpers/headers"
 	"github.com/bokwoon95/nusskylabx/helpers/urlparams"
 	"github.com/bokwoon95/nusskylabx/tables"
@@ -21,24 +20,29 @@ import (
 func (stu Students) SubmissionView(w http.ResponseWriter, r *http.Request) {
 	stu.skylb.Log.TraceRequest(r)
 	headers.DoNotCache(w)
-	var data skylab.SubmissionViewData
-	var msgs = make(map[string][]string)
+	msgs := make(map[string][]string)
 	submissionID, err := urlparams.Int(r, "submissionID")
 	if err != nil {
 		stu.skylb.BadRequest(w, r, err.Error())
 		return
 	}
-	render := func(data skylab.SubmissionViewData, msgs map[string][]string) {
-		funcs := formx.Funcs(nil, stu.skylb.Policy)
+	var submission skylab.Submission
+	var editURL, submitURL string
+	render := func() {
 		r = stu.skylb.SetRoleSection(w, r, skylab.RoleStudent, stu.getSectionFromSubmissionID(submissionID))
 		r, _ = stu.skylb.SetFlashMsgs(w, r, msgs)
-		stu.skylb.Render(w, r, data, funcs, "app/skylab/submission_view.html", "helpers/formx/render_form_results.html")
+		data := map[string]interface{}{
+			"Submission": submission,
+			"EditURL":    editURL,
+			"SubmitURL":  submitURL,
+		}
+		stu.skylb.Wender(w, r, data, "app/skylab/submission_view.html")
 	}
 	s := tables.V_SUBMISSIONS()
 	err = sq.WithDefaultLog(sq.Lverbose).
 		From(s).
 		Where(s.SUBMISSION_ID.EqInt(submissionID)).
-		SelectRowx((&data.Submission).RowMapper(s)).
+		SelectRowx(submission.RowMapper(s)).
 		Fetch(stu.skylb.DB)
 	if err != nil {
 		switch {
@@ -47,16 +51,16 @@ func (stu Students) SubmissionView(w http.ResponseWriter, r *http.Request) {
 		default:
 			msgs[flash.Error] = []string{err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
-			render(data, msgs)
+			render()
 		}
 		return
 	}
 	canEdit, _ := r.Context().Value(skylab.ContextCanEditSubmission).(bool)
 	if canEdit {
-		data.EditURL = skylab.StudentSubmission + "/" + strconv.Itoa(submissionID) + "/edit"
-		data.SubmitURL = skylab.StudentSubmission + "/" + strconv.Itoa(submissionID) + "/submit"
+		editURL = skylab.StudentSubmission + "/" + strconv.Itoa(submissionID) + "/edit"
+		submitURL = skylab.StudentSubmission + "/" + strconv.Itoa(submissionID) + "/submit"
 	}
-	render(data, msgs)
+	render()
 }
 
 func (stu Students) CanViewSubmission(next http.Handler) http.Handler {

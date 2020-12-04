@@ -9,7 +9,6 @@ import (
 
 	sq "github.com/bokwoon95/go-structured-query/postgres"
 	"github.com/bokwoon95/nusskylabx/helpers/flash"
-	"github.com/bokwoon95/nusskylabx/helpers/formx"
 	"github.com/bokwoon95/nusskylabx/helpers/headers"
 	"github.com/bokwoon95/nusskylabx/helpers/urlparams"
 	"github.com/bokwoon95/nusskylabx/tables"
@@ -22,25 +21,35 @@ func (skylb Skylab) SubmissionEdit(role string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		skylb.Log.TraceRequest(r)
 		headers.DoNotCache(w)
-		var data SubmissionEditData
-		var msgs = make(map[string][]string)
+		msgs := make(map[string][]string)
 		submissionID, err := urlparams.Int(r, "submissionID")
 		if err != nil {
 			skylb.BadRequest(w, r, err.Error())
 			return
 		}
-		render := func(data SubmissionEditData, msgs map[string][]string) {
-			var funcs map[string]interface{}
-			funcs = formx.Funcs(funcs, skylb.Policy)
+		var submission Submission
+		var peerEvaluations []TeamEvaluation
+		var adviserEvaluation, mentorEvaluation UserEvaluation
+		var previewURL, updateURL, submitURL string
+		render := func() {
 			r = skylb.SetRoleSection(w, r, role, skylb.getSectionFromSubmissionID(submissionID, role))
 			r, _ = skylb.SetFlashMsgs(w, r, msgs)
-			skylb.Render(w, r, data, funcs, "app/skylab/submission_edit.html", "helpers/formx/render_form.html")
+			data := map[string]interface{}{
+				"Submission":        submission,
+				"PeerEvaluations":   peerEvaluations,
+				"AdviserEvaluation": adviserEvaluation,
+				"MentorEvaluation":  mentorEvaluation,
+				"PreviewURL":        previewURL,
+				"UpdateURL":         updateURL,
+				"SubmitURL":         submitURL,
+			}
+			skylb.Wender(w, r, data, "app/skylab/submission_edit.html")
 		}
 		s := tables.V_SUBMISSIONS()
 		err = sq.WithDefaultLog(sq.Lstats).
 			From(s).
 			Where(s.SUBMISSION_ID.EqInt(submissionID)).
-			SelectRowx((&data.Submission).RowMapper(s)).
+			SelectRowx(submission.RowMapper(s)).
 			Fetch(skylb.DB)
 		if err != nil {
 			switch {
@@ -49,15 +58,15 @@ func (skylb Skylab) SubmissionEdit(role string) http.HandlerFunc {
 			default:
 				msgs[flash.Error] = []string{err.Error()}
 				w.WriteHeader(http.StatusInternalServerError)
-				render(data, msgs)
+				render()
 			}
 			return
 		}
 		switch role {
 		case RoleStudent:
-			data.PreviewURL = StudentSubmission + "/" + strconv.Itoa(submissionID) + "/preview"
-			data.UpdateURL = StudentSubmission + "/" + strconv.Itoa(submissionID) + "/update"
-			data.SubmitURL = StudentSubmission + "/" + strconv.Itoa(submissionID) + "/submit"
+			previewURL = StudentSubmission + "/" + strconv.Itoa(submissionID) + "/preview"
+			updateURL = StudentSubmission + "/" + strconv.Itoa(submissionID) + "/update"
+			submitURL = StudentSubmission + "/" + strconv.Itoa(submissionID) + "/submit"
 		}
 
 		// Team evaluations
@@ -66,8 +75,8 @@ func (skylb Skylab) SubmissionEdit(role string) http.HandlerFunc {
 		err = sq.WithDefaultLog(sq.Lstats).
 			From(te).
 			Where(te.SUBMISSION_ID.EqInt(submissionID)).
-			Selectx((&teamEvaluation).RowMapper(te), func() {
-				data.PeerEvaluations = append(data.PeerEvaluations, teamEvaluation)
+			Selectx(teamEvaluation.RowMapper(te), func() {
+				peerEvaluations = append(peerEvaluations, teamEvaluation)
 			}).
 			Fetch(skylb.DB)
 		if err != nil {
@@ -81,12 +90,12 @@ func (skylb Skylab) SubmissionEdit(role string) http.HandlerFunc {
 		err = sq.WithDefaultLog(sq.Lstats).
 			From(ue).
 			Where(ue.SUBMISSION_ID.EqInt(submissionID)).
-			Selectx((&userEvaluation).RowMapper(ue), func() {
+			Selectx(userEvaluation.RowMapper(ue), func() {
 				switch userEvaluation.Role {
 				case RoleAdviser:
-					data.AdviserEvaluation = userEvaluation
+					adviserEvaluation = userEvaluation
 				case RoleMentor:
-					data.MentorEvaluation = userEvaluation
+					mentorEvaluation = userEvaluation
 				}
 			}).
 			Fetch(skylb.DB)
@@ -94,6 +103,6 @@ func (skylb Skylab) SubmissionEdit(role string) http.HandlerFunc {
 			skylb.InternalServerError(w, r, err)
 			return
 		}
-		render(data, msgs)
+		render()
 	}
 }

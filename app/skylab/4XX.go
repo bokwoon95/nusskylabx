@@ -3,7 +3,6 @@ package skylab
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 	"runtime"
 
 	"github.com/bokwoon95/nusskylabx/helpers/formutil"
@@ -13,32 +12,25 @@ import (
 
 func (skylb Skylab) BadRequest(w http.ResponseWriter, r *http.Request, msg string) {
 	skylb.Log.TraceRequest(r)
-	type Data struct {
-		Msg      string
-		Location string
-	}
-	var data Data
 	pc, filename, linenr, _ := runtime.Caller(1)
-	data.Msg = msg
-	data.Location = fmt.Sprintf("%s:%s:%d", runtime.FuncForPC(pc).Name(), filename, linenr)
+	data := map[string]interface{}{
+		"Msg":      msg,
+		"Location": fmt.Sprintf("%s:%s:%d", runtime.FuncForPC(pc).Name(), filename, linenr),
+	}
 	w.WriteHeader(http.StatusBadRequest)
-	skylb.Render(w, r, data, nil, "app/skylab/400.html")
+	skylb.Wender(w, r, data, "app/skylab/400.html")
 }
 
 func (skylb Skylab) NotLoggedIn(w http.ResponseWriter, r *http.Request) {
 	skylb.Log.TraceRequest(r)
 	w.WriteHeader(http.StatusUnauthorized)
-	skylb.Render(w, r, nil, templateutil.Txt(map[string]interface{}{}), "app/skylab/401.html")
+	skylb.Wender(w, r, nil, "app/skylab/401.html")
 }
 
 func (skylb Skylab) NotAUser(w http.ResponseWriter, r *http.Request) {
 	skylb.Log.TraceRequest(r)
 	w.WriteHeader(http.StatusUnauthorized)
-	skylb.Render(w, r, nil, templateutil.Txt(map[string]interface{}{}), "app/skylab/401_not_a_user.html")
-}
-
-type fourOhThree struct {
-	Role string
+	skylb.Wender(w, r, nil, "app/skylab/401_not_a_user.html")
 }
 
 // Authentication is not Authorization. Not authenticated means the user
@@ -54,53 +46,67 @@ type fourOhThree struct {
 // https://stackoverflow.com/a/6937030
 func (skylb Skylab) NotAuthorized(w http.ResponseWriter, r *http.Request) {
 	skylb.Log.TraceRequest(r)
-	data := fourOhThree{Role: RoleNull}
+	data := map[string]interface{}{
+		"Role": RoleNull,
+	}
 	w.WriteHeader(http.StatusForbidden)
-	skylb.Render(w, r, data, templateutil.Txt(map[string]interface{}{}), "app/skylab/403.html")
+	skylb.Wender(w, r, data, "app/skylab/403.html")
 }
 
 func (skylb Skylab) NotARole(role string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		skylb.Log.TraceRequest(r)
-		data := fourOhThree{Role: role}
+		data := map[string]interface{}{
+			"Role": role,
+		}
 		w.WriteHeader(http.StatusForbidden)
-		skylb.Render(w, r, data, templateutil.Txt(map[string]interface{}{}), "app/skylab/403.html")
+		skylb.Wender(w, r, data, "app/skylab/403.html")
 	}
 }
 
 func (skylb Skylab) NotAnApplicant(w http.ResponseWriter, r *http.Request) {
 	skylb.Log.TraceRequest(r)
-	data := fourOhThree{Role: RoleApplicant}
+	data := map[string]interface{}{
+		"Role": RoleApplicant,
+	}
 	w.WriteHeader(http.StatusForbidden)
-	skylb.Render(w, r, data, templateutil.Txt(map[string]interface{}{}), "app/skylab/403.html")
+	skylb.Wender(w, r, data, "app/skylab/403.html")
 }
 
 func (skylb Skylab) NotAStudent(w http.ResponseWriter, r *http.Request) {
 	skylb.Log.TraceRequest(r)
-	data := fourOhThree{Role: RoleStudent}
+	data := map[string]interface{}{
+		"Role": RoleStudent,
+	}
 	w.WriteHeader(http.StatusForbidden)
-	skylb.Render(w, r, data, templateutil.Txt(map[string]interface{}{}), "app/skylab/403.html")
+	skylb.Wender(w, r, data, "app/skylab/403.html")
 }
 
 func (skylb Skylab) NotAnAdviser(w http.ResponseWriter, r *http.Request) {
 	skylb.Log.TraceRequest(r)
-	data := fourOhThree{Role: RoleAdviser}
+	data := map[string]interface{}{
+		"Role": RoleAdviser,
+	}
 	w.WriteHeader(http.StatusForbidden)
-	skylb.Render(w, r, data, templateutil.Txt(map[string]interface{}{}), "app/skylab/403.html")
+	skylb.Wender(w, r, data, "app/skylab/403.html")
 }
 
 func (skylb Skylab) NotAMentor(w http.ResponseWriter, r *http.Request) {
 	skylb.Log.TraceRequest(r)
-	data := fourOhThree{Role: RoleMentor}
+	data := map[string]interface{}{
+		"Role": RoleMentor,
+	}
 	w.WriteHeader(http.StatusForbidden)
-	skylb.Render(w, r, data, templateutil.Txt(map[string]interface{}{}), "app/skylab/403.html")
+	skylb.Wender(w, r, data, "app/skylab/403.html")
 }
 
 func (skylb Skylab) NotAnAdmin(w http.ResponseWriter, r *http.Request) {
 	skylb.Log.TraceRequest(r)
-	data := fourOhThree{Role: RoleAdmin}
+	data := map[string]interface{}{
+		"Role": RoleAdmin,
+	}
 	w.WriteHeader(http.StatusForbidden)
-	skylb.Render(w, r, data, templateutil.Txt(map[string]interface{}{}), "app/skylab/403.html")
+	skylb.Wender(w, r, data, "app/skylab/403.html")
 }
 
 func (skylb Skylab) CsrfTokenInvalid() http.Handler {
@@ -108,35 +114,31 @@ func (skylb Skylab) CsrfTokenInvalid() http.Handler {
 		skylb.Log.TraceRequest(r)
 		r = skylb.SetRoleSection(w, r, RolePreserve, SectionPreserve)
 		_ = formutil.ParseForm(r)
-		type Data struct {
-			RequestID string
-			URL       *url.URL
-			FormStr   string
+		data := map[string]interface{}{
+			"RequestID": logutil.GetReqID(r.Context()),
+			"URL":       r.URL,
+			"FormStr":   fmt.Sprintf("%#v\n", r.Form),
 		}
-		var data Data
-		data.RequestID = logutil.GetReqID(r.Context())
-		data.URL = r.URL
-		data.FormStr = fmt.Sprintf("%#v\n", r.Form)
 		w.WriteHeader(http.StatusForbidden)
-		skylb.Render(w, r, data, nil, "app/skylab/403_csrf.html")
+		skylb.Wender(w, r, data, "app/skylab/403_csrf.html")
 	})
 }
 
 func (skylb Skylab) NotFound(w http.ResponseWriter, r *http.Request) {
 	skylb.Log.TraceRequest(r)
-	type Data struct{ URL string }
-	data := Data{URL: r.URL.String()}
+	data := map[string]interface{}{
+		"URL": r.URL.String(),
+	}
 	w.WriteHeader(http.StatusNotFound)
-	skylb.Render(w, r, data, nil, "app/skylab/404.html")
+	skylb.Wender(w, r, data, "app/skylab/404.html")
 }
 
 func (skylb Skylab) MethodNotAllowed(w http.ResponseWriter, r *http.Request) {
 	skylb.Log.TraceRequest(r)
-	type Data struct {
-		URL    string
-		Method string
+	data := map[string]interface{}{
+		"URL":    r.URL.String(),
+		"Method": r.Method,
 	}
-	data := Data{URL: r.URL.String(), Method: r.Method}
 	w.WriteHeader(http.StatusMethodNotAllowed)
-	skylb.Render(w, r, data, nil, "app/skylab/405.html")
+	skylb.Wender(w, r, data, "app/skylab/405.html")
 }

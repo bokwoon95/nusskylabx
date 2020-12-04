@@ -8,7 +8,6 @@ import (
 	"strconv"
 
 	sq "github.com/bokwoon95/go-structured-query/postgres"
-	"github.com/bokwoon95/nusskylabx/helpers/formx"
 	"github.com/bokwoon95/nusskylabx/helpers/urlparams"
 	"github.com/bokwoon95/nusskylabx/tables"
 )
@@ -20,18 +19,19 @@ func (skylb Skylab) TeamEvaluationView(role string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		skylb.Log.TraceRequest(r)
 		r = skylb.SetRoleSection(w, r, role, SectionPreserve)
-		var data TeamEvaluationView
-		var msgs = make(map[string][]string)
+		msgs := make(map[string][]string)
 		teamEvaluationID, err := urlparams.Int(r, "teamEvaluationID")
 		if err != nil {
 			skylb.BadRequest(w, r, err.Error())
 			return
 		}
 		te := tables.V_TEAM_EVALUATIONS()
+		var teamEvaluation TeamEvaluation
+		var submitURL, submissionURL, editURL string
 		err = sq.WithDefaultLog(sq.Lstats).
 			From(te).
 			Where(te.TEAM_EVALUATION_ID.EqInt(teamEvaluationID)).
-			SelectRowx((&data.TeamEvaluation).RowMapper(te)).
+			SelectRowx(teamEvaluation.RowMapper(te)).
 			Fetch(skylb.DB)
 		if err != nil {
 			switch {
@@ -46,15 +46,20 @@ func (skylb Skylab) TeamEvaluationView(role string) http.HandlerFunc {
 		switch role {
 		case RoleStudent:
 			if canEdit {
-				data.SubmitURL = StudentTeamEvaluation + "/" + strconv.Itoa(teamEvaluationID) + "/submit"
-				data.EditURL = StudentTeamEvaluation + "/" + strconv.Itoa(teamEvaluationID) + "/edit"
+				submitURL = StudentTeamEvaluation + "/" + strconv.Itoa(teamEvaluationID) + "/submit"
+				editURL = StudentTeamEvaluation + "/" + strconv.Itoa(teamEvaluationID) + "/edit"
 			}
-			data.SubmissionURL = StudentSubmission + "/" + strconv.Itoa(data.TeamEvaluation.Evaluatee.SubmissionID)
+			submissionURL = StudentSubmission + "/" + strconv.Itoa(teamEvaluation.Evaluatee.SubmissionID)
 		case RoleAdviser:
-			data.SubmissionURL = AdviserSubmission + "/" + strconv.Itoa(data.TeamEvaluation.Evaluatee.SubmissionID)
+			submissionURL = AdviserSubmission + "/" + strconv.Itoa(teamEvaluation.Evaluatee.SubmissionID)
 		}
-		funcs := formx.Funcs(nil, skylb.Policy)
 		r, _ = skylb.SetFlashMsgs(w, r, msgs)
-		skylb.Render(w, r, data, funcs, "app/skylab/team_evaluation_view.html", "helpers/formx/render_form_results.html")
+		data := map[string]interface{}{
+			"TeamEvaluation": teamEvaluation,
+			"SubmitURL":      submitURL,
+			"SubmissionURL":  submissionURL,
+			"EditURL":        editURL,
+		}
+		skylb.Wender(w, r, data, "app/skylab/team_evaluation_view.html")
 	}
 }

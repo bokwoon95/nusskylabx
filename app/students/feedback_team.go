@@ -15,17 +15,17 @@ func (stu Students) TeamFeedbackEdit(w http.ResponseWriter, r *http.Request) {
 	r = stu.skylb.SetRoleSection(w, r, skylab.RoleStudent, skylab.StudentTeamFeedback)
 	headers.DoNotCache(w)
 
-	type Data struct {
-		TeamFeedback skylab.TeamFeedback
-	}
-	var data Data
+	var teamFeedback skylab.TeamFeedback
 	var err error
-	data.TeamFeedback.FeedbackIDOnTeam, err = urlparams.Int(r, "feedbackIDOnTeam")
+	teamFeedback.FeedbackIDOnTeam, err = urlparams.Int(r, "feedbackIDOnTeam")
 	if err != nil {
 		stu.skylb.BadRequest(w, r, err.Error())
 		return
 	}
-	stu.skylb.Render(w, r, data, nil, "app/students/feedback_team.html")
+	data := map[string]interface{}{
+		"TeamFeedback": teamFeedback,
+	}
+	stu.skylb.Wender(w, r, data, "app/students/feedback_team.html")
 }
 
 func (stu Students) CanEditTeamFeedback(next http.Handler) http.Handler {

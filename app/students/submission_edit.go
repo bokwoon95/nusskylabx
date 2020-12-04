@@ -15,7 +15,6 @@ import (
 	"github.com/bokwoon95/nusskylabx/helpers/erro"
 	"github.com/bokwoon95/nusskylabx/helpers/flash"
 	"github.com/bokwoon95/nusskylabx/helpers/formutil"
-	"github.com/bokwoon95/nusskylabx/helpers/formx"
 	"github.com/bokwoon95/nusskylabx/helpers/headers"
 	"github.com/bokwoon95/nusskylabx/helpers/urlparams"
 )
@@ -23,25 +22,37 @@ import (
 func (stu Students) SubmissionEdit(w http.ResponseWriter, r *http.Request) {
 	stu.skylb.Log.TraceRequest(r)
 	headers.DoNotCache(w)
-	var data skylab.SubmissionEditData
-	var msgs = make(map[string][]string)
+	// var data skylab.SubmissionEditData
+	msgs := make(map[string][]string)
 	submissionID, err := urlparams.Int(r, "submissionID")
 	if err != nil {
 		stu.skylb.BadRequest(w, r, err.Error())
 		return
 	}
-	render := func(data skylab.SubmissionEditData, msgs map[string][]string) {
-		var funcs map[string]interface{}
-		funcs = formx.Funcs(funcs, stu.skylb.Policy)
+	var submission skylab.Submission
+	var peerEvaluations []skylab.TeamEvaluation
+	var adviserEvaluation skylab.UserEvaluation
+	var mentorEvaluation skylab.UserEvaluation
+	var previewURL, updateURL, submitURL string
+	render := func() {
 		r = stu.skylb.SetRoleSection(w, r, skylab.RoleStudent, stu.getSectionFromSubmissionID(submissionID))
 		r, _ = stu.skylb.SetFlashMsgs(w, r, msgs)
-		stu.skylb.Render(w, r, data, funcs, "app/skylab/submission_edit.html", "helpers/formx/render_form.html")
+		data := map[string]interface{}{
+			"Submission":        submission,
+			"PeerEvaluations":   peerEvaluations,
+			"AdviserEvaluation": adviserEvaluation,
+			"MentorEvaluation":  mentorEvaluation,
+			"PreviewURL":        previewURL,
+			"UpdateURL":         updateURL,
+			"SubmitURL":         submitURL,
+		}
+		stu.skylb.Wender(w, r, data, "app/skylab/submission_edit.html")
 	}
 	s := tables.V_SUBMISSIONS()
 	err = sq.WithDefaultLog(sq.Lstats).
 		From(s).
 		Where(s.SUBMISSION_ID.EqInt(submissionID)).
-		SelectRowx((&data.Submission).RowMapper(s)).
+		SelectRowx(submission.RowMapper(s)).
 		Fetch(stu.skylb.DB)
 	if err != nil {
 		switch {
@@ -50,13 +61,13 @@ func (stu Students) SubmissionEdit(w http.ResponseWriter, r *http.Request) {
 		default:
 			msgs[flash.Error] = []string{err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
-			render(data, msgs)
+			render()
 		}
 		return
 	}
-	data.PreviewURL = skylab.StudentSubmission + "/" + strconv.Itoa(submissionID) + "/preview"
-	data.UpdateURL = skylab.StudentSubmission + "/" + strconv.Itoa(submissionID) + "/update"
-	data.SubmitURL = skylab.StudentSubmission + "/" + strconv.Itoa(submissionID) + "/submit"
+	previewURL = skylab.StudentSubmission + "/" + strconv.Itoa(submissionID) + "/preview"
+	updateURL = skylab.StudentSubmission + "/" + strconv.Itoa(submissionID) + "/update"
+	submitURL = skylab.StudentSubmission + "/" + strconv.Itoa(submissionID) + "/submit"
 
 	// Team evaluations
 	te := tables.V_TEAM_EVALUATIONS()
@@ -64,8 +75,8 @@ func (stu Students) SubmissionEdit(w http.ResponseWriter, r *http.Request) {
 	err = sq.WithDefaultLog(sq.Lstats).
 		From(te).
 		Where(te.SUBMISSION_ID.EqInt(submissionID)).
-		Selectx((&teamEvaluation).RowMapper(te), func() {
-			data.PeerEvaluations = append(data.PeerEvaluations, teamEvaluation)
+		Selectx(teamEvaluation.RowMapper(te), func() {
+			peerEvaluations = append(peerEvaluations, teamEvaluation)
 		}).
 		Fetch(stu.skylb.DB)
 	if err != nil {
@@ -79,12 +90,12 @@ func (stu Students) SubmissionEdit(w http.ResponseWriter, r *http.Request) {
 	err = sq.WithDefaultLog(sq.Lstats).
 		From(ue).
 		Where(ue.SUBMISSION_ID.EqInt(submissionID)).
-		Selectx((&userEvaluation).RowMapper(ue), func() {
+		Selectx(userEvaluation.RowMapper(ue), func() {
 			switch userEvaluation.Role {
 			case skylab.RoleAdviser:
-				data.AdviserEvaluation = userEvaluation
+				adviserEvaluation = userEvaluation
 			case skylab.RoleMentor:
-				data.MentorEvaluation = userEvaluation
+				mentorEvaluation = userEvaluation
 			}
 		}).
 		Fetch(stu.skylb.DB)
@@ -92,7 +103,7 @@ func (stu Students) SubmissionEdit(w http.ResponseWriter, r *http.Request) {
 		stu.skylb.InternalServerError(w, r, err)
 		return
 	}
-	render(data, msgs)
+	render()
 }
 
 func (stu Students) IdempotentSubmissionCreate(next http.Handler) http.Handler {

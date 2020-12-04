@@ -9,7 +9,6 @@ import (
 
 	sq "github.com/bokwoon95/go-structured-query/postgres"
 	"github.com/bokwoon95/nusskylabx/helpers/flash"
-	"github.com/bokwoon95/nusskylabx/helpers/formx"
 	"github.com/bokwoon95/nusskylabx/helpers/urlparams"
 	"github.com/bokwoon95/nusskylabx/tables"
 )
@@ -21,23 +20,29 @@ func (skylb Skylab) UserEvaluationView(role string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		skylb.Log.TraceRequest(r)
 		r = skylb.SetRoleSection(w, r, role, SectionPreserve)
-		var data UserEvaluationView
-		var msgs = make(map[string][]string)
+		msgs := make(map[string][]string)
 		userEvaluationID, err := urlparams.Int(r, "userEvaluationID")
 		if err != nil {
 			skylb.BadRequest(w, r, err.Error())
 			return
 		}
-		render := func(data UserEvaluationView, msgs map[string][]string) {
-			funcs := formx.Funcs(nil, skylb.Policy)
+		var evaluation UserEvaluation
+		var submissionURL, submitURL, editURL string
+		render := func() {
 			r, _ = skylb.SetFlashMsgs(w, r, msgs)
-			skylb.Render(w, r, data, funcs, "app/skylab/user_evaluation_view.html", "helpers/formx/render_form_results.html")
+			data := map[string]interface{}{
+				"Evaluation":    evaluation,
+				"SubmissionURL": submissionURL,
+				"SubmitURL":     submitURL,
+				"EditURL":       editURL,
+			}
+			skylb.Wender(w, r, data, "app/skylab/user_evaluation_view.html")
 		}
 		ue := tables.V_USER_EVALUATIONS()
 		err = sq.WithDefaultLog(sq.Lstats).
 			From(ue).
 			Where(ue.USER_EVALUATION_ID.EqInt(userEvaluationID)).
-			SelectRowx((&data.Evaluation).RowMapper(ue)).
+			SelectRowx(evaluation.RowMapper(ue)).
 			Fetch(skylb.DB)
 		if err != nil {
 			switch {
@@ -46,23 +51,23 @@ func (skylb Skylab) UserEvaluationView(role string) http.HandlerFunc {
 			default:
 				msgs[flash.Error] = []string{err.Error()}
 				w.WriteHeader(http.StatusInternalServerError)
-				render(data, msgs)
+				render()
 			}
 			return
 		}
 		canEdit, _ := r.Context().Value(ContextCanEditEvaluation).(bool)
 		switch role {
 		case RoleStudent:
-			data.SubmissionURL = "google.com"
+			submissionURL = "google.com"
 			if canEdit {
-				data.EditURL = "google.com"
-				data.SubmitURL = "google.com"
+				editURL = "google.com"
+				submitURL = "google.com"
 			}
 		case RoleAdviser:
-			data.SubmissionURL = AdviserSubmission + "/" + strconv.Itoa(data.Evaluation.Evaluatee.SubmissionID)
-			data.EditURL = AdviserUserEvaluation + "/" + strconv.Itoa(userEvaluationID) + "/edit"
-			data.SubmitURL = AdviserUserEvaluation + "/" + strconv.Itoa(userEvaluationID) + "/submit"
+			submissionURL = AdviserSubmission + "/" + strconv.Itoa(evaluation.Evaluatee.SubmissionID)
+			editURL = AdviserUserEvaluation + "/" + strconv.Itoa(userEvaluationID) + "/edit"
+			submitURL = AdviserUserEvaluation + "/" + strconv.Itoa(userEvaluationID) + "/submit"
 		}
-		render(data, msgs)
+		render()
 	}
 }

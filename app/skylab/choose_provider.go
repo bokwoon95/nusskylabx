@@ -21,14 +21,10 @@ func (skylb Skylab) ChooseProvider(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		}
-		type Data struct {
-			Magicstring string
-			RequestURL  string
+		data := map[string]interface{}{
+			"Magicstring": magicstring,
+			"RequestURL":  r.RequestURI,
 		}
-		data := Data{
-			Magicstring: magicstring,
-			RequestURL:  r.RequestURI,
-		}
-		skylb.Render(w, r, data, auth.AddConstProvider(map[string]interface{}{}), "app/skylab/choose_provider.html")
+		skylb.Wender(w, r, data, "app/skylab/choose_provider.html")
 	})
 }

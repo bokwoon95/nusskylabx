@@ -12,10 +12,11 @@ func (stu Students) ListFeedbacks(w http.ResponseWriter, r *http.Request) {
 	r = stu.skylb.SetRoleSection(w, r, skylab.RoleStudent, skylab.StudentListFeedbacks)
 	headers.DoNotCache(w)
 
-	type Data struct {
-		TeamFeedbacks []skylab.TeamFeedback
-		UserFeedbacks []skylab.UserFeedback
+	var teamFeedbacks []skylab.TeamFeedback
+	var userFeedbacks []skylab.UserFeedback
+	data := map[string]interface{}{
+		"TeamFeedbacks": teamFeedbacks,
+		"UserFeedbacks": userFeedbacks,
 	}
-	var data Data
-	stu.skylb.Render(w, r, data, nil, "app/students/list_feedbacks.html")
+	stu.skylb.Wender(w, r, data, "app/students/list_feedbacks.html")
 }

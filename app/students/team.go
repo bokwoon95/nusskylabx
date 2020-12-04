@@ -13,17 +13,14 @@ import (
 func (stu Students) Team(w http.ResponseWriter, r *http.Request) {
 	stu.skylb.Log.TraceRequest(r)
 	r = stu.skylb.SetRoleSection(w, r, skylab.RoleStudent, skylab.StudentTeam)
-	type Data struct {
-		Team skylab.Team
-	}
-	var data Data
 	user, _ := r.Context().Value(skylab.ContextUser).(skylab.User)
 	studentUserRoleID := user.Roles[skylab.RoleStudent]
 	t := tables.V_TEAMS()
+	var team skylab.Team
 	err := sq.WithDefaultLog(sq.Lverbose).
 		From(t).
 		Where(sq.Int(studentUserRoleID).In(sq.Fields{t.STUDENT1_USER_ROLE_ID, t.STUDENT2_USER_ID})).
-		SelectRowx((&data.Team).RowMapper(t)).
+		SelectRowx(team.RowMapper(t)).
 		Fetch(stu.skylb.DB)
 	if err != nil {
 		switch {
@@ -34,5 +31,8 @@ func (stu Students) Team(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	stu.skylb.Render(w, r, data, nil, "app/students/team.html")
+	data := map[string]interface{}{
+		"Team": team,
+	}
+	stu.skylb.Wender(w, r, data, "app/students/team.html")
 }

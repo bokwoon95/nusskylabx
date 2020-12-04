@@ -193,8 +193,10 @@ func NewWithoutDB(config Config) Skylab {
 	funcs = AddSections(funcs)
 	funcs = templateutil.Funcs(funcs)
 	funcs = templateutil.Sql(funcs)
+	funcs = templateutil.Txt(funcs)
 	funcs = timeutil.Funcs(funcs)
 	funcs = formx.Funcs(funcs, skylb.Policy)
+	funcs = auth.AddConstProvider(funcs)
 	common := []string{
 		"app/skylab/head.html",
 		"app/skylab/navbar.html",
@@ -207,6 +209,7 @@ func NewWithoutDB(config Config) Skylab {
 	}
 	templates := []string{
 		"app/*.html",
+		"app/skylab/*.html",
 		"app/admins/*.html",
 		"app/advisers/*.html",
 		"app/applicants/*.html",

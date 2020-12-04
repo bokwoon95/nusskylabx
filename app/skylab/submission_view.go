@@ -9,7 +9,6 @@ import (
 
 	sq "github.com/bokwoon95/go-structured-query/postgres"
 	"github.com/bokwoon95/nusskylabx/helpers/flash"
-	"github.com/bokwoon95/nusskylabx/helpers/formx"
 	"github.com/bokwoon95/nusskylabx/helpers/urlparams"
 	"github.com/bokwoon95/nusskylabx/tables"
 )
@@ -20,24 +19,29 @@ func (skylb Skylab) SubmissionView(role string) http.HandlerFunc {
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
 		skylb.Log.TraceRequest(r)
-		var data SubmissionViewData
-		var msgs = make(map[string][]string)
+		msgs := make(map[string][]string)
 		submissionID, err := urlparams.Int(r, "submissionID")
 		if err != nil {
 			skylb.BadRequest(w, r, err.Error())
 			return
 		}
-		render := func(data SubmissionViewData, msgs map[string][]string) {
-			funcs := formx.Funcs(nil, skylb.Policy)
+		var submission Submission
+		var editURL, submitURL string
+		render := func() {
 			r = skylb.SetRoleSection(w, r, role, skylb.getSectionFromSubmissionID(submissionID, role))
 			r, _ = skylb.SetFlashMsgs(w, r, msgs)
-			skylb.Render(w, r, data, funcs, "app/skylab/submission_view.html", "helpers/formx/render_form_results.html")
+			data := map[string]interface{}{
+				"Submission": submission,
+				"EditURL":    editURL,
+				"SubmitURL":  submitURL,
+			}
+			skylb.Wender(w, r, data, "app/skylab/submission_view.html")
 		}
 		s := tables.V_SUBMISSIONS()
 		err = sq.WithDefaultLog(sq.Lverbose).
 			From(s).
 			Where(s.SUBMISSION_ID.EqInt(submissionID)).
-			SelectRowx((&data.Submission).RowMapper(s)).
+			SelectRowx(submission.RowMapper(s)).
 			Fetch(skylb.DB)
 		if err != nil {
 			switch {
@@ -46,7 +50,7 @@ func (skylb Skylab) SubmissionView(role string) http.HandlerFunc {
 			default:
 				msgs[flash.Error] = []string{err.Error()}
 				w.WriteHeader(http.StatusInternalServerError)
-				render(data, msgs)
+				render()
 			}
 			return
 		}
@@ -54,12 +58,12 @@ func (skylb Skylab) SubmissionView(role string) http.HandlerFunc {
 		if canEdit {
 			switch role {
 			case RoleStudent:
-				data.EditURL = StudentSubmission + "/" + strconv.Itoa(submissionID) + "/edit"
-				data.SubmitURL = StudentSubmission + "/" + strconv.Itoa(submissionID) + "/submit"
+				editURL = StudentSubmission + "/" + strconv.Itoa(submissionID) + "/edit"
+				submitURL = StudentSubmission + "/" + strconv.Itoa(submissionID) + "/submit"
 			case RoleAdviser:
 			}
 		}
-		render(data, msgs)
+		render()
 	}
 }
 

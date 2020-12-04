@@ -15,24 +15,24 @@ import (
 	"github.com/bokwoon95/nusskylabx/helpers/erro"
 	"github.com/bokwoon95/nusskylabx/helpers/flash"
 	"github.com/bokwoon95/nusskylabx/helpers/formutil"
-	"github.com/bokwoon95/nusskylabx/helpers/formx"
 	"github.com/bokwoon95/nusskylabx/helpers/urlparams"
 )
 
 func (stu Students) TeamEvaluationEdit(w http.ResponseWriter, r *http.Request) {
 	stu.skylb.Log.TraceRequest(r)
 	r = stu.skylb.SetRoleSection(w, r, skylab.RoleStudent, skylab.SectionPreserve)
-	var data skylab.TeamEvaluationEdit
 	teamEvaluationID, err := urlparams.Int(r, "teamEvaluationID")
 	if err != nil {
 		stu.skylb.InternalServerError(w, r, err)
 		return
 	}
-	te := tables.V_TEAM_EVALUATIONS()
+	TEAM_EVALUATIONS := tables.V_TEAM_EVALUATIONS()
+	var teamEvaluation skylab.TeamEvaluation
+	var updateURL, submitURL, submissionURL, previewURL string
 	err = sq.WithDefaultLog(sq.Lstats).
-		From(te).
-		Where(te.TEAM_EVALUATION_ID.EqInt(teamEvaluationID)).
-		SelectRowx((&data.TeamEvaluation).RowMapper(te)).
+		From(TEAM_EVALUATIONS).
+		Where(TEAM_EVALUATIONS.TEAM_EVALUATION_ID.EqInt(teamEvaluationID)).
+		SelectRowx(teamEvaluation.RowMapper(TEAM_EVALUATIONS)).
 		Fetch(stu.skylb.DB)
 	if err != nil {
 		switch {
@@ -43,16 +43,18 @@ func (stu Students) TeamEvaluationEdit(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	data.SubmissionURL = skylab.StudentSubmission + "/" + strconv.Itoa(data.TeamEvaluation.Evaluatee.SubmissionID)
-	data.PreviewURL = skylab.StudentTeamEvaluation + "/" + strconv.Itoa(teamEvaluationID) + "/preview"
-	data.UpdateURL = skylab.StudentTeamEvaluation + "/" + strconv.Itoa(teamEvaluationID) + "/update"
-	data.SubmitURL = skylab.StudentTeamEvaluation + "/" + strconv.Itoa(teamEvaluationID) + "/submit"
-	funcs := formx.Funcs(nil, stu.skylb.Policy)
-	stu.skylb.Render(w, r, data, funcs,
-		"app/skylab/team_evaluation_edit.html",
-		"helpers/formx/render_form.html",
-		"helpers/formx/render_form_results.html",
-	)
+	submissionURL = skylab.StudentSubmission + "/" + strconv.Itoa(teamEvaluation.Evaluatee.SubmissionID)
+	previewURL = skylab.StudentTeamEvaluation + "/" + strconv.Itoa(teamEvaluationID) + "/preview"
+	updateURL = skylab.StudentTeamEvaluation + "/" + strconv.Itoa(teamEvaluationID) + "/update"
+	submitURL = skylab.StudentTeamEvaluation + "/" + strconv.Itoa(teamEvaluationID) + "/submit"
+	data := map[string]interface{}{
+		"TeamEvaluation": teamEvaluation,
+		"UpdateURL":      updateURL,
+		"SubmitURL":      submitURL,
+		"SubmissionURL":  submissionURL,
+		"PreviewURL":     previewURL,
+	}
+	stu.skylb.Wender(w, r, data, "app/skylab/team_evaluation_edit.html")
 }
 
 func (stu Students) CanViewTeamEvaluation(next http.Handler) http.Handler {
@@ -66,12 +68,12 @@ func (stu Students) CanViewTeamEvaluation(next http.Handler) http.Handler {
 		}
 
 		// Get user's teamID
-		urs := tables.USER_ROLES_STUDENTS()
+		USER_ROLES_STUDENTS := tables.USER_ROLES_STUDENTS()
 		var userTeamID int
 		err = sq.WithDefaultLog(sq.Lstats).
-			From(urs).
-			Where(urs.USER_ROLE_ID.EqInt(user.Roles[skylab.RoleStudent])).
-			SelectRowx(func(row *sq.Row) { userTeamID = row.Int(urs.TEAM_ID) }).
+			From(USER_ROLES_STUDENTS).
+			Where(USER_ROLES_STUDENTS.USER_ROLE_ID.EqInt(user.Roles[skylab.RoleStudent])).
+			SelectRowx(func(row *sq.Row) { userTeamID = row.Int(USER_ROLES_STUDENTS.TEAM_ID) }).
 			Fetch(stu.skylb.DB)
 		if err != nil {
 			switch {
@@ -85,14 +87,14 @@ func (stu Students) CanViewTeamEvaluation(next http.Handler) http.Handler {
 
 		// Get the evaluator/evaluatee teamID for the given team evaluation
 		var evaluatorTeamID, evaluateeTeamID int
-		te, s := tables.TEAM_EVALUATIONS(), tables.SUBMISSIONS()
+		TEAM_EVALUATIONS, SUBMISSIONS := tables.TEAM_EVALUATIONS(), tables.SUBMISSIONS()
 		err = sq.WithDefaultLog(sq.Lstats).
-			From(te).
-			Join(s, s.SUBMISSION_ID.Eq(te.EVALUATEE_SUBMISSION_ID)).
-			Where(te.TEAM_EVALUATION_ID.EqInt(teamEvaluationID)).
+			From(TEAM_EVALUATIONS).
+			Join(SUBMISSIONS, SUBMISSIONS.SUBMISSION_ID.Eq(TEAM_EVALUATIONS.EVALUATEE_SUBMISSION_ID)).
+			Where(TEAM_EVALUATIONS.TEAM_EVALUATION_ID.EqInt(teamEvaluationID)).
 			SelectRowx(func(row *sq.Row) {
-				evaluatorTeamID = row.Int(te.EVALUATOR_TEAM_ID)
-				evaluateeTeamID = row.Int(s.TEAM_ID)
+				evaluatorTeamID = row.Int(TEAM_EVALUATIONS.EVALUATOR_TEAM_ID)
+				evaluateeTeamID = row.Int(SUBMISSIONS.TEAM_ID)
 			}).
 			Fetch(stu.skylb.DB)
 		if err != nil {
