@@ -6,11 +6,13 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 
 	"github.com/bokwoon95/nusskylabx/helpers/erro"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/oxtoacart/bpool"
 )
 
@@ -160,6 +162,7 @@ func Parse(common []string, templates []string, opts ...Opt) (*Templates, error)
 }
 
 func (main *Templates) Render(w http.ResponseWriter, r *http.Request, data map[string]interface{}, name string, names ...string) error {
+	// "app/students/milestone_team_evaluation.html"
 	mainTemplate, ok := main.lib[name]
 	if !ok {
 		return erro.Wrap(fmt.Errorf("No such template '%s'\n", name))
@@ -167,6 +170,11 @@ func (main *Templates) Render(w http.ResponseWriter, r *http.Request, data map[s
 	fullname := strings.Join(append([]string{name}, names...), "\n")
 	// used cached version if exists...
 	if t, ok := main.cache[fullname]; ok {
+		if fullname == "app/students/milestone_team_evaluation.html" {
+			// TODO: wtfffff why is Map not defined?
+			spew.Dump(t)
+			os.Exit(0)
+		}
 		err := executeTemplate(t, w, main.bufpool, name, data)
 		if err != nil {
 			return erro.Wrap(err)
