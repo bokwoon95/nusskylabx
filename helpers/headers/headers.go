@@ -119,7 +119,6 @@ func SecurityHeaders(w http.ResponseWriter, r *http.Request) *http.Request {
 	// We're not going to use any of these features, so we can tell the browser
 	// that.
 	features := []string{
-		`vibrate 'none'`,
 		`microphone 'none'`,
 		`camera 'none'`,
 		`magnetometer 'none'`,

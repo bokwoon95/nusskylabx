@@ -17,6 +17,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/golang-migrate/migrate/v4"
 
 	"github.com/bokwoon95/nusskylabx/helpers/auth"
@@ -187,6 +188,7 @@ func NewWithoutDB(config Config) Skylab {
 		"SanitizeHTML":        SanitizeHTML(skylb.Policy),
 		"SGTime":              SGTime,
 		"Map":                 Map,
+		"SpewDump":            spew.Sdump,
 	}
 	funcs = skylb.addConsts(funcs)
 	funcs = skylb.AddInputSelects(funcs)

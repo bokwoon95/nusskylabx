@@ -1,13 +1,13 @@
 <!-- Main Sidebar -->
 {{ define "app/skylab/sidebar.html" }}
 {{ if eq $.skylab.CurrentRole RoleStudent }}
-  {{ template "app/skylab/sidebar.html:student" }}
+  {{ template "app/skylab/sidebar.html:student" . }}
 {{ else if eq $.skylab.CurrentRole RoleAdviser }}
-  {{ template "app/skylab/sidebar.html:adviser" }}
+  {{ template "app/skylab/sidebar.html:adviser" . }}
 {{ else if eq $.skylab.CurrentRole RoleMentor }}
-  {{ template "app/skylab/sidebar.html:mentor" }}
+  {{ template "app/skylab/sidebar.html:mentor" . }}
 {{ else if eq $.skylab.CurrentRole RoleAdmin }}
-  {{ template "app/skylab/sidebar.html:admin" }}
+  {{ template "app/skylab/sidebar.html:admin" . }}
 {{ end }}
 <script src="/static/ensure_in_view.js"></script>
 <script src="/static/toggle_mobile_sidebar.js"></script>

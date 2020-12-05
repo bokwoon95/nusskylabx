@@ -1,55 +1,67 @@
 package main
 
 import (
-	"io/ioutil"
+	"html/template"
 	"log"
 	"os"
-	"text/template"
 )
 
-func toString(file string) string {
-	b, err := ioutil.ReadFile(file)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return string(b)
+var funcs0 = map[string]interface{}{
+	"Map": func(args ...interface{}) string { return "Map0" },
 }
 
-func main() {
-	mybatis := func() string { return "mybatis" }
-	mybatis2 := func() string { return "mybatis2" }
-	_, _ = mybatis, mybatis2
+var funcs1 = map[string]interface{}{
+	"Map": func(args ...interface{}) string { return "Map1" },
+}
 
-	t3, err := template.New("z/t3.html").Funcs(template.FuncMap{"mybatis": mybatis2}).Parse(toString("z/t3.html"))
+var funcs2 = map[string]interface{}{
+	"Map": func(args ...interface{}) string { return "Map2" },
+}
+
+var t1_data = `t1 {{Map}}`
+
+var t2_data = `t2 {{Map}}`
+
+var t3_data = `{{template "t1"}}, {template "t2"}}, t3`
+
+func main() {
+	log.SetOutput(os.Stdout)
+	common := template.New("").Funcs(funcs0)
+	cacheEntry := template.Must(common.Clone())
+
+	t1, err := template.New("t1").Funcs(funcs1).Parse(t1_data)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	t1, err := template.New("z/t1.html").Funcs(template.FuncMap{"mybatis": mybatis}).Parse(toString("z/t1.html"))
+	err = addParseTree(cacheEntry, t1)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	t2, err := template.New("z/t2.html").Parse(toString("z/t2.html"))
+
+	t2, err := template.New("t2").Funcs(funcs2).Parse(t2_data)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	for _, t := range t1.Templates() {
-		_, err = t3.AddParseTree(t.Name(), t.Tree)
+	err = addParseTree(cacheEntry, t2)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	log.Println(cacheEntry.DefinedTemplates())
+	err = cacheEntry.ExecuteTemplate(os.Stdout, "t1", nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+}
+
+func addParseTree(parent *template.Template, child *template.Template) error {
+	var err error
+	for _, t := range child.Templates() {
+		_, err = parent.AddParseTree(t.Name(), t.Tree)
 		if err != nil {
-			log.Fatalln(err)
+			return err
 		}
 	}
-	_, err = t3.AddParseTree(t2.Name(), t2.Tree)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	_, _, _ = t1, t2, t3
-	log.SetFlags(log.Llongfile)
-	log.SetOutput(os.Stdout)
-	log.Println(t1.DefinedTemplates())
-	log.Println(t2.DefinedTemplates())
-	log.Println(t3.DefinedTemplates())
-	err = t3.ExecuteTemplate(os.Stdout, "z/t3.html", nil)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	return nil
 }
