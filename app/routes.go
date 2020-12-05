@@ -23,7 +23,7 @@ func AllRoutes(skylb skylab.Skylab) {
 	// Middleware
 	skylb.Mux.Use(middleware.RequestID)    // Insert a unique ID in every request
 	skylb.Mux.Use(middleware.StripSlashes) // Remove trailing slashes
-	skylb.Mux.Use(middleware.Logger)       // Log all paths hit
+	// skylb.Mux.Use(middleware.Logger)       // Log all paths hit
 	skylb.Mux.Use(middleware.Recoverer)    // Pretty print panic traces
 	skylb.Mux.Use(middleware.Compress(-1,  // Compress assets before serving
 		"text/html",

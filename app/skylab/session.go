@@ -106,8 +106,8 @@ func (skylb Skylab) GetUserFromCookie(r *http.Request, cookieName string) (user 
 // corresponding cookie session IDs, and injects them into the current context
 func (skylb Skylab) GetSession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		skylb.Log.StartRequest(r)
-		skylb.Log.TraceRequest(r)
+		// skylb.Log.StartRequest(r)
+		// skylb.Log.TraceRequest(r)
 		user, err := skylb.GetUserFromCookie(r, SessionCookieName)
 		if err != nil {
 			skylb.InternalServerError(w, r, err)
@@ -119,8 +119,8 @@ func (skylb Skylab) GetSession(next http.Handler) http.Handler {
 			return
 		}
 		admin.Valid = admin.Roles[RoleAdmin] != 0 // Ensure that admin is valid only if it is a RoleAdmin
-		skylb.Log.RequestPrintf(r, "user: %+v", user)
-		skylb.Log.RequestPrintf(r, "admin: %+v", admin)
+		// skylb.Log.RequestPrintf(r, "user: %+v", user)
+		// skylb.Log.RequestPrintf(r, "admin: %+v", admin)
 		r = r.WithContext(context.WithValue(r.Context(), ContextUser, user))
 		r = r.WithContext(context.WithValue(r.Context(), ContextAdmin, admin))
 		next.ServeHTTP(w, r)

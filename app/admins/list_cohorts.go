@@ -15,6 +15,7 @@ import (
 )
 
 func (adm Admins) ListCohorts(w http.ResponseWriter, r *http.Request) {
+	adm.skylb.Log.Printf("%+v", adm.skylb.Cohorts())
 	adm.skylb.Log.TraceRequest(r)
 	r = adm.skylb.SetRoleSection(w, r, skylab.RoleAdmin, skylab.AdminListCohorts)
 	var msgs = make(map[string][]string)

@@ -124,7 +124,7 @@ func IsValidSection(section string) bool {
 }
 
 func (skylb Skylab) SetRoleSection(w http.ResponseWriter, r *http.Request, role, section string) *http.Request {
-	skylb.Log.TraceRequest(r)
+	// skylb.Log.TraceRequest(r)
 	ctx := r.Context()
 
 	// Set ContextCurrentRole
@@ -135,21 +135,21 @@ func (skylb Skylab) SetRoleSection(w http.ResponseWriter, r *http.Request, role,
 			role = cookie.Value
 			if Contains(Roles(), role) {
 				ctx = context.WithValue(ctx, ContextCurrentRole, role)
-				skylb.Log.Printf("Preserving Role: Found cookie '%s' with valid role '%s'", LastRoleCookieName, role)
+				// skylb.Log.Printf("Preserving Role: Found cookie '%s' with valid role '%s'", LastRoleCookieName, role)
 			} else {
-				skylb.Log.Printf("Failed Preserving Role: Found cookie '%s' with invalid role '%s'", LastRoleCookieName, role)
+				// skylb.Log.Printf("Failed Preserving Role: Found cookie '%s' with invalid role '%s'", LastRoleCookieName, role)
 			}
 		} else {
-			skylb.Log.Printf("Failed Preserving Role: Cookie '%s' not found", LastRoleCookieName)
+			// skylb.Log.Printf("Failed Preserving Role: Cookie '%s' not found", LastRoleCookieName)
 		}
 	default:
 		ctx = context.WithValue(ctx, ContextCurrentRole, role)
 		cookies.SetCookie(w, LastRoleCookieName, role)
-		skylb.Log.Printf("Setting Role '%s'", role)
+		// skylb.Log.Printf("Setting Role '%s'", role)
 	}
 
 	if !Contains(Roles(), role) {
-		skylb.Log.Printf("Unable to set section because role '%s' is invalid", role)
+		// skylb.Log.Printf("Unable to set section because role '%s' is invalid", role)
 		return r.WithContext(ctx)
 	}
 
@@ -162,17 +162,17 @@ func (skylb Skylab) SetRoleSection(w http.ResponseWriter, r *http.Request, role,
 			section = cookie.Value
 			if IsValidSection(section) {
 				ctx = context.WithValue(ctx, ContextCurrentSection, section)
-				skylb.Log.Printf("Preserving Section: Found cookie '%s' with valid section '%s'", cookiename, section)
+				// skylb.Log.Printf("Preserving Section: Found cookie '%s' with valid section '%s'", cookiename, section)
 			} else {
-				skylb.Log.Printf("Failed Preserving Section: Found cookie '%s' with invalid section '%s'", cookiename, section)
+				// skylb.Log.Printf("Failed Preserving Section: Found cookie '%s' with invalid section '%s'", cookiename, section)
 			}
 		} else {
-			skylb.Log.Printf("Failed Preserving Section: Cookie '%s' not found for role '%s'", cookiename, role)
+			// skylb.Log.Printf("Failed Preserving Section: Cookie '%s' not found for role '%s'", cookiename, role)
 		}
 	default:
 		ctx = context.WithValue(ctx, ContextCurrentSection, section)
 		cookies.SetCookie(w, LastSectionCookieName(role), section)
-		skylb.Log.Printf("Setting Section '%s'", section)
+		// skylb.Log.Printf("Setting Section '%s'", section)
 	}
 	r = r.WithContext(ctx)
 	return r
@@ -194,7 +194,7 @@ func (skylb Skylab) RedirectToLastSection(role string) func(http.Handler) http.H
 			headers.DoNotCache(w)
 			section := cookies.GetCookieValue(r, LastSectionCookieName(role))
 			if IsValidSection(section) {
-				skylb.Log.Printf("%s's last section was %s, redirecting", role, section)
+				// skylb.Log.Printf("%s's last section was %s, redirecting", role, section)
 				http.Redirect(w, r, section, http.StatusMovedPermanently)
 				return
 			}

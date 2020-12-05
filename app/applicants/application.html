@@ -11,7 +11,7 @@
       {{ template "helpers/flash/flash.html" $.flash }}
       <!-- Form -->
       <div class="ba br4 b--black-30 pa2 pa3-m pa4-l">
-        <h1 class="">NUS Orbital Application for cohort {{ CohortCurrent }}</h1>
+        <h1 class="">NUS Orbital Application for cohort {{ $.skylab.CurrentCohort }}</h1>
 
         <!-- Team Member 1 -->
         {{ if $.Application.Applicant1.Valid }}

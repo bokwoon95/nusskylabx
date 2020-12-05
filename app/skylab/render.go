@@ -113,6 +113,9 @@ func (skylb Skylab) Wender(w http.ResponseWriter, r *http.Request, data map[stri
 		"IsProd":                 skylb.IsProd,
 		"CurrentRole":            currentRole,
 		"CurrentSection":         currentSection,
+		"Cohorts":                skylb.Cohorts(),
+		"LatestCohort":           skylb.LatestCohort(),
+		"CurrentCohort":          skylb.CurrentCohort(),
 		"User":                   user,
 		"Admin":                  admin,
 	}
@@ -131,9 +134,7 @@ func (skylb Skylab) Wender(w http.ResponseWriter, r *http.Request, data map[stri
 	if err != nil {
 		_, sourcefile, linenr, _ := runtime.Caller(1)
 		name := name + strings.Join(names, "+")
-		skylb.InternalServerError(w, r,
-			fmt.Errorf("%s:%d tried to render %s and failed: %w", sourcefile, linenr, name, err),
-		)
+		skylb.InternalServerError(w, r, fmt.Errorf("%s:%d tried to render %s and failed: %w", sourcefile, linenr, name, err))
 	}
 }
 
@@ -274,7 +275,7 @@ func (skylb Skylab) addConsts(funcs map[string]interface{}) map[string]interface
 	if funcs == nil {
 		funcs = map[string]interface{}{}
 	}
-	funcs = skylb.addConstCohort(funcs)
+	// funcs = skylb.addConstCohort(funcs)
 	funcs = addConstProjectLevel(funcs)
 	funcs = addConstRole(funcs)
 	funcs = addConstApplicationStatus(funcs)
@@ -284,19 +285,19 @@ func (skylb Skylab) addConsts(funcs map[string]interface{}) map[string]interface
 	return funcs
 }
 
-func (skylb Skylab) addConstCohort(funcs map[string]interface{}) map[string]interface{} {
-	// cohorts := skylb.Cohorts()
-	latest := skylb.LatestCohort()
-	current := skylb.CurrentCohort()
-	for _, cohort := range skylb.Cohorts() {
-		cohort := cohort
-		funcs["Cohort"+cohort] = func() string { return cohort }
-	}
-	funcs["SkylabCohorts"] = func() []string { return skylb.Cohorts() }
-	funcs["CohortCurrent"] = func() string { return current }
-	funcs["CohortLatest"] = func() string { return latest }
-	return funcs
-}
+// func (skylb Skylab) addConstCohort(funcs map[string]interface{}) map[string]interface{} {
+// 	// cohorts := skylb.Cohorts()
+// 	latest := skylb.LatestCohort()
+// 	current := skylb.CurrentCohort()
+// 	for _, cohort := range skylb.Cohorts() {
+// 		cohort := cohort
+// 		funcs["Cohort"+cohort] = func() string { return cohort }
+// 	}
+// 	funcs["SkylabCohorts"] = func() []string { return skylb.Cohorts() }
+// 	funcs["CohortCurrent"] = func() string { return current }
+// 	funcs["CohortLatest"] = func() string { return latest }
+// 	return funcs
+// }
 
 // csrfToken is a Template Function that returns a HTML input element with the
 // CSRF token as the input value, e.g.

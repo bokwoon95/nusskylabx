@@ -12,7 +12,7 @@
   <div class="sans-serif pa2 pa4-l">
     <div>
       Cohorts:
-      {{ range $i, $cohort := SkylabCohorts }}
+      {{ range $i, $cohort := $.skylab.Cohorts }}
         {{ if eq $.Cohort $cohort }}
           <span class="ml1 underline">{{ $cohort }}</span>
         {{ else }}

@@ -1,0 +1,47 @@
+{{ define "app/skylab/select.html:cohort" }}
+<select name="{{ $.Name }}" class="{{ $.Class }}">
+  {{ range $i, $cohort := $.Cohorts }}
+    {{ if $cohort }}
+      <option value="{{ $cohort }}" {{ if eq $.DefaultValue $cohort }}selected{{ end }}>{{ $cohort }}</option>
+    {{ end }}
+  {{ end }}
+</select>
+{{ end }}
+
+{{ define "app/skylab/select.html:milestone" }}
+<select name="{{ $.Name }}" class="{{ $.Class }}">
+  <option value="{{ Milestone1 }}" {{ if eq $.DefaultValue Milestone1 }}selected{{ end }}>Milestone 1</option>
+  <option value="{{ Milestone2 }}" {{ if eq $.DefaultValue Milestone2 }}selected{{ end }}>Milestone 2</option>
+  <option value="{{ Milestone3 }}" {{ if eq $.DefaultValue Milestone3 }}selected{{ end }}>Milestone 3</option>
+  <option value="{{ MilestoneNull }}" {{ if eq $.DefaultValue MilestoneNull }}selected{{ end }}>&lt;No Milestone&gt;</option>
+</select>
+{{ end }}
+
+{{ define "app/skylab/select.html:stage" }}
+<select name="{{ $.Name }}" class="{{ $.Class }}">
+  <option value="{{ StageApplication }}" {{ if eq $.DefaultValue StageApplication }}selected{{ end }}>Application</option>
+  <option value="{{ StageSubmission }}" {{ if eq $.DefaultValue StageSubmission }}selected{{ end }}>Submission</option>
+  <option value="{{ StageEvaluation }}" {{ if eq $.DefaultValue StageEvaluation }}selected{{ end }}>Evaluation</option>
+  <option value="{{ StageFeedback }}" {{ if eq $.DefaultValue StageFeedback }}selected{{ end }}>Feedback</option>
+  <option value="{{ StageNull }}" {{ if eq $.DefaultValue MilestoneNull }}selected{{ end }}>&lt;No Stage&gt;</option>
+</select>
+{{ end }}
+
+{{ define "app/skylab/select.html:project_level" }}
+<select name="{{ $.Name }}" class="{{ $.Class }}">
+  <option value="{{ ProjectLevelVostok }}" {{ if eq $.DefaultValue ProjectLevelVostok }}selected{{ end }}>Vostok</option>
+  <option value="{{ ProjectLevelGemini }}" {{ if eq $.DefaultValue ProjectLevelGemini }}selected{{ end }}>Gemini</option>
+  <option value="{{ ProjectLevelApollo }}" {{ if eq $.DefaultValue ProjectLevelApollo }}selected{{ end }}>Apollo</option>
+  <option value="{{ ProjectLevelArtemis }}" {{ if eq $.DefaultValue ProjectLevelArtemis }}selected{{ end }}>Artemis</option>
+</select>
+{{ end }}
+
+{{ define "app/skylab/select.html:role" }}
+<select name="{{ $.Name }}" class="{{ $.Class }}">
+  <option value="{{ RoleStudent }}" {{ if eq $.DefaultValue RoleStudent }}selected{{ end }}>Student</option>
+  <option value="{{ RoleAdviser }}" {{ if eq $.DefaultValue RoleAdviser }}selected{{ end }}>Adviser</option>
+  <option value="{{ RoleMentor }}" {{ if eq $.DefaultValue RoleMentor }}selected{{ end }}>Mentor</option>
+  <option value="{{ RoleAdmin }}" {{ if eq $.DefaultValue RoleAdmin }}selected{{ end }}>Admin</option>
+  <option value="{{ RoleApplicant }}" {{ if eq $.DefaultValue RoleApplicant }}selected{{ end }}>Applicant</option>
+</select>
+{{ end }}

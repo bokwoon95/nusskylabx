@@ -107,16 +107,16 @@ func (skylb Skylab) RedirectUserrole(w http.ResponseWriter, r *http.Request) {
 
 func (skylb Skylab) AllowIfDevelopment(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		skylb.Log.TraceRequest(r)
+		// skylb.Log.TraceRequest(r)
 		isProd, _ := r.Context().Value(ContextIsProd).(bool)
 		if !isProd {
-			skylb.Log.Printf("environment is development, allowing user through")
+			// skylb.Log.Printf("environment is development, allowing user through")
 			next.ServeHTTP(w, r)
 			return
 		}
 		admin, _ := r.Context().Value(ContextAdmin).(User)
 		if !admin.Valid {
-			skylb.Log.Printf("admin is not a valid admin %+v", admin)
+			// skylb.Log.Printf("admin is not a valid admin %+v", admin)
 			skylb.NotAnAdmin(w, r)
 			return
 		}

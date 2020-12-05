@@ -191,7 +191,6 @@ func NewWithoutDB(config Config) Skylab {
 		"SpewDump":            spew.Sdump,
 	}
 	funcs = skylb.addConsts(funcs)
-	funcs = skylb.AddInputSelects(funcs)
 	funcs = AddSections(funcs)
 	funcs = templateutil.Funcs(funcs)
 	funcs = templateutil.Sql(funcs)
@@ -203,6 +202,7 @@ func NewWithoutDB(config Config) Skylab {
 		"app/skylab/head.html",
 		"app/skylab/navbar.html",
 		"app/skylab/sidebar.html",
+		"app/skylab/select.html",
 
 		// helpers
 		"helpers/flash/flash.html",
@@ -378,7 +378,13 @@ func (skylab Skylab) Port() string {
 func (skylb Skylab) Cohorts() []string {
 	skylb.RW.RLock()
 	defer skylb.RW.RUnlock()
-	return skylb.cohorts
+	var cohorts []string
+	for _, cohort := range skylb.cohorts {
+		if cohort != "" {
+			cohorts = append(cohorts, cohort)
+		}
+	}
+	return cohorts
 }
 
 // CurrentCohort returns the current cohort.

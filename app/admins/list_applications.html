@@ -13,7 +13,7 @@
     {{ template "helpers/flash/flash.html" . }}
     <div>
       Cohorts:
-      {{ range $i, $cohort := SkylabCohorts }}
+      {{ range $i, $cohort := $.skylab.Cohorts }}
         {{ if eq $.Cohort $cohort }}
           <span class="ml1 underline">{{ $cohort }}</span>
         {{ else }}

@@ -18,6 +18,7 @@ import (
 )
 
 func (adm Admins) ListPeriods(w http.ResponseWriter, r *http.Request) {
+	adm.skylb.Log.Printf("%+v", adm.skylb.Cohorts())
 	adm.skylb.Log.TraceRequest(r)
 	r = adm.skylb.SetRoleSection(w, r, skylab.RoleAdmin, skylab.AdminListPeriods)
 	headers.DoNotCache(w)

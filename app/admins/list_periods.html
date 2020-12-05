@@ -14,7 +14,7 @@
     {{ template "helpers/flash/flash.html" . }}
     <div>
       Cohorts:
-      {{ range $i, $cohort := SkylabCohorts }}
+      {{ range $i, $cohort := $.skylab.Cohorts }}
         {{ if eq $.Cohort $cohort }}
           <span class="ml1 underline">{{ $cohort }}</span>
         {{ else }}
@@ -80,15 +80,15 @@
           <p class="w5 sans-serif">
             <p>
               <div class="b">Cohort</div>
-              <div>{{ SkylabSelectCohort "cohort" $.Cohort "form-input pointer" }}</div>
+              <div>{{ template "app/skylab/select.html:cohort" Map "Cohorts" $.skylab.Cohorts "Name" "cohort" "DefaultValue" $.Cohort "Class" "form-input pointer" }}</div>
             </p>
             <p>
               <div class="b">Stage</div>
-              <div>{{ SkylabSelectStageOptional "stage" StageSubmission "form-input pointer" }}</div>
+              <div>{{ template "app/skylab/select.html:stage" Map "Name" "stage" "DefaultValue" StageSubmission "Class" "form-input pointer" }}</div>
             </p>
             <p>
               <div class="b">Milestone</div>
-              <div>{{ SkylabSelectMilestoneOptional "milestone" Milestone1 "form-input pointer" }}</div>
+              <div>{{ template "app/skylab/select.html:milestone" Map "Name" "milestone" "DefaultValue" Milestone1 "Class" "form-input pointer" }}</div>
             </p>
             <p>
               <div class="b">Start</div>
@@ -130,7 +130,7 @@
           <p>
             <div class="b">Select which cohort to duplicate the period(s) for</div>
             <div id="cohort-duplicate-list"></div>
-            {{ SkylabSelectCohort "cohort" CohortLatest "form-input pointer" }}
+            {{ template "app/skylab/select.html:cohort" Map "Cohorts" $.skylab.Cohorts "Name" "cohort" "DefaultValue" $.skylab.LatestCohort "Class" "form-input pointer" }}
           </p>
         </main>
         <footer class="modal__footer">
