@@ -19,12 +19,10 @@ func Funcs(funcs map[string]interface{}, r *http.Request) map[string]interface{}
 }
 
 func GetData(r *http.Request) map[string]interface{} {
-	data := make(map[string]interface{})
-	data["CSPNonce"] = func() string {
-		nonce, _ := r.Context().Value(CspNonceCtxkey).(string)
-		return nonce
+	nonce, _ := r.Context().Value(CspNonceCtxkey).(string)
+	return map[string]interface{}{
+		"CSPNonce": nonce,
 	}
-	return data
 }
 
 // DoNotCache tells the browser to never cache the page being rendered.

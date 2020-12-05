@@ -30,7 +30,7 @@ func Dump(w io.Writer, err error) {
 	pc, filename, linenr, _ := runtime.Caller(1)
 	strs := strings.Split(runtime.FuncForPC(pc).Name(), "/")
 	function := strs[len(strs)-1]
-	err = fmt.Errorf("->"+null+" Error in %s:%d (%s) %w", filename, linenr, function, err)
+	err = fmt.Errorf("Error in %s:%d (%s) %w", filename, linenr, function, err)
 	// err = fmt.Errorf("Error in function[%s] file:line[%s:%d] %w", runtime.FuncForPC(pc).Name(), filename, linenr, err)
 	fmtedErr := strings.Replace(err.Error(), " ->"+null+" ", "\n\n", -1)
 	fmt.Fprintln(w, fmtedErr)
@@ -42,7 +42,7 @@ func Sdump(err error) string {
 	pc, filename, linenr, _ := runtime.Caller(2)
 	strs := strings.Split(runtime.FuncForPC(pc).Name(), "/")
 	function := strs[len(strs)-1]
-	err = fmt.Errorf("->"+null+" Error in %s:%d (%s) %w", filename, linenr, function, err)
+	err = fmt.Errorf("Error in %s:%d (%s) %w", filename, linenr, function, err)
 	// err = fmt.Errorf("Error in function[%s] file:line[%s:%d] %w", runtime.FuncForPC(pc).Name(), filename, linenr, err)
 	fmtedErr := strings.Replace(err.Error(), " ->"+null+" ", "\n\n", -1)
 	return fmtedErr
@@ -54,7 +54,7 @@ func S1dump(err error) string {
 	pc, filename, linenr, _ := runtime.Caller(2)
 	strs := strings.Split(runtime.FuncForPC(pc).Name(), "/")
 	function := strs[len(strs)-1]
-	err = fmt.Errorf("->"+null+" Error in %s:%d (%s) %w", filename, linenr, function, err)
+	err = fmt.Errorf("Error in %s:%d (%s) %w", filename, linenr, function, err)
 	// err = fmt.Errorf("Error in function[%s] file:line[%s:%d] %w", runtime.FuncForPC(pc).Name(), filename, linenr, err)
 	return err.Error()
 }

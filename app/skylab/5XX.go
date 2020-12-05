@@ -5,7 +5,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"net/url"
 	"regexp"
 
 	"github.com/bokwoon95/nusskylabx/helpers/erro"
@@ -21,35 +20,21 @@ func (skylb Skylab) InternalServerError(w http.ResponseWriter, r *http.Request, 
 	skylb.Log.TraceRequest(r)
 	isProd, _ := r.Context().Value(ContextIsProd).(bool)
 	var diagnosis Diagnosis
-	type Data struct {
-		IsProd        bool
-		RequestID     string
-		Error         string
-		OnelinerError string
-		Diagnosis     Diagnosis
-		URL           *url.URL
-	}
 	requestID := logutil.GetReqID(r.Context())
 	prettifiedError := erro.Sdump(err)
 	onelinerError := erro.S1dump(err)
 	diagnosis = skylb.diagnoseError(err, r)
-	data := Data{
-		IsProd:        isProd,
-		RequestID:     requestID,
-		Error:         prettifiedError,
-		OnelinerError: onelinerError,
-		Diagnosis:     diagnosis,
-		URL:           r.URL,
+	data := map[string]interface{}{
+		"IsProd":        isProd,
+		"RequestID":     requestID,
+		"Error":         prettifiedError,
+		"OnelinerError": onelinerError,
+		"Diagnosis":     diagnosis,
+		"URL":           r.URL,
 	}
 	log.Printf("RequestID:%s URL:%s %s\n\n", requestID, r.URL, onelinerError)
 	w.WriteHeader(http.StatusInternalServerError)
-	funcs := skylb.NavbarFuncs(nil, w, r)
-	t, err := template.New("500.html").Funcs(funcs).ParseFiles("app/skylab/500.html", "app/skylab/navbar.html")
-	if err != nil {
-		fmt.Fprintf(w, "%s\n\n%s\n\nError parsing 500.html: %s\n", onelinerError, string(data.Diagnosis.HTML), err.Error())
-		return
-	}
-	err = t.Execute(w, data)
+	err = skylb.Templates.Render(w, r, data, "app/skylab/500.html")
 	if err != nil {
 		log.Printf("%s\n\nError executing 500.html: %s\n", onelinerError, err.Error())
 		return

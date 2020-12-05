@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"text/template"
 	"log"
 	"os"
+	"text/template"
 
 	"github.com/davecgh/go-spew/spew"
 )
