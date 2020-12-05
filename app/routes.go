@@ -16,6 +16,7 @@ import (
 	"github.com/bokwoon95/nusskylabx/helpers/auth/openid"
 	"github.com/bokwoon95/nusskylabx/helpers/flash"
 	"github.com/bokwoon95/nusskylabx/helpers/headers"
+	"github.com/bokwoon95/nusskylabx/helpers/templateloader"
 	"github.com/go-chi/chi/middleware"
 )
 
@@ -24,8 +25,8 @@ func AllRoutes(skylb skylab.Skylab) {
 	skylb.Mux.Use(middleware.RequestID)    // Insert a unique ID in every request
 	skylb.Mux.Use(middleware.StripSlashes) // Remove trailing slashes
 	// skylb.Mux.Use(middleware.Logger)       // Log all paths hit
-	skylb.Mux.Use(middleware.Recoverer)    // Pretty print panic traces
-	skylb.Mux.Use(middleware.Compress(-1,  // Compress assets before serving
+	skylb.Mux.Use(middleware.Recoverer)   // Pretty print panic traces
+	skylb.Mux.Use(middleware.Compress(-1, // Compress assets before serving
 		"text/html",
 		"text/css",
 		"text/javascript",
@@ -39,6 +40,7 @@ func AllRoutes(skylb skylab.Skylab) {
 	}
 	skylb.Mux.Use(skylb.AddProdContext)           // Add prod or dev context to request
 	skylb.Mux.Use(headers.SecurityHeadersHandler) // Add security related headers to every request
+	skylb.Mux.Use(templateloader.RenderJSONHandler("json"))
 
 	Routes(skylb)
 	SkylabRoutes(skylb)
