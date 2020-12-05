@@ -4,7 +4,6 @@ todo.txt
 tmp/
 .tmp/
 skylab.log
-.air.conf
 /bfg*.jar
 /routes.md
 coverage.out
