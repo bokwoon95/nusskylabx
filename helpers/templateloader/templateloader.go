@@ -113,7 +113,6 @@ func Parse(common []string, templates []string, opts ...Opt) (*Templates, error)
 				return main, erro.Wrap(err)
 			}
 			main.lib[file] = t
-			// TODO: is addParseTree equivalent to doing a Parse? Will the Funcs and Options take effect?
 			err = addParseTree(main.common, t)
 			if err != nil {
 				return main, erro.Wrap(err)
@@ -149,6 +148,7 @@ func Parse(common []string, templates []string, opts ...Opt) (*Templates, error)
 			if err != nil {
 				return main, erro.Wrap(err)
 			}
+			cacheEntry = cacheEntry.Option(main.opts...)
 			err = addParseTree(cacheEntry, t)
 			if err != nil {
 				return main, erro.Wrap(err)
@@ -179,6 +179,7 @@ func (main *Templates) Render(w http.ResponseWriter, r *http.Request, data map[s
 	if err != nil {
 		return erro.Wrap(err)
 	}
+	cacheEntry = cacheEntry.Option(main.opts...)
 	err = addParseTree(cacheEntry, mainTemplate)
 	if err != nil {
 		return erro.Wrap(err)

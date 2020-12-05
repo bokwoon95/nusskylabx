@@ -189,6 +189,9 @@ func NewWithoutDB(config Config) Skylab {
 		"SGTime":              SGTime,
 		"Map":                 Map,
 		"SpewDump":            spew.Sdump,
+		"Errorf": func(format string, a ...interface{}) (string, error) {
+			return "", fmt.Errorf(format, a...)
+		},
 	}
 	funcs = skylb.addConsts(funcs)
 	funcs = AddSections(funcs)
@@ -221,7 +224,7 @@ func NewWithoutDB(config Config) Skylab {
 	skylb.Templates, err = templateloader.Parse(
 		common, templates,
 		templateloader.Funcs(funcs),
-		templateloader.Option("missingkey=zero"),
+		templateloader.Option("missingkey=error"),
 	)
 	if err != nil {
 		log.Fatalln(erro.Wrap(err))
