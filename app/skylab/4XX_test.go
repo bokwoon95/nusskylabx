@@ -1,13 +1,11 @@
 package skylab
 
 import (
-	"crypto/sha256"
 	"net/http"
 	"testing"
 
 	"github.com/bokwoon95/nusskylabx/helpers/random"
 	"github.com/bokwoon95/nusskylabx/helpers/testutil"
-	"github.com/gorilla/csrf"
 	"github.com/matryer/is"
 )
 
@@ -63,23 +61,24 @@ func TestSkylab_NotARole_X(t *testing.T) {
 	}
 }
 
-func TestSkylab_CsrfTokenInvalid(t *testing.T) {
-	t.Parallel()
-	is := is.New(t)
-	skylb := NewTestDefault(t)
-	authKey := sha256.Sum256([]byte(random.SecretKey()))
-	skylb.Mux.Use(csrf.Protect(authKey[:])) // Add CSRF protection
-	path := random.URL()
-	skylb.Mux.Post(path, func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("200 OK"))
-	})
-	// Send a POST without any CSRF token
-	w, r := testutil.NewPost(path, nil)
-	skylb.Mux.ServeHTTP(w, r)
-	is.True(testutil.HasBody(w))
-	is.Equal(w.Code, http.StatusForbidden)
-}
+// We no longer need to check for CSRF tokens because our cookies use the samesite:lax setting.
+// func TestSkylab_CsrfTokenInvalid(t *testing.T) {
+// 	t.Parallel()
+// 	is := is.New(t)
+// 	skylb := NewTestDefault(t)
+// 	authKey := sha256.Sum256([]byte(random.SecretKey()))
+// 	skylb.Mux.Use(csrf.Protect(authKey[:])) // Add CSRF protection
+// 	path := random.URL()
+// 	skylb.Mux.Post(path, func(w http.ResponseWriter, r *http.Request) {
+// 		w.WriteHeader(http.StatusOK)
+// 		_, _ = w.Write([]byte("200 OK"))
+// 	})
+// 	// Send a POST without any CSRF token
+// 	w, r := testutil.NewPost(path, nil)
+// 	skylb.Mux.ServeHTTP(w, r)
+// 	is.True(testutil.HasBody(w))
+// 	is.Equal(w.Code, http.StatusForbidden)
+// }
 
 func TestSkylab_NotFound(t *testing.T) {
 	t.Parallel()

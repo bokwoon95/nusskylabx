@@ -223,8 +223,8 @@ func NewWithoutDB(config Config) Skylab {
 	}
 	skylb.Templates, err = templateloader.Parse(
 		// common, templates,
-		templateloader.AddCommonFiles(commonFiles...),
-		templateloader.AddFiles(files...),
+		templateloader.AddCommonFiles(templateloader.Directory(2), commonFiles...),
+		templateloader.AddFiles(templateloader.Directory(2), files...),
 		templateloader.Funcs(funcs),
 		templateloader.Option("missingkey=error"),
 	)

@@ -8,9 +8,11 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"path/filepath"
 	"reflect"
 	"regexp"
+	"runtime"
 	"strings"
 
 	"github.com/bokwoon95/nusskylabx/helpers/erro"
@@ -23,6 +25,15 @@ import (
 // Then, users are encouraged to pass the dot to the template as-is without narrowing down anything, thus allowing plugin templates to access their own data at the predetermined namespace.
 // This may let templates potentially snoop at user data but essentially plugins must be trusted first before they can be used.
 // That way we can sidestep any trust issues by saying it's up to the user to screen for security issues before trusting the plugin.
+
+func Directory(skip int) string {
+	_, filename, _, _ := runtime.Caller(1)
+	elems := []string{filepath.Dir(filename)}
+	for i := 0; i < skip; i++ {
+		elems = append(elems, "..")
+	}
+	return filepath.Join(elems...) + string(os.PathSeparator)
+}
 
 type ctxkey int
 
@@ -198,16 +209,20 @@ func AddParse(base *Templates, opts ...ParseOption) (*Templates, error) {
 	}
 	return ts, nil
 }
-func AddCommonFiles(filepatterns ...string) ParseOption {
+func AddCommonFiles(root string, filepatterns ...string) ParseOption {
 	return func(srcs *Sources) error {
 		for _, filepattern := range filepatterns {
-			filenames, err := filepath.Glob(filepattern)
+			filenames, err := filepath.Glob(root + filepattern)
 			if err != nil {
 				return err
 			}
+			if len(filenames) == 0 {
+				return fmt.Errorf("no files matching %s%s", root, filepattern)
+			}
 			for _, filename := range filenames {
+				filename = strings.TrimPrefix(filename, root)
 				src := Source{}
-				b, err := ioutil.ReadFile(filename)
+				b, err := ioutil.ReadFile(root + filename)
 				if err != nil {
 					return err
 				}
@@ -228,16 +243,20 @@ func AddCommonFiles(filepatterns ...string) ParseOption {
 	}
 }
 
-func AddFiles(filepatterns ...string) ParseOption {
+func AddFiles(root string, filepatterns ...string) ParseOption {
 	return func(srcs *Sources) error {
 		for _, filepattern := range filepatterns {
-			filenames, err := filepath.Glob(filepattern)
+			filenames, err := filepath.Glob(root + filepattern)
 			if err != nil {
 				return err
 			}
+			if len(filenames) == 0 {
+				return fmt.Errorf("no files matching %s%s", root, filepattern)
+			}
 			for _, filename := range filenames {
+				filename = strings.TrimPrefix(filename, root)
 				src := Source{}
-				b, err := ioutil.ReadFile(filename)
+				b, err := ioutil.ReadFile(root + filename)
 				if err != nil {
 					return err
 				}
