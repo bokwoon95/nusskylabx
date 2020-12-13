@@ -107,7 +107,7 @@ func (adv Advisers) EvaluateeEvaluators(w http.ResponseWriter, r *http.Request) 
 		"EvaluateeEvaluators": evaluateeEvaluators,
 		"Teams":               teams,
 	}
-	adv.skylb.Wender(w, r, data, "app/advisers/evaluatee_evaluators.html")
+	adv.skylb.Render(w, r, data, "app/advisers/evaluatee_evaluators.html")
 }
 
 func (adv Advisers) EvaluateeEvaluatorsUpdate(w http.ResponseWriter, r *http.Request) {

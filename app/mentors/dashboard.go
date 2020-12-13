@@ -9,5 +9,5 @@ import (
 func (mnt Mentors) Dashboard(w http.ResponseWriter, r *http.Request) {
 	mnt.skylb.Log.TraceRequest(r)
 	r = mnt.skylb.SetRoleSection(w, r, skylab.RoleMentor, skylab.MentorDashboard)
-	mnt.skylb.Wender(w, r, nil, "app/mentors/dashboard.html")
+	mnt.skylb.Render(w, r, nil, "app/mentors/dashboard.html")
 }

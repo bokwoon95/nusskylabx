@@ -25,7 +25,7 @@ func (stu Students) TeamFeedbackEdit(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
 		"TeamFeedback": teamFeedback,
 	}
-	stu.skylb.Wender(w, r, data, "app/students/feedback_team.html")
+	stu.skylb.Render(w, r, data, "app/students/feedback_team.html")
 }
 
 func (stu Students) CanEditTeamFeedback(next http.Handler) http.Handler {

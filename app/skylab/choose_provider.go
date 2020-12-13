@@ -25,6 +25,6 @@ func (skylb Skylab) ChooseProvider(next http.Handler) http.Handler {
 			"Magicstring": magicstring,
 			"RequestURL":  r.RequestURI,
 		}
-		skylb.Wender(w, r, data, "app/skylab/choose_provider.html")
+		skylb.Render(w, r, data, "app/skylab/choose_provider.html")
 	})
 }

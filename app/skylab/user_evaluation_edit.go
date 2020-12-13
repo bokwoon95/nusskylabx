@@ -58,6 +58,6 @@ func (skylb Skylab) UserEvaluationEdit(role string) http.HandlerFunc {
 			"PreviewURL":    previewURL,
 			"UpdateURL":     updateURL,
 		}
-		skylb.Wender(w, r, data, "app/skylab/user_evaluation_edit.html")
+		skylb.Render(w, r, data, "app/skylab/user_evaluation_edit.html")
 	}
 }

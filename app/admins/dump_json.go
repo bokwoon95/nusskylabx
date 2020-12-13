@@ -35,7 +35,7 @@ Try it with this page! Enter '<pre class="di">%s%s</pre>' into the text box belo
 			"Firefox": "already built in",
 		},
 	}
-	adm.skylb.Wender(w, r, data, "app/admins/dump_json.html")
+	adm.skylb.Render(w, r, data, "app/admins/dump_json.html")
 }
 
 func (adm Admins) DumpJsonPost(w http.ResponseWriter, r *http.Request) {

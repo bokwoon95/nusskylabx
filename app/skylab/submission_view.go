@@ -35,7 +35,7 @@ func (skylb Skylab) SubmissionView(role string) http.HandlerFunc {
 				"EditURL":    editURL,
 				"SubmitURL":  submitURL,
 			}
-			skylb.Wender(w, r, data, "app/skylab/submission_view.html")
+			skylb.Render(w, r, data, "app/skylab/submission_view.html")
 		}
 		s := tables.V_SUBMISSIONS()
 		err = sq.WithDefaultLog(sq.Lverbose).

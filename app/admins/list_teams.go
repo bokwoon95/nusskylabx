@@ -40,5 +40,5 @@ func (adm Admins) ListTeams(w http.ResponseWriter, r *http.Request) {
 		"Teams":  teams,
 		"Cohort": cohort,
 	}
-	adm.skylb.Wender(w, r, data, "app/admins/list_teams.html")
+	adm.skylb.Render(w, r, data, "app/admins/list_teams.html")
 }

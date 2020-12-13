@@ -55,7 +55,7 @@ func (adm Admins) FormEdit(w http.ResponseWriter, r *http.Request) {
 		"PreviewURL":       skylab.AdminForm + "/" + strconv.Itoa(formID) + "/preview",
 		"UpdateURL":        skylab.AdminForm + "/" + strconv.Itoa(formID) + "/update",
 	}
-	adm.skylb.Wender(w, r, data, "app/skylab/form_edit.html")
+	adm.skylb.Render(w, r, data, "app/skylab/form_edit.html")
 }
 
 func (adm Admins) FormUpdate(next http.Handler) http.Handler {
@@ -112,5 +112,5 @@ func (adm Admins) FormView(w http.ResponseWriter, r *http.Request) {
 		"EditURL":          skylab.AdminForm + "/" + strconv.Itoa(formID) + "/edit",
 		"UpdateURL":        skylab.AdminForm + "/" + strconv.Itoa(formID) + "/update",
 	}
-	adm.skylb.Wender(w, r, data, "app/skylab/form_view.html")
+	adm.skylb.Render(w, r, data, "app/skylab/form_view.html")
 }

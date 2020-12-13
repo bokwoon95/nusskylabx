@@ -67,5 +67,5 @@ func (adm Admins) ListApplications(w http.ResponseWriter, r *http.Request) {
 		"Applications": applications,
 		"Cohort":       cohort,
 	}
-	adm.skylb.Wender(w, r, data, "app/admins/list_applications.html")
+	adm.skylb.Render(w, r, data, "app/admins/list_applications.html")
 }

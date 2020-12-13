@@ -22,13 +22,13 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 )
 
-// Render will render one or more html templates together with the given data
+// Render_Old will render one or more html templates together with the given data
 // and funcs. Crucially, this function is where all the global template
 // functions (prefixed by "Skylab") and templates (such as the global navbar
 // template "app/skylab/navbar.html") are injected. If you want to add any
 // globally available template functions or templates files, this is the place
 // to do it
-func (skylb Skylab) Render(w http.ResponseWriter, r *http.Request, data interface{}, funcs map[string]interface{}, filename string, filenames ...string) {
+func (skylb Skylab) Render_Old(w http.ResponseWriter, r *http.Request, data interface{}, funcs map[string]interface{}, filename string, filenames ...string) {
 	// if requested, render JSON instead of HTML and return
 	if shouldJSONify(w, r) {
 		skylb.renderJSON(w, r, data)
@@ -101,7 +101,7 @@ func (skylb Skylab) Render(w http.ResponseWriter, r *http.Request, data interfac
 	_, _ = buf.WriteTo(w)
 }
 
-func (skylb Skylab) Wender(w http.ResponseWriter, r *http.Request, data map[string]interface{}, name string, names ...string) {
+func (skylb Skylab) Render(w http.ResponseWriter, r *http.Request, data map[string]interface{}, name string, names ...string) {
 	currentRole, _ := r.Context().Value(ContextCurrentRole).(string)
 	currentSection, _ := r.Context().Value(ContextCurrentSection).(string)
 	user, _ := r.Context().Value(ContextUser).(User)

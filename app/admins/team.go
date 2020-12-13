@@ -32,5 +32,5 @@ func (adm Admins) TeamView(w http.ResponseWriter, r *http.Request) {
 		"Team":        team,
 		"UserBaseURL": skylab.AdminUser,
 	}
-	adm.skylb.Wender(w, r, data, "app/skylab/team_view.html")
+	adm.skylb.Render(w, r, data, "app/skylab/team_view.html")
 }

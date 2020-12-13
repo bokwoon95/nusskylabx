@@ -43,6 +43,6 @@ func (stu Students) MilestoneTeamEvaluation(section string) http.HandlerFunc {
 			"Milestone":   milestone,
 			"Evaluations": evaluations,
 		}
-		stu.skylb.Wender(w, r, data, "app/students/milestone_team_evaluation.html")
+		stu.skylb.Render(w, r, data, "app/students/milestone_team_evaluation.html")
 	}
 }

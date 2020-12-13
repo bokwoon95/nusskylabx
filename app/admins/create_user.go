@@ -22,5 +22,5 @@ func (adm Admins) CreateUser(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
 		"Rows": strings.Join(rows, "\n"),
 	}
-	adm.skylb.Wender(w, r, data, "app/admins/create_user.html")
+	adm.skylb.Render(w, r, data, "app/admins/create_user.html")
 }

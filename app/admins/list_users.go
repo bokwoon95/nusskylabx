@@ -112,8 +112,8 @@ func (adm Admins) ListUsers(w http.ResponseWriter, r *http.Request) {
 		}
 		data["Teams"] = teams
 		data["UserIDToTeamIndex"] = userIDToTeamIndex
-		adm.skylb.Wender(w, r, data, "app/admins/list_students.html")
+		adm.skylb.Render(w, r, data, "app/admins/list_students.html")
 	default:
-		adm.skylb.Wender(w, r, data, "app/admins/list_users.html")
+		adm.skylb.Render(w, r, data, "app/admins/list_users.html")
 	}
 }

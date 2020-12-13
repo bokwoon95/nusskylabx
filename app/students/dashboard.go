@@ -9,5 +9,5 @@ import (
 func (stu Students) Dashboard(w http.ResponseWriter, r *http.Request) {
 	stu.skylb.Log.TraceRequest(r)
 	r = stu.skylb.SetRoleSection(w, r, skylab.RoleStudent, skylab.StudentDashboard)
-	stu.skylb.Wender(w, r, nil, "app/students/dashboard.html")
+	stu.skylb.Render(w, r, nil, "app/students/dashboard.html")
 }

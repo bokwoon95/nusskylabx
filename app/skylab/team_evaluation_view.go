@@ -60,6 +60,6 @@ func (skylb Skylab) TeamEvaluationView(role string) http.HandlerFunc {
 			"SubmissionURL":  submissionURL,
 			"EditURL":        editURL,
 		}
-		skylb.Wender(w, r, data, "app/skylab/team_evaluation_view.html")
+		skylb.Render(w, r, data, "app/skylab/team_evaluation_view.html")
 	}
 }

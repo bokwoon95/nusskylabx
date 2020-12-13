@@ -43,7 +43,7 @@ func (skylb Skylab) SubmissionEdit(role string) http.HandlerFunc {
 				"UpdateURL":         updateURL,
 				"SubmitURL":         submitURL,
 			}
-			skylb.Wender(w, r, data, "app/skylab/submission_edit.html")
+			skylb.Render(w, r, data, "app/skylab/submission_edit.html")
 		}
 		s := tables.V_SUBMISSIONS()
 		err = sq.WithDefaultLog(sq.Lstats).

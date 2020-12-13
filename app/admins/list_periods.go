@@ -60,7 +60,7 @@ func (adm Admins) ListPeriods(w http.ResponseWriter, r *http.Request) {
 		"Periods": periods,
 		"Cohort":  cohort,
 	}
-	adm.skylb.Wender(w, r, data, "app/admins/list_periods.html")
+	adm.skylb.Render(w, r, data, "app/admins/list_periods.html")
 }
 
 func (adm Admins) ListPeriodsDelete(next http.Handler) http.Handler {

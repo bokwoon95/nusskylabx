@@ -36,7 +36,7 @@ func (skylb Skylab) UserEvaluationView(role string) http.HandlerFunc {
 				"SubmitURL":     submitURL,
 				"EditURL":       editURL,
 			}
-			skylb.Wender(w, r, data, "app/skylab/user_evaluation_view.html")
+			skylb.Render(w, r, data, "app/skylab/user_evaluation_view.html")
 		}
 		ue := tables.V_USER_EVALUATIONS()
 		err = sq.WithDefaultLog(sq.Lstats).

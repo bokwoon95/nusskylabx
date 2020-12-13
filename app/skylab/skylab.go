@@ -201,7 +201,7 @@ func NewWithoutDB(config Config) Skylab {
 	funcs = timeutil.Funcs(funcs)
 	funcs = formx.Funcs(funcs, skylb.Policy)
 	funcs = auth.AddConstProvider(funcs)
-	common := []string{
+	commonFiles := []string{
 		"app/skylab/head.html",
 		"app/skylab/navbar.html",
 		"app/skylab/sidebar.html",
@@ -212,7 +212,7 @@ func NewWithoutDB(config Config) Skylab {
 		"helpers/formx/render_form.html",
 		"helpers/formx/render_form_results.html",
 	}
-	templates := []string{
+	files := []string{
 		"app/*.html",
 		"app/skylab/*.html",
 		"app/admins/*.html",
@@ -222,7 +222,9 @@ func NewWithoutDB(config Config) Skylab {
 		"app/students/*.html",
 	}
 	skylb.Templates, err = templateloader.Parse(
-		common, templates,
+		// common, templates,
+		templateloader.AddCommonFiles(commonFiles...),
+		templateloader.AddFiles(files...),
 		templateloader.Funcs(funcs),
 		templateloader.Option("missingkey=error"),
 	)

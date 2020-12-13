@@ -95,7 +95,7 @@ func (adv Advisers) EvaluatorEvaluatees(w http.ResponseWriter, r *http.Request) 
 	data := make(map[string]interface{})
 	data["EvaluatorEvaluatees"] = evaluatorEvaluatees
 	data["Teams"] = teams
-	adv.skylb.Wender(w, r, data, "app/advisers/evaluator_evaluatees.html")
+	adv.skylb.Render(w, r, data, "app/advisers/evaluator_evaluatees.html")
 }
 
 func (adv Advisers) EvaluatorEvaluateesUpdate(w http.ResponseWriter, r *http.Request) {

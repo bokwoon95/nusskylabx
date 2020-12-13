@@ -34,5 +34,5 @@ func (stu Students) Team(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
 		"Team": team,
 	}
-	stu.skylb.Wender(w, r, data, "app/students/team.html")
+	stu.skylb.Render(w, r, data, "app/students/team.html")
 }

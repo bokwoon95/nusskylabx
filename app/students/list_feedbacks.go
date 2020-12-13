@@ -18,5 +18,5 @@ func (stu Students) ListFeedbacks(w http.ResponseWriter, r *http.Request) {
 		"TeamFeedbacks": teamFeedbacks,
 		"UserFeedbacks": userFeedbacks,
 	}
-	stu.skylb.Wender(w, r, data, "app/students/list_feedbacks.html")
+	stu.skylb.Render(w, r, data, "app/students/list_feedbacks.html")
 }

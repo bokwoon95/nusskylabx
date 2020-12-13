@@ -54,7 +54,7 @@ func (apt Applicants) Application(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data["Application"] = application
-	apt.skylb.Wender(w, r, data, "app/applicants/application.html")
+	apt.skylb.Render(w, r, data, "app/applicants/application.html")
 }
 
 func (apt Applicants) MagicstringVerifier(next http.Handler) http.Handler {
@@ -71,7 +71,7 @@ func (apt Applicants) MagicstringVerifier(next http.Handler) http.Handler {
 				http.Redirect(w, r, "/applicant", http.StatusMovedPermanently)
 				return
 			}
-			apt.skylb.Wender(w, r, nil, "app/applicants/invalid_magicstring.html")
+			apt.skylb.Render(w, r, nil, "app/applicants/invalid_magicstring.html")
 		}
 		// if magicstring cannot be obtained from form.Value, check context as well
 		if magicstring == "" {

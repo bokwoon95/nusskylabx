@@ -30,14 +30,40 @@ const (
 	RenderJSON ctxkey = iota
 )
 
+type Source struct {
+	// equivalent html/template call:
+	// t.New(src.Name).Funcs(src.Funcs).Option(src.Options...).Parse(src.Text)
+	Name      string
+	Filepaths []string
+	Text      string
+	Funcs     map[string]interface{}
+	Options   []string
+}
+
+type Sources struct {
+	Templates       []Source
+	CommonTemplates []Source
+	CommonFuncs     map[string]interface{}
+	CommonOptions   []string
+}
+
+type Template struct {
+	Name string
+	HTML *template.Template
+	CSS  []template.CSS
+	JS   []template.JS
+}
+
 type Templates struct {
 	bufpool *bpool.BufferPool
+	common  *template.Template            // gets included in every template in the cache
+	lib     map[string]*template.Template // never gets executed, main purpose for cloning
+	cache   map[string]*template.Template // is what gets executed, should not changed after it is set
 	funcs   map[string]interface{}
 	opts    []string
-	common  *template.Template
-	lib     map[string]*template.Template
-	cache   map[string]*template.Template
 }
+
+type ParseOption func(*Sources) error
 
 func addParseTree(parent *template.Template, child *template.Template) error {
 	var err error
@@ -48,6 +74,216 @@ func addParseTree(parent *template.Template, child *template.Template) error {
 		}
 	}
 	return nil
+}
+
+func Parse(opts ...ParseOption) (*Templates, error) {
+	var err error
+	ts := &Templates{
+		bufpool: bpool.NewBufferPool(64),
+		common:  template.New(""),
+		lib:     make(map[string]*template.Template),
+		cache:   make(map[string]*template.Template),
+	}
+	srcs := &Sources{
+		CommonFuncs: make(map[string]interface{}),
+	}
+	for _, opt := range opts {
+		err = opt(srcs)
+		if err != nil {
+			return ts, err
+		}
+	}
+	ts.opts = srcs.CommonOptions // clone options
+	if len(srcs.CommonFuncs) > 0 {
+		ts.common = ts.common.Funcs(srcs.CommonFuncs)
+	}
+	if len(srcs.CommonOptions) > 0 {
+		ts.common = ts.common.Option(srcs.CommonOptions...)
+	}
+	for _, src := range srcs.CommonTemplates {
+		ts.common, err = ts.common.New(src.Name).Parse(src.Text)
+		if err != nil {
+			return ts, err
+		}
+	}
+	for _, src := range srcs.Templates {
+		var tmpl, cacheEntry *template.Template
+		tmpl, err = template.New(src.Name).Funcs(srcs.CommonFuncs).Option(srcs.CommonOptions...).Parse(src.Text)
+		if err != nil {
+			return ts, err
+		}
+		ts.lib[src.Name] = tmpl
+		cacheEntry, err = ts.common.Clone()
+		if err != nil {
+			return ts, err
+		}
+		cacheEntry = cacheEntry.Option(srcs.CommonOptions...)
+		err = addParseTree(cacheEntry, tmpl)
+		if err != nil {
+			return ts, err
+		}
+		ts.cache[src.Name] = cacheEntry
+	}
+	return ts, nil
+}
+
+func AddParse(base *Templates, opts ...ParseOption) (*Templates, error) {
+	var err error
+	ts := &Templates{
+		bufpool: bpool.NewBufferPool(64),
+		lib:     make(map[string]*template.Template),
+		cache:   make(map[string]*template.Template),
+	}
+	// Clone base.common
+	ts.common, err = base.common.Clone()
+	if err != nil {
+		return ts, err
+	}
+	// Clone base.lib and regenerate base.cache
+	for name, tmpl := range base.lib {
+		libTmpl, err := tmpl.Clone()
+		if err != nil {
+			return ts, err
+		}
+		ts.lib[name] = libTmpl
+		cacheEntry, err := ts.common.Clone()
+		if err != nil {
+			return ts, err
+		}
+		cacheEntry = cacheEntry.Option(base.opts...) // clone options
+		err = addParseTree(cacheEntry, libTmpl)
+		if err != nil {
+			return ts, err
+		}
+		ts.cache[name] = cacheEntry
+	}
+	srcs := &Sources{
+		CommonFuncs: make(map[string]interface{}),
+	}
+	for _, opt := range opts {
+		err = opt(srcs)
+		if err != nil {
+			return ts, err
+		}
+	}
+	if len(srcs.CommonFuncs) > 0 {
+		ts.common = ts.common.Funcs(srcs.CommonFuncs)
+	}
+	if len(srcs.CommonOptions) > 0 {
+		ts.common = ts.common.Option(srcs.CommonOptions...)
+	}
+	for _, src := range srcs.CommonTemplates {
+		ts.common, err = ts.common.New(src.Name).Parse(src.Text)
+		if err != nil {
+			return ts, err
+		}
+	}
+	for _, src := range srcs.Templates {
+		var tmpl, cacheEntry *template.Template
+		tmpl, err = template.New(src.Name).Funcs(srcs.CommonFuncs).Option(srcs.CommonOptions...).Parse(src.Text)
+		if err != nil {
+			return ts, err
+		}
+		ts.lib[src.Name] = tmpl
+		cacheEntry, err = ts.common.Clone()
+		if err != nil {
+			return ts, err
+		}
+		cacheEntry = cacheEntry.Option(srcs.CommonOptions...)
+		err = addParseTree(cacheEntry, tmpl)
+		if err != nil {
+			return ts, err
+		}
+		ts.cache[src.Name] = cacheEntry
+	}
+	return ts, nil
+}
+func AddCommonFiles(filepatterns ...string) ParseOption {
+	return func(srcs *Sources) error {
+		for _, filepattern := range filepatterns {
+			filenames, err := filepath.Glob(filepattern)
+			if err != nil {
+				return err
+			}
+			for _, filename := range filenames {
+				src := Source{}
+				b, err := ioutil.ReadFile(filename)
+				if err != nil {
+					return err
+				}
+				src.Text = string(b)
+				src.Filepaths = append(src.Filepaths, filename)
+				// check if user already defined a template called `filename` inside the template itself
+				re, err := regexp.Compile(`{{\s*define\s+["` + "`" + `]` + filename + `["` + "`" + `]\s*}}`)
+				if err != nil {
+					return err
+				}
+				if !re.MatchString(string(b)) {
+					src.Name = filename
+				}
+				srcs.CommonTemplates = append(srcs.CommonTemplates, src)
+			}
+		}
+		return nil
+	}
+}
+
+func AddFiles(filepatterns ...string) ParseOption {
+	return func(srcs *Sources) error {
+		for _, filepattern := range filepatterns {
+			filenames, err := filepath.Glob(filepattern)
+			if err != nil {
+				return err
+			}
+			for _, filename := range filenames {
+				src := Source{}
+				b, err := ioutil.ReadFile(filename)
+				if err != nil {
+					return err
+				}
+				src.Text = string(b)
+				src.Filepaths = append(src.Filepaths, filename)
+				// check if user already defined a template called `filename` inside the template itself
+				re, err := regexp.Compile(`{{\s*define\s+["` + "`" + `]` + filename + `["` + "`" + `]\s*}}`)
+				if err != nil {
+					return err
+				}
+				if !re.MatchString(string(b)) {
+					src.Name = filename
+				}
+				srcs.Templates = append(srcs.Templates, src)
+			}
+		}
+		return nil
+	}
+}
+
+func Funcs(funcs map[string]interface{}) ParseOption {
+	return func(srcs *Sources) error {
+		for name, fn := range funcs {
+			srcs.CommonFuncs[name] = fn
+		}
+		return nil
+	}
+}
+
+func Option(opts ...string) ParseOption {
+	return func(srcs *Sources) error {
+		srcs.CommonOptions = append(srcs.CommonOptions, opts...)
+		return nil
+	}
+}
+
+func lookup(ts *Templates, name string) (tmpl *template.Template, isCommon bool) {
+	tmpl = ts.lib[name]
+	if tmpl != nil {
+		return tmpl, false
+	}
+	tmpl = ts.common.Lookup(name)
+	if tmpl != nil {
+		return tmpl, true
+	}
+	return nil, false
 }
 
 func executeTemplate(t *template.Template, w io.Writer, bufpool *bpool.BufferPool, name string, data map[string]interface{}) error {
@@ -64,112 +300,8 @@ func executeTemplate(t *template.Template, w io.Writer, bufpool *bpool.BufferPoo
 	return nil
 }
 
-type Opt func(t *Templates)
-
-func Funcs(funcs map[string]interface{}) func(*Templates) {
-	return func(t *Templates) {
-		t.funcs = funcs
-	}
-}
-
-func Option(opts ...string) func(*Templates) {
-	return func(t *Templates) {
-		t.opts = opts
-	}
-}
-
-func stripSpaces(s string) string {
-	return s
-}
-
-func Parse(common []string, templates []string, opts ...Opt) (*Templates, error) {
-	main := &Templates{
-		bufpool: bpool.NewBufferPool(64),
-		common:  template.New(""),
-		lib:     make(map[string]*template.Template),
-		cache:   make(map[string]*template.Template),
-	}
-	for _, opt := range opts {
-		opt(main)
-	}
-	if len(main.funcs) > 0 {
-		main.common = main.common.Funcs(main.funcs)
-	}
-	if len(main.opts) > 0 {
-		main.common = main.common.Option(main.opts...)
-	}
-	for _, name := range common {
-		files, err := filepath.Glob(name)
-		if err != nil {
-			return main, erro.Wrap(err)
-		}
-		for _, file := range files {
-			b, err := ioutil.ReadFile(file)
-			if err != nil {
-				return main, erro.Wrap(err)
-			}
-			var t *template.Template
-			re, err := regexp.Compile(`{{\s*define\s+["` + "`" + `]` + file + `["` + "`" + `]\s*}}`)
-			if err != nil {
-				return main, erro.Wrap(err)
-			}
-			if re.MatchString(string(b)) {
-				t = template.New("")
-			} else {
-				t = template.New(file)
-			}
-			t, err = t.Funcs(main.funcs).Option(main.opts...).Parse(string(b))
-			if err != nil {
-				return main, erro.Wrap(err)
-			}
-			main.lib[file] = t
-			err = addParseTree(main.common, t)
-			if err != nil {
-				return main, erro.Wrap(err)
-			}
-		}
-	}
-	for _, name := range templates {
-		files, err := filepath.Glob(name)
-		if err != nil {
-			return main, erro.Wrap(err)
-		}
-		for _, file := range files {
-			b, err := ioutil.ReadFile(file)
-			if err != nil {
-				return main, erro.Wrap(err)
-			}
-			var t *template.Template
-			re, err := regexp.Compile(`{{\s*define\s+["` + "`" + `]` + file + `["` + "`" + `]\s*}}`)
-			if err != nil {
-				return main, erro.Wrap(err)
-			}
-			if re.MatchString(string(b)) {
-				t = template.New("")
-			} else {
-				t = template.New(file)
-			}
-			t, err = t.Funcs(main.funcs).Option(main.opts...).Parse(string(b))
-			if err != nil {
-				return main, erro.Wrap(err)
-			}
-			main.lib[file] = t
-			cacheEntry, err := main.common.Clone()
-			if err != nil {
-				return main, erro.Wrap(err)
-			}
-			cacheEntry = cacheEntry.Option(main.opts...)
-			err = addParseTree(cacheEntry, t)
-			if err != nil {
-				return main, erro.Wrap(err)
-			}
-			main.cache[file] = cacheEntry
-		}
-	}
-	return main, nil
-}
-
-func (main *Templates) Render(w http.ResponseWriter, r *http.Request, data map[string]interface{}, name string, names ...string) error {
+func (ts *Templates) Render(w http.ResponseWriter, r *http.Request, data map[string]interface{}, name string, names ...string) error {
+	// check if render JSON
 	renderJSON, _ := r.Context().Value(RenderJSON).(bool)
 	if renderJSON {
 		sanitizedData, err := sanitizeObject(data)
@@ -184,44 +316,47 @@ func (main *Templates) Render(w http.ResponseWriter, r *http.Request, data map[s
 		w.Write(b)
 		return nil
 	}
-	// "app/students/milestone_team_evaluation.html"
-	mainTemplate, ok := main.lib[name]
-	if !ok {
-		return erro.Wrap(fmt.Errorf("No such template '%s'\n", name))
+	// check if the template being rendered exists
+	tmpl, isCommon := lookup(ts, name)
+	if tmpl == nil {
+		return fmt.Errorf("No such template '%s'\n", name)
 	}
-	fullname := strings.Join(append([]string{name}, names...), "\n")
-	// used cached version if exists...
-	if t, ok := main.cache[fullname]; ok {
-		err := executeTemplate(t, w, main.bufpool, name, data)
+	if isCommon {
+		err := executeTemplate(ts.common, w, ts.bufpool, name, data)
 		if err != nil {
-			return erro.Wrap(err)
+			return err
+		}
+		return nil
+	}
+	// used cached version if exists...
+	fullname := strings.Join(append([]string{name}, names...), "\n")
+	if tmpl, ok := ts.cache[fullname]; ok {
+		err := executeTemplate(tmpl, w, ts.bufpool, name, data)
+		if err != nil {
+			return err
 		}
 		return nil
 	}
 	// ...otherwise generate ad-hoc template and cache it
-	cacheEntry, err := main.common.Clone()
+	cacheEntry, err := ts.common.Clone()
 	if err != nil {
-		return erro.Wrap(err)
+		return err
 	}
-	cacheEntry = cacheEntry.Option(main.opts...)
-	err = addParseTree(cacheEntry, mainTemplate)
-	if err != nil {
-		return erro.Wrap(err)
-	}
+	cacheEntry = cacheEntry.Option(ts.opts...)
 	for _, nm := range names {
-		t, ok := main.lib[nm]
-		if !ok {
-			return erro.Wrap(fmt.Errorf("No such template '%s'\n", nm))
+		tmpl, _ := lookup(ts, nm)
+		if tmpl == nil {
+			return fmt.Errorf("No such template '%s'\n", nm)
 		}
-		err := addParseTree(cacheEntry, t)
+		err := addParseTree(cacheEntry, tmpl)
 		if err != nil {
-			return erro.Wrap(err)
+			return err
 		}
 	}
-	main.cache[fullname] = cacheEntry
-	err = executeTemplate(cacheEntry, w, main.bufpool, name, data)
+	ts.cache[fullname] = cacheEntry
+	err = executeTemplate(cacheEntry, w, ts.bufpool, name, data)
 	if err != nil {
-		return erro.Wrap(err)
+		return err
 	}
 	return nil
 }

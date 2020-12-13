@@ -202,7 +202,7 @@ func (adm Admins) CreateUserConfirm(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 	data = addCreateUserActions(data)
-	adm.skylb.Wender(w, r, data, "app/admins/create_user_confirm.html")
+	adm.skylb.Render(w, r, data, "app/admins/create_user_confirm.html")
 }
 
 func bitwiseOr(actions ...createUserAction) createUserAction {

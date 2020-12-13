@@ -17,19 +17,19 @@ func (skylb Skylab) BadRequest(w http.ResponseWriter, r *http.Request, msg strin
 		"Location": fmt.Sprintf("%s:%s:%d", runtime.FuncForPC(pc).Name(), filename, linenr),
 	}
 	w.WriteHeader(http.StatusBadRequest)
-	skylb.Wender(w, r, data, "app/skylab/400.html")
+	skylb.Render(w, r, data, "app/skylab/400.html")
 }
 
 func (skylb Skylab) NotLoggedIn(w http.ResponseWriter, r *http.Request) {
 	skylb.Log.TraceRequest(r)
 	w.WriteHeader(http.StatusUnauthorized)
-	skylb.Wender(w, r, nil, "app/skylab/401.html")
+	skylb.Render(w, r, nil, "app/skylab/401.html")
 }
 
 func (skylb Skylab) NotAUser(w http.ResponseWriter, r *http.Request) {
 	skylb.Log.TraceRequest(r)
 	w.WriteHeader(http.StatusUnauthorized)
-	skylb.Wender(w, r, nil, "app/skylab/401_not_a_user.html")
+	skylb.Render(w, r, nil, "app/skylab/401_not_a_user.html")
 }
 
 // Authentication is not Authorization. Not authenticated means the user
@@ -49,7 +49,7 @@ func (skylb Skylab) NotAuthorized(w http.ResponseWriter, r *http.Request) {
 		"Role": RoleNull,
 	}
 	w.WriteHeader(http.StatusForbidden)
-	skylb.Wender(w, r, data, "app/skylab/403.html")
+	skylb.Render(w, r, data, "app/skylab/403.html")
 }
 
 func (skylb Skylab) NotARole(role string) func(http.ResponseWriter, *http.Request) {
@@ -59,7 +59,7 @@ func (skylb Skylab) NotARole(role string) func(http.ResponseWriter, *http.Reques
 			"Role": role,
 		}
 		w.WriteHeader(http.StatusForbidden)
-		skylb.Wender(w, r, data, "app/skylab/403.html")
+		skylb.Render(w, r, data, "app/skylab/403.html")
 	}
 }
 
@@ -69,7 +69,7 @@ func (skylb Skylab) NotAnApplicant(w http.ResponseWriter, r *http.Request) {
 		"Role": RoleApplicant,
 	}
 	w.WriteHeader(http.StatusForbidden)
-	skylb.Wender(w, r, data, "app/skylab/403.html")
+	skylb.Render(w, r, data, "app/skylab/403.html")
 }
 
 func (skylb Skylab) NotAStudent(w http.ResponseWriter, r *http.Request) {
@@ -78,7 +78,7 @@ func (skylb Skylab) NotAStudent(w http.ResponseWriter, r *http.Request) {
 		"Role": RoleStudent,
 	}
 	w.WriteHeader(http.StatusForbidden)
-	skylb.Wender(w, r, data, "app/skylab/403.html")
+	skylb.Render(w, r, data, "app/skylab/403.html")
 }
 
 func (skylb Skylab) NotAnAdviser(w http.ResponseWriter, r *http.Request) {
@@ -87,7 +87,7 @@ func (skylb Skylab) NotAnAdviser(w http.ResponseWriter, r *http.Request) {
 		"Role": RoleAdviser,
 	}
 	w.WriteHeader(http.StatusForbidden)
-	skylb.Wender(w, r, data, "app/skylab/403.html")
+	skylb.Render(w, r, data, "app/skylab/403.html")
 }
 
 func (skylb Skylab) NotAMentor(w http.ResponseWriter, r *http.Request) {
@@ -96,7 +96,7 @@ func (skylb Skylab) NotAMentor(w http.ResponseWriter, r *http.Request) {
 		"Role": RoleMentor,
 	}
 	w.WriteHeader(http.StatusForbidden)
-	skylb.Wender(w, r, data, "app/skylab/403.html")
+	skylb.Render(w, r, data, "app/skylab/403.html")
 }
 
 func (skylb Skylab) NotAnAdmin(w http.ResponseWriter, r *http.Request) {
@@ -105,7 +105,7 @@ func (skylb Skylab) NotAnAdmin(w http.ResponseWriter, r *http.Request) {
 		"Role": RoleAdmin,
 	}
 	w.WriteHeader(http.StatusForbidden)
-	skylb.Wender(w, r, data, "app/skylab/403.html")
+	skylb.Render(w, r, data, "app/skylab/403.html")
 }
 
 func (skylb Skylab) CsrfTokenInvalid() http.Handler {
@@ -119,7 +119,7 @@ func (skylb Skylab) CsrfTokenInvalid() http.Handler {
 			"FormStr":   fmt.Sprintf("%#v\n", r.Form),
 		}
 		w.WriteHeader(http.StatusForbidden)
-		skylb.Wender(w, r, data, "app/skylab/403_csrf.html")
+		skylb.Render(w, r, data, "app/skylab/403_csrf.html")
 	})
 }
 
@@ -129,7 +129,7 @@ func (skylb Skylab) NotFound(w http.ResponseWriter, r *http.Request) {
 		"URL": r.URL.String(),
 	}
 	w.WriteHeader(http.StatusNotFound)
-	skylb.Wender(w, r, data, "app/skylab/404.html")
+	skylb.Render(w, r, data, "app/skylab/404.html")
 }
 
 func (skylb Skylab) MethodNotAllowed(w http.ResponseWriter, r *http.Request) {
@@ -139,5 +139,5 @@ func (skylb Skylab) MethodNotAllowed(w http.ResponseWriter, r *http.Request) {
 		"Method": r.Method,
 	}
 	w.WriteHeader(http.StatusMethodNotAllowed)
-	skylb.Wender(w, r, data, "app/skylab/405.html")
+	skylb.Render(w, r, data, "app/skylab/405.html")
 }

@@ -18,7 +18,7 @@ const (
 	prefixTrace = "[TRACE] "
 	prefixDebug = "[DEBUG] "
 	flagTrace   = 0
-	flagDebug   = log.LstdFlags | log.Llongfile | log.Lmsgprefix
+	flagDebug   = log.LstdFlags | log.Llongfile //| log.Lmsgprefix
 )
 
 // A Logger represents an active logging object that generates lines of
@@ -124,7 +124,9 @@ func (l *Logger) TraceRequest(r *http.Request) {
 	}
 	reqID := GetReqID(r.Context())
 	pc, filename, linenr, _ := runtime.Caller(1)
-	_ = l.trace.Output(2, fmt.Sprintf("RequestID:%s file:line[%s:%d] function[%s]", reqID, filename, linenr, runtime.FuncForPC(pc).Name()))
+	strs := strings.Split(runtime.FuncForPC(pc).Name(), "/")
+	function := strs[len(strs)-1]
+	_ = l.trace.Output(2, fmt.Sprintf("RequestID:%s %s:%d (%s)", reqID, filename, linenr, function))
 }
 
 // TraceFunc is like TraceRequest, except it is for functions that don't take
@@ -135,7 +137,9 @@ func (l *Logger) TraceFunc() {
 		return
 	}
 	pc, filename, linenr, _ := runtime.Caller(1)
-	_ = l.trace.Output(2, fmt.Sprintf("file:line[%s:%d] function[%s]", filename, linenr, runtime.FuncForPC(pc).Name()))
+	strs := strings.Split(runtime.FuncForPC(pc).Name(), "/")
+	function := strs[len(strs)-1]
+	_ = l.trace.Output(2, fmt.Sprintf("%s:%d (%s)", filename, linenr, function))
 }
 
 // RequestPrintf is like Printf, but it will also print out the request ID of

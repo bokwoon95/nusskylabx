@@ -68,7 +68,7 @@ func (adm Admins) ListForms(w http.ResponseWriter, r *http.Request) {
 		"Forms":  forms,
 		"Cohort": cohort,
 	}
-	adm.skylb.Wender(w, r, data, "app/admins/list_forms.html")
+	adm.skylb.Render(w, r, data, "app/admins/list_forms.html")
 }
 
 func (adm Admins) ListFormsCreate(next http.Handler) http.Handler {

@@ -9,5 +9,5 @@ import (
 func (adv Advisers) Teams(w http.ResponseWriter, r *http.Request) {
 	adv.skylb.Log.TraceRequest(r)
 	r = adv.skylb.SetRoleSection(w, r, skylab.RoleAdviser, skylab.AdviserTeams)
-	adv.skylb.Wender(w, r, nil, "app/advisers/teams.html")
+	adv.skylb.Render(w, r, nil, "app/advisers/teams.html")
 }

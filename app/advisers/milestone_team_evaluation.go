@@ -62,6 +62,6 @@ func (adv Advisers) MilestoneTeamEvaluation(section string) http.HandlerFunc {
 		data := make(map[string]interface{})
 		data["Milestone"] = milestone
 		data["EvaluationGroups"] = evaluationGroups
-		adv.skylb.Wender(w, r, data, "app/advisers/milestone_team_evaluation.html")
+		adv.skylb.Render(w, r, data, "app/advisers/milestone_team_evaluation.html")
 	}
 }

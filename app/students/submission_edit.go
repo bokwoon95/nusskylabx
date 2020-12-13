@@ -46,7 +46,7 @@ func (stu Students) SubmissionEdit(w http.ResponseWriter, r *http.Request) {
 			"UpdateURL":         updateURL,
 			"SubmitURL":         submitURL,
 		}
-		stu.skylb.Wender(w, r, data, "app/skylab/submission_edit.html")
+		stu.skylb.Render(w, r, data, "app/skylab/submission_edit.html")
 	}
 	s := tables.V_SUBMISSIONS()
 	err = sq.WithDefaultLog(sq.Lstats).

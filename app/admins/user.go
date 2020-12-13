@@ -140,7 +140,7 @@ func (adm Admins) UserView(w http.ResponseWriter, r *http.Request) {
 		"TeamBaseURL":    skylab.AdminTeam,
 		"UserBaseURL":    skylab.AdminUser,
 	}
-	adm.skylb.Wender(w, r, data, "app/skylab/user_view.html")
+	adm.skylb.Render(w, r, data, "app/skylab/user_view.html")
 }
 
 func (adm Admins) UserPreviewAs(next http.Handler) http.Handler {

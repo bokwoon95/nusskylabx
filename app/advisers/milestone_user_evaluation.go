@@ -46,6 +46,6 @@ func (adv Advisers) MilestoneUserEvaluation(section string) http.HandlerFunc {
 		if len(evaluations) > 0 {
 			data["Period"] = evaluations[0].EvaluationForm.Period
 		}
-		adv.skylb.Wender(w, r, data, "app/advisers/milestone_user_evaluation.html")
+		adv.skylb.Render(w, r, data, "app/advisers/milestone_user_evaluation.html")
 	}
 }

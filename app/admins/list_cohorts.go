@@ -31,7 +31,7 @@ func (adm Admins) ListCohorts(w http.ResponseWriter, r *http.Request) {
 		"NextCohort": nextCohort,
 		"Cohorts":    adm.skylb.Cohorts(),
 	}
-	adm.skylb.Wender(w, r, data, "app/admins/list_cohorts.html")
+	adm.skylb.Render(w, r, data, "app/admins/list_cohorts.html")
 }
 
 func (adm Admins) ListCohortsCreate(next http.Handler) http.Handler {

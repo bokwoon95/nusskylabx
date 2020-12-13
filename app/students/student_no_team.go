@@ -9,5 +9,5 @@ import (
 func (stu Students) StudentNoTeam(w http.ResponseWriter, r *http.Request) {
 	stu.skylb.Log.TraceRequest(r)
 	r = stu.skylb.SetRoleSection(w, r, skylab.RoleStudent, skylab.SectionPreserve)
-	stu.skylb.Wender(w, r, nil, "app/students/student_no_team.html")
+	stu.skylb.Render(w, r, nil, "app/students/student_no_team.html")
 }

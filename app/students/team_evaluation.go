@@ -54,7 +54,7 @@ func (stu Students) TeamEvaluationEdit(w http.ResponseWriter, r *http.Request) {
 		"SubmissionURL":  submissionURL,
 		"PreviewURL":     previewURL,
 	}
-	stu.skylb.Wender(w, r, data, "app/skylab/team_evaluation_edit.html")
+	stu.skylb.Render(w, r, data, "app/skylab/team_evaluation_edit.html")
 }
 
 func (stu Students) CanViewTeamEvaluation(next http.Handler) http.Handler {
