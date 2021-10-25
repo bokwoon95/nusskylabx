@@ -19,6 +19,7 @@
     "lit-html": "^1.2.1",
     "micromodal": "^0.4.6",
     "mithril": "^2.0.4",
+    "npm": "^8.1.1",
     "qs": "^6.9.6",
     "uuid": "^3.4.0",
     "vanilla-lazyload": "^15.2.0"
@@ -35,7 +36,7 @@
     "dotenv-webpack": "^1.8.0",
     "regenerator-runtime": "^0.13.7",
     "typescript": "^3.9.7",
-    "webpack": "^4.46.0",
-    "webpack-cli": "^3.3.12"
+    "webpack": "^5.59.1",
+    "webpack-cli": "^4.9.1"
   }
 }
