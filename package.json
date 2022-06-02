@@ -19,7 +19,7 @@
     "lit-html": "^1.2.1",
     "micromodal": "^0.4.6",
     "mithril": "^2.0.4",
-    "npm": "^8.1.1",
+    "npm": "^8.11.0",
     "qs": "^6.9.6",
     "uuid": "^3.4.0",
     "vanilla-lazyload": "^15.2.0"
